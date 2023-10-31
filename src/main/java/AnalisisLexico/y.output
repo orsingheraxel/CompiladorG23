@@ -1,0 +1,2220 @@
+   0  $accept : Programa $end
+
+   1  Programa : '{' ListSentencias '}'
+   2           | '{' ListSentencias
+   3           | ListSentencias '}'
+   4           | ListSentencias
+
+   5  ListSentencias : Sentencia ','
+   6                 | Sentencia ',' ListSentencias
+   7                 | Sentencia
+
+   8  Sentencia : SentenciaControl
+   9            | SentenciaEjecutable
+  10            | SentenciaDeclarativa
+
+  11  ReferenciaObjeto : ID '.' ID
+
+  12  ReferenciaObjetoFuncion : ID '.' LlamadoFuncion
+
+  13  SentenciaEjecutable : Asignacion
+  14                      | LlamadoFuncion
+  15                      | BloqueIF
+  16                      | SalidaMensaje
+  17                      | ReferenciaObjetoFuncion
+
+  18  ClaseSentenciaEjecutable : ID ListVariables ','
+  19                           | ID ListVariables
+
+  20  SentenciaDeclarativa : Tipo ListVariables
+  21                       | Funcion
+  22                       | ListVariables
+  23                       | Tipo
+  24                       | ClaseSentenciaEjecutable
+  25                       | HerenciaComposicion
+  26                       | List_objeto_clase
+
+  27  List_objeto_clase : Objeto_clase
+  28                    | Objeto_clase ';' ListVariables
+
+  29  ListVariables : DeclaracionVariable
+  30                | DeclaracionVariable ';' ListVariables
+  31                |
+
+  32  DeclaracionVariable : ID
+
+  33  Objeto_clase : ID ID
+
+  34  Tipo : USHORT
+  35       | INT
+  36       | DOUBLE
+
+  37  Constante : ENTERO
+  38            | ENTEROCORTO
+  39            | '-' ENTEROCORTO
+  40            | PUNTOFLOTANTE
+  41            | '-' ENTERO
+  42            | '-' PUNTOFLOTANTE
+
+  43  Expresion : Termino '+' Expresion
+  44            | Termino '-' Expresion
+  45            | Termino
+  46            | ConversionExplicita
+
+  47  Termino : Factor '*' Termino
+  48          | Factor '/' Termino
+  49          | Factor
+  50          | Factor_RefObjeto '*' Termino
+  51          | Factor_RefObjeto '/' Termino
+  52          | Factor_RefObjeto
+
+  53  Factor : ID
+  54         | Constante
+
+  55  Factor_RefObjeto : ReferenciaObjeto
+
+  56  Condicion : Expresion Comparador Expresion
+
+  57  BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF
+  58           | IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF
+
+  59  ListSentenciasIF : SentenciaEjecutable ','
+  60                   | SentenciaEjecutable ',' ListSentenciasIF
+  61                   | SentenciaEjecutable
+
+  62  Comparador : '<'
+  63             | '>'
+  64             | MAYORIGUAL
+  65             | MENORIGUAL
+  66             | IGUAL
+  67             | DIST
+
+  68  ListFuncion : Funcion
+  69              | FuncionSinCuerpo
+  70              | FuncionSinCuerpo ListFuncion
+  71              | Funcion ListFuncion
+
+  72  Funcion : VOID ID '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}'
+  73          | VOID ID '(' ')' '{' CuerpoFuncion RETURN ',' '}'
+  74          | VOID ID '(' ')' '{' CuerpoFuncion '}'
+
+  75  Parametro : Tipo ID
+
+  76  CuerpoFuncion : ListSentenciasFuncion
+
+  77  ListSentenciasFuncion : SentenciaDeclarativa ',' ListSentenciasFuncion
+  78                        | SentenciaEjecutable ',' ListSentenciasFuncion
+  79                        | SentenciaEjecutable ','
+  80                        | SentenciaDeclarativa ','
+  81                        | SentenciaEjecutable
+  82                        | SentenciaDeclarativa
+
+  83  LlamadoFuncion : ID '(' ')'
+  84                 | ID '(' Expresion ')'
+  85                 | ID '(' Factor ')'
+
+  86  SalidaMensaje : PRINT CADENA
+
+  87  OperadorAsignacion : '='
+  88                     | ASIG
+
+  89  Asignacion : ID OperadorAsignacion ID
+  90             | ID OperadorAsignacion Expresion
+  91             | ID OperadorAsignacion Constante
+  92             | ID OperadorAsignacion ReferenciaObjeto
+  93             | ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
+
+  94  SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')'
+  95                   | DO '{' ListSentenciasIF '}' UNTIL
+
+  96  ConversionExplicita : TOD '(' Expresion ')'
+  97                      | TOD '(' ')'
+
+  98  ListHerencia : DeclaracionAtributo
+  99               | FuncionIMPL
+ 100               | FuncionIMPL ',' ListHerencia
+ 101               | DeclaracionAtributo ListHerencia
+ 102               | ListFuncion ','
+ 103               | ListFuncion ',' ListHerencia
+
+ 104  HerenciaComposicion : CLASS ID '{' ListHerencia '}'
+ 105                      | CLASS ID
+
+ 106  DeclaracionAtributo : Tipo ID ','
+ 107                      | Tipo ID ',' DeclaracionAtributo
+ 108                      | ID ',' DeclaracionAtributo
+
+ 109  FuncionSinCuerpo : VOID ID '(' Parametro ')' ','
+ 110                   | VOID ID '(' ')' ','
+
+ 111  FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'
+
+state 0
+	$accept : . Programa $end  (0)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	DO  shift 5
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	'{'  shift 10
+	$end  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	Programa  goto 11
+	ListSentencias  goto 12
+	Sentencia  goto 13
+	SentenciaControl  goto 14
+	SentenciaEjecutable  goto 15
+	SentenciaDeclarativa  goto 16
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+
+
+state 1
+	BloqueIF : IF . '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF . '(' Condicion ')' '{' ListSentenciasIF '}' END_IF  (58)
+
+	'('  shift 31
+	.  error
+
+
+state 2
+	SalidaMensaje : PRINT . CADENA  (86)
+
+	CADENA  shift 32
+	.  error
+
+
+state 3
+	HerenciaComposicion : CLASS . ID '{' ListHerencia '}'  (104)
+	HerenciaComposicion : CLASS . ID  (105)
+
+	ID  shift 33
+	.  error
+
+
+state 4
+	Funcion : VOID . ID '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID . ID '(' ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID . ID '(' ')' '{' CuerpoFuncion '}'  (74)
+
+	ID  shift 34
+	.  error
+
+
+state 5
+	SentenciaControl : DO . '{' ListSentenciasIF '}' UNTIL '(' Condicion ')'  (94)
+	SentenciaControl : DO . '{' ListSentenciasIF '}' UNTIL  (95)
+
+	'{'  shift 35
+	.  error
+
+
+state 6
+	Tipo : INT .  (35)
+
+	.  reduce 35
+
+
+state 7
+	Tipo : USHORT .  (34)
+
+	.  reduce 34
+
+
+state 8
+	Tipo : DOUBLE .  (36)
+
+	.  reduce 36
+
+
+9: reduce/reduce conflict (reduce 31, reduce 32) on $end
+9: reduce/reduce conflict (reduce 31, reduce 32) on RETURN
+9: reduce/reduce conflict (reduce 31, reduce 32) on '}'
+9: reduce/reduce conflict (reduce 31, reduce 32) on ','
+state 9
+	ReferenciaObjeto : ID . '.' ID  (11)
+	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (12)
+	ClaseSentenciaEjecutable : ID . ListVariables ','  (18)
+	ClaseSentenciaEjecutable : ID . ListVariables  (19)
+	DeclaracionVariable : ID .  (32)
+	Objeto_clase : ID . ID  (33)
+	LlamadoFuncion : ID . '(' ')'  (83)
+	LlamadoFuncion : ID . '(' Expresion ')'  (84)
+	LlamadoFuncion : ID . '(' Factor ')'  (85)
+	Asignacion : ID . OperadorAsignacion ID  (89)
+	Asignacion : ID . OperadorAsignacion Expresion  (90)
+	Asignacion : ID . OperadorAsignacion Constante  (91)
+	Asignacion : ID . OperadorAsignacion ReferenciaObjeto  (92)
+	ListVariables : .  (31)
+
+	ID  shift 36
+	ASIG  shift 37
+	'.'  shift 38
+	'('  shift 39
+	'='  shift 40
+	$end  reduce 31
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+	';'  reduce 32
+
+	ListVariables  goto 41
+	DeclaracionVariable  goto 30
+	OperadorAsignacion  goto 42
+
+
+state 10
+	Programa : '{' . ListSentencias '}'  (1)
+	Programa : '{' . ListSentencias  (2)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	DO  shift 5
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	$end  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	ListSentencias  goto 43
+	Sentencia  goto 13
+	SentenciaControl  goto 14
+	SentenciaEjecutable  goto 15
+	SentenciaDeclarativa  goto 16
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+
+
+state 11
+	$accept : Programa . $end  (0)
+
+	$end  accept
+
+
+state 12
+	Programa : ListSentencias . '}'  (3)
+	Programa : ListSentencias .  (4)
+
+	'}'  shift 44
+	$end  reduce 4
+
+
+state 13
+	ListSentencias : Sentencia . ','  (5)
+	ListSentencias : Sentencia . ',' ListSentencias  (6)
+	ListSentencias : Sentencia .  (7)
+
+	','  shift 45
+	$end  reduce 7
+	'}'  reduce 7
+
+
+state 14
+	Sentencia : SentenciaControl .  (8)
+
+	.  reduce 8
+
+
+state 15
+	Sentencia : SentenciaEjecutable .  (9)
+
+	.  reduce 9
+
+
+state 16
+	Sentencia : SentenciaDeclarativa .  (10)
+
+	.  reduce 10
+
+
+state 17
+	Asignacion : ReferenciaObjeto . OperadorAsignacion ReferenciaObjeto  (93)
+
+	ASIG  shift 37
+	'='  shift 40
+	.  error
+
+	OperadorAsignacion  goto 46
+
+
+state 18
+	SentenciaEjecutable : ReferenciaObjetoFuncion .  (17)
+
+	.  reduce 17
+
+
+state 19
+	SentenciaEjecutable : LlamadoFuncion .  (14)
+
+	.  reduce 14
+
+
+state 20
+	SentenciaEjecutable : Asignacion .  (13)
+
+	.  reduce 13
+
+
+state 21
+	SentenciaEjecutable : BloqueIF .  (15)
+
+	.  reduce 15
+
+
+state 22
+	SentenciaEjecutable : SalidaMensaje .  (16)
+
+	.  reduce 16
+
+
+state 23
+	SentenciaDeclarativa : ClaseSentenciaEjecutable .  (24)
+
+	.  reduce 24
+
+
+state 24
+	SentenciaDeclarativa : ListVariables .  (22)
+
+	.  reduce 22
+
+
+25: reduce/reduce conflict (reduce 23, reduce 31) on $end
+25: reduce/reduce conflict (reduce 23, reduce 31) on RETURN
+25: reduce/reduce conflict (reduce 23, reduce 31) on '}'
+25: reduce/reduce conflict (reduce 23, reduce 31) on ','
+state 25
+	SentenciaDeclarativa : Tipo . ListVariables  (20)
+	SentenciaDeclarativa : Tipo .  (23)
+	ListVariables : .  (31)
+
+	ID  shift 47
+	$end  reduce 23
+	RETURN  reduce 23
+	'}'  reduce 23
+	','  reduce 23
+
+	ListVariables  goto 48
+	DeclaracionVariable  goto 30
+
+
+state 26
+	SentenciaDeclarativa : Funcion .  (21)
+
+	.  reduce 21
+
+
+state 27
+	SentenciaDeclarativa : HerenciaComposicion .  (25)
+
+	.  reduce 25
+
+
+state 28
+	SentenciaDeclarativa : List_objeto_clase .  (26)
+
+	.  reduce 26
+
+
+state 29
+	List_objeto_clase : Objeto_clase .  (27)
+	List_objeto_clase : Objeto_clase . ';' ListVariables  (28)
+
+	';'  shift 49
+	$end  reduce 27
+	RETURN  reduce 27
+	'}'  reduce 27
+	','  reduce 27
+
+
+state 30
+	ListVariables : DeclaracionVariable .  (29)
+	ListVariables : DeclaracionVariable . ';' ListVariables  (30)
+
+	';'  shift 50
+	$end  reduce 29
+	RETURN  reduce 29
+	'}'  reduce 29
+	','  reduce 29
+
+
+state 31
+	BloqueIF : IF '(' . Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' . Condicion ')' '{' ListSentenciasIF '}' END_IF  (58)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 59
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+	Condicion  goto 64
+
+
+state 32
+	SalidaMensaje : PRINT CADENA .  (86)
+
+	.  reduce 86
+
+
+state 33
+	HerenciaComposicion : CLASS ID . '{' ListHerencia '}'  (104)
+	HerenciaComposicion : CLASS ID .  (105)
+
+	'{'  shift 65
+	$end  reduce 105
+	RETURN  reduce 105
+	'}'  reduce 105
+	','  reduce 105
+
+
+state 34
+	Funcion : VOID ID . '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID ID . '(' ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID . '(' ')' '{' CuerpoFuncion '}'  (74)
+
+	'('  shift 66
+	.  error
+
+
+state 35
+	SentenciaControl : DO '{' . ListSentenciasIF '}' UNTIL '(' Condicion ')'  (94)
+	SentenciaControl : DO '{' . ListSentenciasIF '}' UNTIL  (95)
+
+	IF  shift 1
+	PRINT  shift 2
+	ID  shift 67
+	.  error
+
+	SentenciaEjecutable  goto 68
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ListSentenciasIF  goto 69
+
+
+36: reduce/reduce conflict (reduce 32, reduce 33) on $end
+36: reduce/reduce conflict (reduce 32, reduce 33) on RETURN
+36: reduce/reduce conflict (reduce 32, reduce 33) on '}'
+36: reduce/reduce conflict (reduce 32, reduce 33) on ','
+36: reduce/reduce conflict (reduce 32, reduce 33) on ';'
+state 36
+	DeclaracionVariable : ID .  (32)
+	Objeto_clase : ID ID .  (33)
+
+	.  reduce 32
+
+
+state 37
+	OperadorAsignacion : ASIG .  (88)
+
+	.  reduce 88
+
+
+state 38
+	ReferenciaObjeto : ID '.' . ID  (11)
+	ReferenciaObjetoFuncion : ID '.' . LlamadoFuncion  (12)
+
+	ID  shift 70
+	.  error
+
+	LlamadoFuncion  goto 71
+
+
+state 39
+	LlamadoFuncion : ID '(' . ')'  (83)
+	LlamadoFuncion : ID '(' . Expresion ')'  (84)
+	LlamadoFuncion : ID '(' . Factor ')'  (85)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	')'  shift 72
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 73
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 74
+	Factor_RefObjeto  goto 63
+
+
+state 40
+	OperadorAsignacion : '=' .  (87)
+
+	.  reduce 87
+
+
+41: shift/reduce conflict (shift 75, reduce 19) on ','
+state 41
+	ClaseSentenciaEjecutable : ID ListVariables . ','  (18)
+	ClaseSentenciaEjecutable : ID ListVariables .  (19)
+
+	','  shift 75
+	$end  reduce 19
+	RETURN  reduce 19
+	'}'  reduce 19
+
+
+state 42
+	Asignacion : ID OperadorAsignacion . ID  (89)
+	Asignacion : ID OperadorAsignacion . Expresion  (90)
+	Asignacion : ID OperadorAsignacion . Constante  (91)
+	Asignacion : ID OperadorAsignacion . ReferenciaObjeto  (92)
+
+	ID  shift 76
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 77
+	Constante  goto 78
+	Expresion  goto 79
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 43
+	Programa : '{' ListSentencias . '}'  (1)
+	Programa : '{' ListSentencias .  (2)
+
+	'}'  shift 80
+	$end  reduce 2
+
+
+state 44
+	Programa : ListSentencias '}' .  (3)
+
+	.  reduce 3
+
+
+45: reduce/reduce conflict (reduce 5, reduce 31) on $end
+45: reduce/reduce conflict (reduce 5, reduce 31) on '}'
+state 45
+	ListSentencias : Sentencia ',' .  (5)
+	ListSentencias : Sentencia ',' . ListSentencias  (6)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	DO  shift 5
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	$end  reduce 5
+	'}'  reduce 5
+	','  reduce 31
+
+	ListSentencias  goto 81
+	Sentencia  goto 13
+	SentenciaControl  goto 14
+	SentenciaEjecutable  goto 15
+	SentenciaDeclarativa  goto 16
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+
+
+state 46
+	Asignacion : ReferenciaObjeto OperadorAsignacion . ReferenciaObjeto  (93)
+
+	ID  shift 82
+	.  error
+
+	ReferenciaObjeto  goto 83
+
+
+state 47
+	DeclaracionVariable : ID .  (32)
+
+	.  reduce 32
+
+
+state 48
+	SentenciaDeclarativa : Tipo ListVariables .  (20)
+
+	.  reduce 20
+
+
+state 49
+	List_objeto_clase : Objeto_clase ';' . ListVariables  (28)
+	ListVariables : .  (31)
+
+	ID  shift 47
+	$end  reduce 31
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	ListVariables  goto 84
+	DeclaracionVariable  goto 30
+
+
+state 50
+	ListVariables : DeclaracionVariable ';' . ListVariables  (30)
+	ListVariables : .  (31)
+
+	ID  shift 47
+	$end  reduce 31
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	ListVariables  goto 85
+	DeclaracionVariable  goto 30
+
+
+state 51
+	ReferenciaObjeto : ID . '.' ID  (11)
+	Factor : ID .  (53)
+
+	'.'  shift 86
+	$end  reduce 53
+	IGUAL  reduce 53
+	DIST  reduce 53
+	MENORIGUAL  reduce 53
+	MAYORIGUAL  reduce 53
+	RETURN  reduce 53
+	'}'  reduce 53
+	','  reduce 53
+	'-'  reduce 53
+	'+'  reduce 53
+	'*'  reduce 53
+	'/'  reduce 53
+	')'  reduce 53
+	'<'  reduce 53
+	'>'  reduce 53
+
+
+state 52
+	ConversionExplicita : TOD . '(' Expresion ')'  (96)
+	ConversionExplicita : TOD . '(' ')'  (97)
+
+	'('  shift 87
+	.  error
+
+
+state 53
+	Constante : ENTERO .  (37)
+
+	.  reduce 37
+
+
+state 54
+	Constante : ENTEROCORTO .  (38)
+
+	.  reduce 38
+
+
+state 55
+	Constante : PUNTOFLOTANTE .  (40)
+
+	.  reduce 40
+
+
+state 56
+	Constante : '-' . ENTEROCORTO  (39)
+	Constante : '-' . ENTERO  (41)
+	Constante : '-' . PUNTOFLOTANTE  (42)
+
+	ENTERO  shift 88
+	ENTEROCORTO  shift 89
+	PUNTOFLOTANTE  shift 90
+	.  error
+
+
+state 57
+	Factor_RefObjeto : ReferenciaObjeto .  (55)
+
+	.  reduce 55
+
+
+state 58
+	Factor : Constante .  (54)
+
+	.  reduce 54
+
+
+state 59
+	Condicion : Expresion . Comparador Expresion  (56)
+
+	IGUAL  shift 91
+	DIST  shift 92
+	MENORIGUAL  shift 93
+	MAYORIGUAL  shift 94
+	'<'  shift 95
+	'>'  shift 96
+	.  error
+
+	Comparador  goto 97
+
+
+state 60
+	Expresion : Termino . '+' Expresion  (43)
+	Expresion : Termino . '-' Expresion  (44)
+	Expresion : Termino .  (45)
+
+	'-'  shift 98
+	'+'  shift 99
+	$end  reduce 45
+	IGUAL  reduce 45
+	DIST  reduce 45
+	MENORIGUAL  reduce 45
+	MAYORIGUAL  reduce 45
+	RETURN  reduce 45
+	'}'  reduce 45
+	','  reduce 45
+	')'  reduce 45
+	'<'  reduce 45
+	'>'  reduce 45
+
+
+state 61
+	Expresion : ConversionExplicita .  (46)
+
+	.  reduce 46
+
+
+state 62
+	Termino : Factor . '*' Termino  (47)
+	Termino : Factor . '/' Termino  (48)
+	Termino : Factor .  (49)
+
+	'*'  shift 100
+	'/'  shift 101
+	$end  reduce 49
+	IGUAL  reduce 49
+	DIST  reduce 49
+	MENORIGUAL  reduce 49
+	MAYORIGUAL  reduce 49
+	RETURN  reduce 49
+	'}'  reduce 49
+	','  reduce 49
+	'-'  reduce 49
+	'+'  reduce 49
+	')'  reduce 49
+	'<'  reduce 49
+	'>'  reduce 49
+
+
+state 63
+	Termino : Factor_RefObjeto . '*' Termino  (50)
+	Termino : Factor_RefObjeto . '/' Termino  (51)
+	Termino : Factor_RefObjeto .  (52)
+
+	'*'  shift 102
+	'/'  shift 103
+	$end  reduce 52
+	IGUAL  reduce 52
+	DIST  reduce 52
+	MENORIGUAL  reduce 52
+	MAYORIGUAL  reduce 52
+	RETURN  reduce 52
+	'}'  reduce 52
+	','  reduce 52
+	'-'  reduce 52
+	'+'  reduce 52
+	')'  reduce 52
+	'<'  reduce 52
+	'>'  reduce 52
+
+
+state 64
+	BloqueIF : IF '(' Condicion . ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' Condicion . ')' '{' ListSentenciasIF '}' END_IF  (58)
+
+	')'  shift 104
+	.  error
+
+
+state 65
+	HerenciaComposicion : CLASS ID '{' . ListHerencia '}'  (104)
+
+	VOID  shift 105
+	IMPL  shift 106
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	.  error
+
+	Tipo  goto 108
+	Funcion  goto 109
+	ListFuncion  goto 110
+	FuncionSinCuerpo  goto 111
+	ListHerencia  goto 112
+	DeclaracionAtributo  goto 113
+	FuncionIMPL  goto 114
+
+
+state 66
+	Funcion : VOID ID '(' . Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID ID '(' . ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' . ')' '{' CuerpoFuncion '}'  (74)
+
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	')'  shift 115
+	.  error
+
+	Tipo  goto 116
+	Parametro  goto 117
+
+
+state 67
+	ReferenciaObjeto : ID . '.' ID  (11)
+	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (12)
+	LlamadoFuncion : ID . '(' ')'  (83)
+	LlamadoFuncion : ID . '(' Expresion ')'  (84)
+	LlamadoFuncion : ID . '(' Factor ')'  (85)
+	Asignacion : ID . OperadorAsignacion ID  (89)
+	Asignacion : ID . OperadorAsignacion Expresion  (90)
+	Asignacion : ID . OperadorAsignacion Constante  (91)
+	Asignacion : ID . OperadorAsignacion ReferenciaObjeto  (92)
+
+	ASIG  shift 37
+	'.'  shift 38
+	'('  shift 39
+	'='  shift 40
+	.  error
+
+	OperadorAsignacion  goto 42
+
+
+state 68
+	ListSentenciasIF : SentenciaEjecutable . ','  (59)
+	ListSentenciasIF : SentenciaEjecutable . ',' ListSentenciasIF  (60)
+	ListSentenciasIF : SentenciaEjecutable .  (61)
+
+	','  shift 118
+	'}'  reduce 61
+
+
+state 69
+	SentenciaControl : DO '{' ListSentenciasIF . '}' UNTIL '(' Condicion ')'  (94)
+	SentenciaControl : DO '{' ListSentenciasIF . '}' UNTIL  (95)
+
+	'}'  shift 119
+	.  error
+
+
+state 70
+	ReferenciaObjeto : ID '.' ID .  (11)
+	LlamadoFuncion : ID . '(' ')'  (83)
+	LlamadoFuncion : ID . '(' Expresion ')'  (84)
+	LlamadoFuncion : ID . '(' Factor ')'  (85)
+
+	'('  shift 39
+	ASIG  reduce 11
+	'='  reduce 11
+
+
+state 71
+	ReferenciaObjetoFuncion : ID '.' LlamadoFuncion .  (12)
+
+	.  reduce 12
+
+
+state 72
+	LlamadoFuncion : ID '(' ')' .  (83)
+
+	.  reduce 83
+
+
+state 73
+	LlamadoFuncion : ID '(' Expresion . ')'  (84)
+
+	')'  shift 120
+	.  error
+
+
+74: shift/reduce conflict (shift 121, reduce 49) on ')'
+state 74
+	Termino : Factor . '*' Termino  (47)
+	Termino : Factor . '/' Termino  (48)
+	Termino : Factor .  (49)
+	LlamadoFuncion : ID '(' Factor . ')'  (85)
+
+	'*'  shift 100
+	'/'  shift 101
+	')'  shift 121
+	'-'  reduce 49
+	'+'  reduce 49
+
+
+state 75
+	ClaseSentenciaEjecutable : ID ListVariables ',' .  (18)
+
+	.  reduce 18
+
+
+76: reduce/reduce conflict (reduce 53, reduce 89) on $end
+76: reduce/reduce conflict (reduce 53, reduce 89) on RETURN
+76: reduce/reduce conflict (reduce 53, reduce 89) on '}'
+76: reduce/reduce conflict (reduce 53, reduce 89) on ','
+state 76
+	ReferenciaObjeto : ID . '.' ID  (11)
+	Factor : ID .  (53)
+	Asignacion : ID OperadorAsignacion ID .  (89)
+
+	'.'  shift 86
+	$end  reduce 53
+	RETURN  reduce 53
+	'}'  reduce 53
+	','  reduce 53
+	'-'  reduce 53
+	'+'  reduce 53
+	'*'  reduce 53
+	'/'  reduce 53
+
+
+77: reduce/reduce conflict (reduce 55, reduce 92) on $end
+77: reduce/reduce conflict (reduce 55, reduce 92) on RETURN
+77: reduce/reduce conflict (reduce 55, reduce 92) on '}'
+77: reduce/reduce conflict (reduce 55, reduce 92) on ','
+state 77
+	Factor_RefObjeto : ReferenciaObjeto .  (55)
+	Asignacion : ID OperadorAsignacion ReferenciaObjeto .  (92)
+
+	.  reduce 55
+
+
+78: reduce/reduce conflict (reduce 54, reduce 91) on $end
+78: reduce/reduce conflict (reduce 54, reduce 91) on RETURN
+78: reduce/reduce conflict (reduce 54, reduce 91) on '}'
+78: reduce/reduce conflict (reduce 54, reduce 91) on ','
+state 78
+	Factor : Constante .  (54)
+	Asignacion : ID OperadorAsignacion Constante .  (91)
+
+	.  reduce 54
+
+
+state 79
+	Asignacion : ID OperadorAsignacion Expresion .  (90)
+
+	.  reduce 90
+
+
+state 80
+	Programa : '{' ListSentencias '}' .  (1)
+
+	.  reduce 1
+
+
+state 81
+	ListSentencias : Sentencia ',' ListSentencias .  (6)
+
+	.  reduce 6
+
+
+state 82
+	ReferenciaObjeto : ID . '.' ID  (11)
+
+	'.'  shift 86
+	.  error
+
+
+state 83
+	Asignacion : ReferenciaObjeto OperadorAsignacion ReferenciaObjeto .  (93)
+
+	.  reduce 93
+
+
+state 84
+	List_objeto_clase : Objeto_clase ';' ListVariables .  (28)
+
+	.  reduce 28
+
+
+state 85
+	ListVariables : DeclaracionVariable ';' ListVariables .  (30)
+
+	.  reduce 30
+
+
+state 86
+	ReferenciaObjeto : ID '.' . ID  (11)
+
+	ID  shift 122
+	.  error
+
+
+state 87
+	ConversionExplicita : TOD '(' . Expresion ')'  (96)
+	ConversionExplicita : TOD '(' . ')'  (97)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	')'  shift 123
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 124
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 88
+	Constante : '-' ENTERO .  (41)
+
+	.  reduce 41
+
+
+state 89
+	Constante : '-' ENTEROCORTO .  (39)
+
+	.  reduce 39
+
+
+state 90
+	Constante : '-' PUNTOFLOTANTE .  (42)
+
+	.  reduce 42
+
+
+state 91
+	Comparador : IGUAL .  (66)
+
+	.  reduce 66
+
+
+state 92
+	Comparador : DIST .  (67)
+
+	.  reduce 67
+
+
+state 93
+	Comparador : MENORIGUAL .  (65)
+
+	.  reduce 65
+
+
+state 94
+	Comparador : MAYORIGUAL .  (64)
+
+	.  reduce 64
+
+
+state 95
+	Comparador : '<' .  (62)
+
+	.  reduce 62
+
+
+state 96
+	Comparador : '>' .  (63)
+
+	.  reduce 63
+
+
+state 97
+	Condicion : Expresion Comparador . Expresion  (56)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 125
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 98
+	Expresion : Termino '-' . Expresion  (44)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 126
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 99
+	Expresion : Termino '+' . Expresion  (43)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 127
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 100
+	Termino : Factor '*' . Termino  (47)
+
+	ID  shift 51
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Termino  goto 128
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 101
+	Termino : Factor '/' . Termino  (48)
+
+	ID  shift 51
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Termino  goto 129
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 102
+	Termino : Factor_RefObjeto '*' . Termino  (50)
+
+	ID  shift 51
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Termino  goto 130
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 103
+	Termino : Factor_RefObjeto '/' . Termino  (51)
+
+	ID  shift 51
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Termino  goto 131
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+
+
+state 104
+	BloqueIF : IF '(' Condicion ')' . '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' Condicion ')' . '{' ListSentenciasIF '}' END_IF  (58)
+
+	'{'  shift 132
+	.  error
+
+
+state 105
+	Funcion : VOID . ID '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID . ID '(' ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID . ID '(' ')' '{' CuerpoFuncion '}'  (74)
+	FuncionSinCuerpo : VOID . ID '(' Parametro ')' ','  (109)
+	FuncionSinCuerpo : VOID . ID '(' ')' ','  (110)
+
+	ID  shift 133
+	.  error
+
+
+state 106
+	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion '}'  (111)
+
+	FOR  shift 134
+	.  error
+
+
+state 107
+	DeclaracionAtributo : ID . ',' DeclaracionAtributo  (108)
+
+	','  shift 135
+	.  error
+
+
+state 108
+	DeclaracionAtributo : Tipo . ID ','  (106)
+	DeclaracionAtributo : Tipo . ID ',' DeclaracionAtributo  (107)
+
+	ID  shift 136
+	.  error
+
+
+state 109
+	ListFuncion : Funcion .  (68)
+	ListFuncion : Funcion . ListFuncion  (71)
+
+	VOID  shift 105
+	','  reduce 68
+
+	Funcion  goto 109
+	ListFuncion  goto 137
+	FuncionSinCuerpo  goto 111
+
+
+state 110
+	ListHerencia : ListFuncion . ','  (102)
+	ListHerencia : ListFuncion . ',' ListHerencia  (103)
+
+	','  shift 138
+	.  error
+
+
+state 111
+	ListFuncion : FuncionSinCuerpo .  (69)
+	ListFuncion : FuncionSinCuerpo . ListFuncion  (70)
+
+	VOID  shift 105
+	','  reduce 69
+
+	Funcion  goto 109
+	ListFuncion  goto 139
+	FuncionSinCuerpo  goto 111
+
+
+state 112
+	HerenciaComposicion : CLASS ID '{' ListHerencia . '}'  (104)
+
+	'}'  shift 140
+	.  error
+
+
+state 113
+	ListHerencia : DeclaracionAtributo .  (98)
+	ListHerencia : DeclaracionAtributo . ListHerencia  (101)
+
+	VOID  shift 105
+	IMPL  shift 106
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	'}'  reduce 98
+
+	Tipo  goto 108
+	Funcion  goto 109
+	ListFuncion  goto 110
+	FuncionSinCuerpo  goto 111
+	ListHerencia  goto 141
+	DeclaracionAtributo  goto 113
+	FuncionIMPL  goto 114
+
+
+state 114
+	ListHerencia : FuncionIMPL .  (99)
+	ListHerencia : FuncionIMPL . ',' ListHerencia  (100)
+
+	','  shift 142
+	'}'  reduce 99
+
+
+state 115
+	Funcion : VOID ID '(' ')' . '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' ')' . '{' CuerpoFuncion '}'  (74)
+
+	'{'  shift 143
+	.  error
+
+
+state 116
+	Parametro : Tipo . ID  (75)
+
+	ID  shift 144
+	.  error
+
+
+state 117
+	Funcion : VOID ID '(' Parametro . ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+
+	')'  shift 145
+	.  error
+
+
+state 118
+	ListSentenciasIF : SentenciaEjecutable ',' .  (59)
+	ListSentenciasIF : SentenciaEjecutable ',' . ListSentenciasIF  (60)
+
+	IF  shift 1
+	PRINT  shift 2
+	ID  shift 67
+	'}'  reduce 59
+
+	SentenciaEjecutable  goto 68
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ListSentenciasIF  goto 146
+
+
+state 119
+	SentenciaControl : DO '{' ListSentenciasIF '}' . UNTIL '(' Condicion ')'  (94)
+	SentenciaControl : DO '{' ListSentenciasIF '}' . UNTIL  (95)
+
+	UNTIL  shift 147
+	.  error
+
+
+state 120
+	LlamadoFuncion : ID '(' Expresion ')' .  (84)
+
+	.  reduce 84
+
+
+state 121
+	LlamadoFuncion : ID '(' Factor ')' .  (85)
+
+	.  reduce 85
+
+
+state 122
+	ReferenciaObjeto : ID '.' ID .  (11)
+
+	.  reduce 11
+
+
+state 123
+	ConversionExplicita : TOD '(' ')' .  (97)
+
+	.  reduce 97
+
+
+state 124
+	ConversionExplicita : TOD '(' Expresion . ')'  (96)
+
+	')'  shift 148
+	.  error
+
+
+state 125
+	Condicion : Expresion Comparador Expresion .  (56)
+
+	.  reduce 56
+
+
+state 126
+	Expresion : Termino '-' Expresion .  (44)
+
+	.  reduce 44
+
+
+state 127
+	Expresion : Termino '+' Expresion .  (43)
+
+	.  reduce 43
+
+
+state 128
+	Termino : Factor '*' Termino .  (47)
+
+	.  reduce 47
+
+
+state 129
+	Termino : Factor '/' Termino .  (48)
+
+	.  reduce 48
+
+
+state 130
+	Termino : Factor_RefObjeto '*' Termino .  (50)
+
+	.  reduce 50
+
+
+state 131
+	Termino : Factor_RefObjeto '/' Termino .  (51)
+
+	.  reduce 51
+
+
+state 132
+	BloqueIF : IF '(' Condicion ')' '{' . ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' Condicion ')' '{' . ListSentenciasIF '}' END_IF  (58)
+
+	IF  shift 1
+	PRINT  shift 2
+	ID  shift 67
+	.  error
+
+	SentenciaEjecutable  goto 68
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ListSentenciasIF  goto 149
+
+
+state 133
+	Funcion : VOID ID . '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID ID . '(' ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID . '(' ')' '{' CuerpoFuncion '}'  (74)
+	FuncionSinCuerpo : VOID ID . '(' Parametro ')' ','  (109)
+	FuncionSinCuerpo : VOID ID . '(' ')' ','  (110)
+
+	'('  shift 150
+	.  error
+
+
+state 134
+	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion '}'  (111)
+
+	ID  shift 151
+	.  error
+
+
+state 135
+	DeclaracionAtributo : ID ',' . DeclaracionAtributo  (108)
+
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	.  error
+
+	Tipo  goto 108
+	DeclaracionAtributo  goto 152
+
+
+state 136
+	DeclaracionAtributo : Tipo ID . ','  (106)
+	DeclaracionAtributo : Tipo ID . ',' DeclaracionAtributo  (107)
+
+	','  shift 153
+	.  error
+
+
+state 137
+	ListFuncion : Funcion ListFuncion .  (71)
+
+	.  reduce 71
+
+
+state 138
+	ListHerencia : ListFuncion ',' .  (102)
+	ListHerencia : ListFuncion ',' . ListHerencia  (103)
+
+	VOID  shift 105
+	IMPL  shift 106
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	'}'  reduce 102
+
+	Tipo  goto 108
+	Funcion  goto 109
+	ListFuncion  goto 110
+	FuncionSinCuerpo  goto 111
+	ListHerencia  goto 154
+	DeclaracionAtributo  goto 113
+	FuncionIMPL  goto 114
+
+
+state 139
+	ListFuncion : FuncionSinCuerpo ListFuncion .  (70)
+
+	.  reduce 70
+
+
+state 140
+	HerenciaComposicion : CLASS ID '{' ListHerencia '}' .  (104)
+
+	.  reduce 104
+
+
+state 141
+	ListHerencia : DeclaracionAtributo ListHerencia .  (101)
+
+	.  reduce 101
+
+
+state 142
+	ListHerencia : FuncionIMPL ',' . ListHerencia  (100)
+
+	VOID  shift 105
+	IMPL  shift 106
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	.  error
+
+	Tipo  goto 108
+	Funcion  goto 109
+	ListFuncion  goto 110
+	FuncionSinCuerpo  goto 111
+	ListHerencia  goto 155
+	DeclaracionAtributo  goto 113
+	FuncionIMPL  goto 114
+
+
+state 143
+	Funcion : VOID ID '(' ')' '{' . CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' ')' '{' . CuerpoFuncion '}'  (74)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	SentenciaEjecutable  goto 156
+	SentenciaDeclarativa  goto 157
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+	CuerpoFuncion  goto 158
+	ListSentenciasFuncion  goto 159
+
+
+state 144
+	Parametro : Tipo ID .  (75)
+
+	.  reduce 75
+
+
+state 145
+	Funcion : VOID ID '(' Parametro ')' . '{' CuerpoFuncion RETURN ',' '}'  (72)
+
+	'{'  shift 160
+	.  error
+
+
+state 146
+	ListSentenciasIF : SentenciaEjecutable ',' ListSentenciasIF .  (60)
+
+	.  reduce 60
+
+
+state 147
+	SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL . '(' Condicion ')'  (94)
+	SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL .  (95)
+
+	'('  shift 161
+	$end  reduce 95
+	'}'  reduce 95
+	','  reduce 95
+
+
+state 148
+	ConversionExplicita : TOD '(' Expresion ')' .  (96)
+
+	.  reduce 96
+
+
+state 149
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF . '}' ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF . '}' END_IF  (58)
+
+	'}'  shift 162
+	.  error
+
+
+state 150
+	Funcion : VOID ID '(' . Parametro ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	Funcion : VOID ID '(' . ')' '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' . ')' '{' CuerpoFuncion '}'  (74)
+	FuncionSinCuerpo : VOID ID '(' . Parametro ')' ','  (109)
+	FuncionSinCuerpo : VOID ID '(' . ')' ','  (110)
+
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	')'  shift 163
+	.  error
+
+	Tipo  goto 116
+	Parametro  goto 164
+
+
+state 151
+	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion '}'  (111)
+
+	':'  shift 165
+	.  error
+
+
+state 152
+	DeclaracionAtributo : ID ',' DeclaracionAtributo .  (108)
+
+	.  reduce 108
+
+
+153: shift/reduce conflict (shift 6, reduce 106) on INT
+153: shift/reduce conflict (shift 7, reduce 106) on USHORT
+153: shift/reduce conflict (shift 8, reduce 106) on DOUBLE
+153: shift/reduce conflict (shift 107, reduce 106) on ID
+state 153
+	DeclaracionAtributo : Tipo ID ',' .  (106)
+	DeclaracionAtributo : Tipo ID ',' . DeclaracionAtributo  (107)
+
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 107
+	VOID  reduce 106
+	IMPL  reduce 106
+	'}'  reduce 106
+
+	Tipo  goto 108
+	DeclaracionAtributo  goto 166
+
+
+state 154
+	ListHerencia : ListFuncion ',' ListHerencia .  (103)
+
+	.  reduce 103
+
+
+state 155
+	ListHerencia : FuncionIMPL ',' ListHerencia .  (100)
+
+	.  reduce 100
+
+
+state 156
+	ListSentenciasFuncion : SentenciaEjecutable . ',' ListSentenciasFuncion  (78)
+	ListSentenciasFuncion : SentenciaEjecutable . ','  (79)
+	ListSentenciasFuncion : SentenciaEjecutable .  (81)
+
+	','  shift 167
+	RETURN  reduce 81
+	'}'  reduce 81
+
+
+state 157
+	ListSentenciasFuncion : SentenciaDeclarativa . ',' ListSentenciasFuncion  (77)
+	ListSentenciasFuncion : SentenciaDeclarativa . ','  (80)
+	ListSentenciasFuncion : SentenciaDeclarativa .  (82)
+
+	','  shift 168
+	RETURN  reduce 82
+	'}'  reduce 82
+
+
+state 158
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion . RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion . '}'  (74)
+
+	RETURN  shift 169
+	'}'  shift 170
+	.  error
+
+
+state 159
+	CuerpoFuncion : ListSentenciasFuncion .  (76)
+
+	.  reduce 76
+
+
+state 160
+	Funcion : VOID ID '(' Parametro ')' '{' . CuerpoFuncion RETURN ',' '}'  (72)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	RETURN  reduce 31
+	','  reduce 31
+
+	SentenciaEjecutable  goto 156
+	SentenciaDeclarativa  goto 157
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+	CuerpoFuncion  goto 171
+	ListSentenciasFuncion  goto 159
+
+
+state 161
+	SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL '(' . Condicion ')'  (94)
+
+	ID  shift 51
+	TOD  shift 52
+	ENTERO  shift 53
+	ENTEROCORTO  shift 54
+	PUNTOFLOTANTE  shift 55
+	'-'  shift 56
+	.  error
+
+	ReferenciaObjeto  goto 57
+	Constante  goto 58
+	Expresion  goto 59
+	Termino  goto 60
+	ConversionExplicita  goto 61
+	Factor  goto 62
+	Factor_RefObjeto  goto 63
+	Condicion  goto 172
+
+
+state 162
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' . ELSE '{' ListSentenciasIF '}' END_IF  (57)
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' . END_IF  (58)
+
+	ELSE  shift 173
+	END_IF  shift 174
+	.  error
+
+
+state 163
+	Funcion : VOID ID '(' ')' . '{' CuerpoFuncion RETURN ',' '}'  (73)
+	Funcion : VOID ID '(' ')' . '{' CuerpoFuncion '}'  (74)
+	FuncionSinCuerpo : VOID ID '(' ')' . ','  (110)
+
+	'{'  shift 143
+	','  shift 175
+	.  error
+
+
+state 164
+	Funcion : VOID ID '(' Parametro . ')' '{' CuerpoFuncion RETURN ',' '}'  (72)
+	FuncionSinCuerpo : VOID ID '(' Parametro . ')' ','  (109)
+
+	')'  shift 176
+	.  error
+
+
+state 165
+	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion '}'  (111)
+
+	'{'  shift 177
+	.  error
+
+
+state 166
+	DeclaracionAtributo : Tipo ID ',' DeclaracionAtributo .  (107)
+
+	.  reduce 107
+
+
+167: reduce/reduce conflict (reduce 31, reduce 79) on RETURN
+167: reduce/reduce conflict (reduce 31, reduce 79) on '}'
+state 167
+	ListSentenciasFuncion : SentenciaEjecutable ',' . ListSentenciasFuncion  (78)
+	ListSentenciasFuncion : SentenciaEjecutable ',' .  (79)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	SentenciaEjecutable  goto 156
+	SentenciaDeclarativa  goto 157
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+	ListSentenciasFuncion  goto 178
+
+
+168: reduce/reduce conflict (reduce 31, reduce 80) on RETURN
+168: reduce/reduce conflict (reduce 31, reduce 80) on '}'
+state 168
+	ListSentenciasFuncion : SentenciaDeclarativa ',' . ListSentenciasFuncion  (77)
+	ListSentenciasFuncion : SentenciaDeclarativa ',' .  (80)
+	ListVariables : .  (31)
+
+	IF  shift 1
+	PRINT  shift 2
+	CLASS  shift 3
+	VOID  shift 4
+	INT  shift 6
+	USHORT  shift 7
+	DOUBLE  shift 8
+	ID  shift 9
+	RETURN  reduce 31
+	'}'  reduce 31
+	','  reduce 31
+
+	SentenciaEjecutable  goto 156
+	SentenciaDeclarativa  goto 157
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ClaseSentenciaEjecutable  goto 23
+	ListVariables  goto 24
+	Tipo  goto 25
+	Funcion  goto 26
+	HerenciaComposicion  goto 27
+	List_objeto_clase  goto 28
+	Objeto_clase  goto 29
+	DeclaracionVariable  goto 30
+	ListSentenciasFuncion  goto 179
+
+
+state 169
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion RETURN . ',' '}'  (73)
+
+	','  shift 180
+	.  error
+
+
+state 170
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion '}' .  (74)
+
+	.  reduce 74
+
+
+state 171
+	Funcion : VOID ID '(' Parametro ')' '{' CuerpoFuncion . RETURN ',' '}'  (72)
+
+	RETURN  shift 181
+	.  error
+
+
+state 172
+	SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL '(' Condicion . ')'  (94)
+
+	')'  shift 182
+	.  error
+
+
+state 173
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE . '{' ListSentenciasIF '}' END_IF  (57)
+
+	'{'  shift 183
+	.  error
+
+
+state 174
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF .  (58)
+
+	.  reduce 58
+
+
+state 175
+	FuncionSinCuerpo : VOID ID '(' ')' ',' .  (110)
+
+	.  reduce 110
+
+
+state 176
+	Funcion : VOID ID '(' Parametro ')' . '{' CuerpoFuncion RETURN ',' '}'  (72)
+	FuncionSinCuerpo : VOID ID '(' Parametro ')' . ','  (109)
+
+	'{'  shift 160
+	','  shift 184
+	.  error
+
+
+state 177
+	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion '}'  (111)
+
+	VOID  shift 4
+	.  error
+
+	Funcion  goto 185
+
+
+state 178
+	ListSentenciasFuncion : SentenciaEjecutable ',' ListSentenciasFuncion .  (78)
+
+	.  reduce 78
+
+
+state 179
+	ListSentenciasFuncion : SentenciaDeclarativa ',' ListSentenciasFuncion .  (77)
+
+	.  reduce 77
+
+
+state 180
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion RETURN ',' . '}'  (73)
+
+	'}'  shift 186
+	.  error
+
+
+state 181
+	Funcion : VOID ID '(' Parametro ')' '{' CuerpoFuncion RETURN . ',' '}'  (72)
+
+	','  shift 187
+	.  error
+
+
+state 182
+	SentenciaControl : DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' .  (94)
+
+	.  reduce 94
+
+
+state 183
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' . ListSentenciasIF '}' END_IF  (57)
+
+	IF  shift 1
+	PRINT  shift 2
+	ID  shift 67
+	.  error
+
+	SentenciaEjecutable  goto 68
+	ReferenciaObjeto  goto 17
+	ReferenciaObjetoFuncion  goto 18
+	LlamadoFuncion  goto 19
+	Asignacion  goto 20
+	BloqueIF  goto 21
+	SalidaMensaje  goto 22
+	ListSentenciasIF  goto 188
+
+
+state 184
+	FuncionSinCuerpo : VOID ID '(' Parametro ')' ',' .  (109)
+
+	.  reduce 109
+
+
+state 185
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . '}'  (111)
+
+	'}'  shift 189
+	.  error
+
+
+state 186
+	Funcion : VOID ID '(' ')' '{' CuerpoFuncion RETURN ',' '}' .  (73)
+
+	.  reduce 73
+
+
+state 187
+	Funcion : VOID ID '(' Parametro ')' '{' CuerpoFuncion RETURN ',' . '}'  (72)
+
+	'}'  shift 190
+	.  error
+
+
+state 188
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF . '}' END_IF  (57)
+
+	'}'  shift 191
+	.  error
+
+
+state 189
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}' .  (111)
+
+	.  reduce 111
+
+
+state 190
+	Funcion : VOID ID '(' Parametro ')' '{' CuerpoFuncion RETURN ',' '}' .  (72)
+
+	.  reduce 72
+
+
+state 191
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' . END_IF  (57)
+
+	END_IF  shift 192
+	.  error
+
+
+state 192
+	BloqueIF : IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF .  (57)
+
+	.  reduce 57
+
+
+Rules never reduced:
+	Objeto_clase : ID ID  (33)
+	ListSentenciasFuncion : SentenciaEjecutable ','  (79)
+	ListSentenciasFuncion : SentenciaDeclarativa ','  (80)
+	Asignacion : ID OperadorAsignacion ID  (89)
+	Asignacion : ID OperadorAsignacion Constante  (91)
+	Asignacion : ID OperadorAsignacion ReferenciaObjeto  (92)
+
+
+State 9 contains 4 reduce/reduce conflicts.
+State 25 contains 4 reduce/reduce conflicts.
+State 36 contains 5 reduce/reduce conflicts.
+State 41 contains 1 shift/reduce conflict.
+State 45 contains 2 reduce/reduce conflicts.
+State 74 contains 1 shift/reduce conflict.
+State 76 contains 4 reduce/reduce conflicts.
+State 77 contains 4 reduce/reduce conflicts.
+State 78 contains 4 reduce/reduce conflicts.
+State 153 contains 4 shift/reduce conflicts.
+State 167 contains 2 reduce/reduce conflicts.
+State 168 contains 2 reduce/reduce conflicts.
+
+
+43 terminals, 39 nonterminals
+112 grammar rules, 193 states

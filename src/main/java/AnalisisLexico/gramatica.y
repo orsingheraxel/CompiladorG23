@@ -17,51 +17,56 @@ Programa:'{' ListSentencias '}'
 	    | ListSentencias {agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
         ;
 
-ListSentencias: SentenciaControl ','
-		| SentenciaEjecutable ','
-		| SentenciaDeclarativa ','
-		| SentenciaDeclarativa ',' ListSentencias
-		| SentenciaControl ',' ListSentencias
-		| SentenciaEjecutable ',' ListSentencias
-		| SentenciaControl  {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-		| SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-		| SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-              ;
+ListSentencias: Sentencia ','
+		| Sentencia ',' ListSentencias
+		| Sentencia  {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        ;
+
+Sentencia: SentenciaControl
+        | SentenciaEjecutable
+        | SentenciaDeclarativa
+        ;
 
 ReferenciaObjeto: ID '.' ID
-                | ID '.' LlamadoFuncion
                 ;
+
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion
+                       ;
 
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF
 		          | SalidaMensaje
-                  | ReferenciaObjeto
-                   ;
+                  | ReferenciaObjetoFuncion
+                  ;
 
-
-
-ClaseSentenciaEjecutable: ID ListVariables ',';
+ClaseSentenciaEjecutable: ID ListVariables ','
                         | ID ListVariables {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+                        ;
 
 SentenciaDeclarativa: Tipo ListVariables
 			| Funcion
 			| ListVariables  {agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
 			| Tipo  {agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
             | ClaseSentenciaEjecutable
-            | HerenciaComposicion;
-
-ListVariables: ID
-            | ID ';' ListVariables
-            | ID ListVariables {agregarErrorSintactico("Se espera un ';' seguido de cada variable en caso de querer agregar mas en la linea ");}
+            | HerenciaComposicion
             ;
 
-Tipo: ID
-      |USHORT
-      |INT
-      |DOUBLE
-      |CLASS
-      ;
+ListVariables : DeclaracionVariable
+              | DeclaracionVariable ';' ListVariables
+              |
+              ;
+
+DeclaracionVariable : ID
+    ;
+
+Objeto_clase: ID ID
+    ;
+
+Tipo : USHORT
+     | INT
+     | DOUBLE
+     ;
 
 Constante: ENTERO
 	| ENTEROCORTO
@@ -69,7 +74,6 @@ Constante: ENTERO
 	| PUNTOFLOTANTE
 	| '-' ENTERO
 	| '-' PUNTOFLOTANTE
-	| CTE
 	;
 
 Expresion: Termino '+' Expresion
@@ -78,15 +82,21 @@ Expresion: Termino '+' Expresion
 |ConversionExplicita
         ;
 
+
 Termino: Factor '*' Termino
 | Factor '/' Termino
 | Factor
+| Factor_RefObjeto '*' Termino
+| Factor_RefObjeto '/' Termino
+| Factor_RefObjeto
 ;
 
 Factor: ID
-	|Constante
-	| ReferenciaObjeto
+	| Constante
 	;
+
+Factor_RefObjeto: ReferenciaObjeto
+                ;
 
 Condicion : Expresion Comparador Expresion
 	  ;
@@ -112,6 +122,7 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	| FuncionSinCuerpo ListFuncion
 	| Funcion ListFuncion
+	;
 
 Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion  RETURN ',' '}' {agregarEstructura("Reconoce funcion VOID ");}
       |VOID ID '(' ')''{' CuerpoFuncion RETURN ',''}'{agregarEstructura("Reconoce funcion VOID ");}
@@ -132,22 +143,13 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
           | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-
-
 LlamadoFuncion: ID '(' ')'
-            | ID '(' ParametroReal ')'
+            | ID '(' Expresion ')'
+            | ID '(' Factor ')'
             ;
-
-ParametroReal:ID
-            | Expresion
-            | Constante
-            ;
-
 
 SalidaMensaje: PRINT CADENA
             ;
-
-//TEMA 11 -------------------------------------------------
 
 OperadorAsignacion: '='
                   | ASIG
@@ -157,13 +159,8 @@ Asignacion: ID OperadorAsignacion ID
 	| ID OperadorAsignacion Expresion
 	| ID OperadorAsignacion Constante
 	| ID OperadorAsignacion ReferenciaObjeto
-	| ID '.' ID OperadorAsignacion ReferenciaObjeto
+	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	;
-
-
-
-
-//TEMA 14 -------------------------------------------------
 
 SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {agregarEstructura("Reconoce funcion DO UNTIL");}
                   |DO '{' ListSentenciasIF '}' UNTIL {agregarErrorSintactico("Se esperaba una condicion ");}
@@ -175,17 +172,16 @@ ConversionExplicita: TOD '(' Expresion ')' {agregarEstructura("Reconoce funcion 
                   | TOD '(' ')' {agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
-//TEMA 17 ---------------------------------------------------
-
 ListHerencia: DeclaracionAtributo
 		|FuncionIMPL
 		|FuncionIMPL ',' ListHerencia
 		| DeclaracionAtributo ListHerencia
 		| ListFuncion ','
 		| ListFuncion ',' ListHerencia
+        ;
 
 HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {agregarEstructura("Reconoce CLASE");}
-                  //| CLASS ID '{' ListHerencia  ID ',' '}'
+                  | CLASS ID
                   ;
 
 DeclaracionAtributo: Tipo ID ','
@@ -193,11 +189,9 @@ DeclaracionAtributo: Tipo ID ','
 		| ID ',' DeclaracionAtributo
 		;
 
-//TEMA 20 -----------------------------------------------------
-
 FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {agregarEstructura("Reconoce Funcion sin cuerpo");}
                   |VOID ID '(' ')' ','
-
+                  ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcion IMPL");}
 		;
