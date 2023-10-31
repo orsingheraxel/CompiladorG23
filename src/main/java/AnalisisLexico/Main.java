@@ -46,6 +46,13 @@ public class Main {
             Error elemento = AnalizadorLexico.warnings.get(i);
             System.out.println("Warning: " + elemento.getError() + " en la linea: " + elemento.getLinea());
         }
+        System.out.println(" ");
+        System.out.println( "-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------");
+        System.out.println(" ");
+        for (int i = 0; i < AnalizadorLexico.estructuraReconocida.size(); i++) {
+            String elemento = AnalizadorLexico.estructuraReconocida.get(i);
+            System.out.println(": " + elemento);
+        }
 
     }
 }

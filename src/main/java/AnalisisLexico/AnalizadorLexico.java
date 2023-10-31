@@ -18,6 +18,8 @@ public class AnalizadorLexico {
     static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
     static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
     //private static ArrayList<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
+
+    static ArrayList<String> estructuraReconocida = new ArrayList<String>();
     static ArrayList<Error> warnings = new ArrayList<Error>();
 
     public static int getLineaAct() {
@@ -41,6 +43,11 @@ public class AnalizadorLexico {
         Error e = new Error(error, AnalizadorLexico.getLineaAct());
         erroresSintacticos.add(e);
     }
+
+    public static void agregarEstructura(String error){
+        estructuraReconocida.add(error);
+    }
+
     public static void addWarning(String s) {
         Error e = new Error(s, getLineaAct());
         warnings.add(e);

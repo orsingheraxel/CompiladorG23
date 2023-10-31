@@ -9,7 +9,6 @@ public class GeneradorMatrices {
     private static final AccionSemantica AS1 = new AS1();
     private static final AccionSemantica AS2 = new AS2();
     private static final AccionSemantica AS3 = new AS3();
-    private static final AccionSemantica AS4 = new AS4();
     private static final AccionSemantica AS5 = new AS5();
     private static final AccionSemantica AS6 = new AS6();
     private static final AccionSemantica AS7 = new AS7();
@@ -33,7 +32,7 @@ public class GeneradorMatrices {
         as_matrix[3] = new AccionSemantica[]{AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS0, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9,AS9};
         as_matrix[4] = new AccionSemantica[]{AS9, AS9, AS9, AS9, AS9, AS0, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9,AS9};
         as_matrix[5] = new AccionSemantica[]{AS9, AS9, AS9, AS9, AS9, AS0, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9,AS9};
-        as_matrix[6] = new AccionSemantica[]{AS4, AS4, AS2, AS4, AS4, AS4, AS4, AS4, AS4, AS4, AS2, AS4, AS4, AS4, AS2, AS4, AS4, AS2, AS4,AS4};
+        as_matrix[6] = new AccionSemantica[]{E, E, AS2, E, E, E, E, E, E, E, AS2, E, E, E, AS2, E, E, AS2, E, E };
         as_matrix[7] = new AccionSemantica[]{E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, AS2, AS11, E, E,E};
         as_matrix[8] = new AccionSemantica[]{E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, E, AS10, E,E};
         as_matrix[9] = new AccionSemantica[]{AS9, AS9, AS2, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9,AS9};

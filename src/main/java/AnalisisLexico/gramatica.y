@@ -1,5 +1,5 @@
 %{
-package com.tp.compiladores;
+package AnalisisLexico;;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,9 +12,9 @@ import java.util.*;
 
 %%
 Programa:'{' ListSentencias '}'
-        | '{'ListSentencias {System.out.println("Se espera '}' en la linea "+ AnalizadorLexico.getLineaAct());}
-	| ListSentencias '}' {System.out.println("Se espera '{' en la linea "+ AnalizadorLexico.getLineaAct());}
-	| ListSentencias {System.out.println("Se esperan '{' '}' en la linea "+ AnalizadorLexico.getLineaAct());}
+        | '{'ListSentencias {agregarErrorSintactico("Se espera '}' en la linea ");}
+	    | ListSentencias '}' {agregarErrorSintactico("Se espera '{' en la linea ");}
+	    | ListSentencias {agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
         ;
 
 ListSentencias: SentenciaControl ','
@@ -23,50 +23,49 @@ ListSentencias: SentenciaControl ','
 		| SentenciaDeclarativa ',' ListSentencias
 		| SentenciaControl ',' ListSentencias
 		| SentenciaEjecutable ',' ListSentencias
+		| SentenciaControl  {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
               ;
 
 ReferenciaObjeto: ID '.' ID
                 | ID '.' LlamadoFuncion
                 ;
 
-
-
-
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF
-		  | SalidaMensaje
+		          | SalidaMensaje
                   | ReferenciaObjeto
                    ;
 
 
 
 ClaseSentenciaEjecutable: ID ListVariables ',';
+                        | ID ListVariables {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 
 SentenciaDeclarativa: Tipo ListVariables
 			| Funcion
-			| ListVariables  {System.out.println("Se espera el tipo de la variable en la linea "+ AnalizadorLexico.getLineaAct());}
-			| Tipo  {System.out.println("Se espera identificador de la variable en la linea "+ AnalizadorLexico.getLineaAct());}
-                        | ClaseSentenciaEjecutable
-                        | HerenciaComposicion
-
-                    ;
+			| ListVariables  {agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
+			| Tipo  {agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
+            | ClaseSentenciaEjecutable
+            | HerenciaComposicion;
 
 ListVariables: ID
             | ID ';' ListVariables
-            | ID ListVariables {System.out.println("Se espera un ';' seguido de cada variable en caso de querer agregar mas en la linea "+ AnalizadorLexico.getLineaAct());}
+            | ID ListVariables {agregarErrorSintactico("Se espera un ';' seguido de cada variable en caso de querer agregar mas en la linea ");}
             ;
 
 Tipo: ID
       |USHORT
       |INT
       |DOUBLE
-      |CLASS //Chequear en prox etapa que no se pase como parametro
+      |CLASS
       ;
 
 Constante: ENTERO
 	| ENTEROCORTO
-	| '-' ENTEROCORTO {System.out.println("Un entero corto no puede ser negativo en la linea "+ AnalizadorLexico.getLineaAct());}
+	| '-' ENTEROCORTO {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
 	| PUNTOFLOTANTE
 	| '-' ENTERO
 	| '-' PUNTOFLOTANTE
@@ -92,12 +91,13 @@ Factor: ID
 Condicion : Expresion Comparador Expresion
 	  ;
 
-BloqueIF: IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF {System.out.println("Reconoce ELSE IF en la linea "+ AnalizadorLexico.getLineaAct());}
-	| IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF {System.out.println("Reconoce IF en la linea "+ AnalizadorLexico.getLineaAct());}
+BloqueIF: IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF {agregarEstructura("Reconoce ELSE IF ");}
+	| IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF {agregarEstructura("Reconoce IF ");}
         ;
 
 ListSentenciasIF: SentenciaEjecutable ','
                   | SentenciaEjecutable ',' ListSentenciasIF
+                  |SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
                   ;
 
 Comparador: '<'
@@ -113,9 +113,9 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo ListFuncion
 	| Funcion ListFuncion
 
-Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion  RETURN ',' '}' {System.out.println("Reconoce funcion VOID en la linea "+ AnalizadorLexico.getLineaAct());}
-      |VOID ID '(' ')''{' CuerpoFuncion RETURN ',''}'{System.out.println("Reconoce funcion VOID en la linea "+ AnalizadorLexico.getLineaAct());}
-      |VOID ID '(' ')''{' CuerpoFuncion '}'  {System.out.println("Reconoce funcion VOID en la linea "+ AnalizadorLexico.getLineaAct());}
+Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion  RETURN ',' '}' {agregarEstructura("Reconoce funcion VOID ");}
+      |VOID ID '(' ')''{' CuerpoFuncion RETURN ',''}'{agregarEstructura("Reconoce funcion VOID ");}
+      |VOID ID '(' ')''{' CuerpoFuncion '}'  {agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
@@ -128,7 +128,9 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaEjecutable ',' ListSentenciasFuncion
 		  | SentenciaEjecutable ','
 		  | SentenciaDeclarativa ','
-                  ;
+		  | SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          ;
 
 
 
@@ -163,14 +165,14 @@ Asignacion: ID OperadorAsignacion ID
 
 //TEMA 14 -------------------------------------------------
 
-SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {System.out.println("Reconoce funcion DO UNTIL en la linea "+ AnalizadorLexico.getLineaAct());}
-                  |DO '{' ListSentenciasIF '}' UNTIL {System.out.println("Se esperaba una condicion");}
+SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {agregarEstructura("Reconoce funcion DO UNTIL");}
+                  |DO '{' ListSentenciasIF '}' UNTIL {agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
 
-ConversionExplicita: TOD '(' Expresion ')' {System.out.println("Reconoce funcion TOD en la linea "+ AnalizadorLexico.getLineaAct());}
-                  | TOD '(' ')' {System.out.println("Se esperaba una Expresion");}
+ConversionExplicita: TOD '(' Expresion ')' {agregarEstructura("Reconoce funcion TOD ");}
+                  | TOD '(' ')' {agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
 //TEMA 17 ---------------------------------------------------
@@ -182,7 +184,7 @@ ListHerencia: DeclaracionAtributo
 		| ListFuncion ','
 		| ListFuncion ',' ListHerencia
 
-HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {System.out.println("Reconoce CLASE en la linea "+ AnalizadorLexico.getLineaAct());}
+HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {agregarEstructura("Reconoce CLASE");}
                   //| CLASS ID '{' ListHerencia  ID ',' '}'
                   ;
 
@@ -193,11 +195,11 @@ DeclaracionAtributo: Tipo ID ','
 
 //TEMA 20 -----------------------------------------------------
 
-FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {System.out.println("Reconoce Funcion sin cuerpo, en la linea"+ AnalizadorLexico.getLineaAct());}
+FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {agregarEstructura("Reconoce Funcion sin cuerpo");}
                   |VOID ID '(' ')' ','
-                  ;
 
-FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {System.out.println("Reconoce funcion IMPL en la linea "+ AnalizadorLexico.getLineaAct());}
+
+FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcion IMPL");}
 		;
 
 //TEMA 21 ----------------------------------------------------
@@ -207,6 +209,24 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {System.out.println("Reconoce funci
 */
 
 %%
+  static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
+  static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
+  static ArrayList<String> estructuraReconocida = new ArrayList<String>();
+
+   public static void agregarErrorLexico(String error){
+          Error e = new Error(error, AnalizadorLexico.getLineaAct());
+          erroresLexicos.add(e);
+   }
+
+   public static void agregarErrorSintactico(String error){
+          Error e = new Error(error, AnalizadorLexico.getLineaAct());
+          erroresSintacticos.add(e);
+   }
+
+   public static void agregarEstructura(String error){
+             estructuraReconocida.add(error);
+   }
+
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();
     this.yylval = new ParserVal(t.getLexema());
