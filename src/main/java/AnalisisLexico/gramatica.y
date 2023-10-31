@@ -36,31 +36,23 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF
-		          | SalidaMensaje
+		  | SalidaMensaje
                   | ReferenciaObjetoFuncion
                   ;
-
-ClaseSentenciaEjecutable: ID ListVariables ','
-                        | ID ListVariables {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-                        ;
 
 SentenciaDeclarativa: Tipo ListVariables
 			| Funcion
 			| ListVariables  {agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
 			| Tipo  {agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
-            | ClaseSentenciaEjecutable
-            | HerenciaComposicion
+			| HerenciaComposicion
+			| Objeto_clase
             ;
 
-ListVariables : DeclaracionVariable
-              | DeclaracionVariable ';' ListVariables
-              |
+ListVariables : ID
+              | ID ';' ListVariables
               ;
 
-DeclaracionVariable : ID
-    ;
-
-Objeto_clase: ID ID
+Objeto_clase: ID ListVariables
     ;
 
 Tipo : USHORT
@@ -140,12 +132,11 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaEjecutable ','
 		  | SentenciaDeclarativa ','
 		  | SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          	  | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 LlamadoFuncion: ID '(' ')'
             | ID '(' Expresion ')'
-            | ID '(' Factor ')'
             ;
 
 SalidaMensaje: PRINT CADENA
@@ -155,11 +146,9 @@ OperadorAsignacion: '='
                   | ASIG
                   ;
 
-Asignacion: ID OperadorAsignacion ID
-	| ID OperadorAsignacion Expresion
-	| ID OperadorAsignacion Constante
-	| ID OperadorAsignacion ReferenciaObjeto
+Asignacion: ID OperadorAsignacion Expresion
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
+	| ReferenciaObjeto OperadorAsignacion Factor
 	;
 
 SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {agregarEstructura("Reconoce funcion DO UNTIL");}
@@ -172,10 +161,10 @@ ConversionExplicita: TOD '(' Expresion ')' {agregarEstructura("Reconoce funcion 
                   | TOD '(' ')' {agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
-ListHerencia: DeclaracionAtributo
+ListHerencia: Tipo ListVariables
 		|FuncionIMPL
 		|FuncionIMPL ',' ListHerencia
-		| DeclaracionAtributo ListHerencia
+		| Tipo ListVariables ',' ListHerencia
 		| ListFuncion ','
 		| ListFuncion ',' ListHerencia
         ;
@@ -183,11 +172,6 @@ ListHerencia: DeclaracionAtributo
 HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {agregarEstructura("Reconoce CLASE");}
                   | CLASS ID
                   ;
-
-DeclaracionAtributo: Tipo ID ','
-		| Tipo ID ',' DeclaracionAtributo
-		| ID ',' DeclaracionAtributo
-		;
 
 FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {agregarEstructura("Reconoce Funcion sin cuerpo");}
                   |VOID ID '(' ')' ','
