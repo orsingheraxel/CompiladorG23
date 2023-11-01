@@ -11,11 +11,8 @@ public class AS10 extends AccionSemantica {//CHEQUEA RANGO USHORT Y AGREGA A TS
     private static int longMaxUSHORT = 256;
     @Override
     public void ejecutar(Token t, Reader entrada) {
-        Token aux = new Token(t);
-        aux.borrarUltimoCaracter();//BORRAMOS _us ASI OBTENEMOS EL VALOR NUMERICO
-        aux.borrarUltimoCaracter();
-        aux.borrarUltimoCaracter();
-        long valor = Integer.valueOf(aux.getLexema());
+        t.eliminarNoDigitos(); //Eliminamos _us del lexema, y nos quedamos con la parte entera para chequear rango
+        long valor = Integer.valueOf(t.getLexema());
 
         if (valor>=longMinUSHORT && valor<longMaxUSHORT ){
             if (TablaSimbolos.existeSimbolo(t.getLexema())){

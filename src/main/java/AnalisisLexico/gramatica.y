@@ -116,9 +116,8 @@ ListFuncion: Funcion
 	| Funcion ListFuncion
 	;
 
-Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion  RETURN ',' '}' {agregarEstructura("Reconoce funcion VOID ");}
-      |VOID ID '(' ')''{' CuerpoFuncion RETURN ',''}'{agregarEstructura("Reconoce funcion VOID ");}
-      |VOID ID '(' ')''{' CuerpoFuncion '}'  {agregarEstructura("Reconoce funcion VOID ");}
+Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion '}' {agregarEstructura("Reconoce funcion VOID ");}
+      |VOID ID '(' ')''{' CuerpoFuncion '}'{agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
@@ -131,8 +130,10 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaEjecutable ',' ListSentenciasFuncion
 		  | SentenciaEjecutable ','
 		  | SentenciaDeclarativa ','
+		  | RETURN ','
+		  | RETURN ',' ListSentenciasFuncion
 		  | SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          	  | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 LlamadoFuncion: ID '(' ')'
@@ -140,6 +141,7 @@ LlamadoFuncion: ID '(' ')'
             ;
 
 SalidaMensaje: PRINT CADENA
+            | PRINT Factor
             ;
 
 OperadorAsignacion: '='

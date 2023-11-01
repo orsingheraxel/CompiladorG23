@@ -17,7 +17,6 @@ public abstract class AccionSemantica {
     public final static short ENTERO=278;
     public final static short ENTEROCORTO=279;
     public final static short PUNTOFLOTANTE=280;
-    public final static short CTE=282;
     protected static final int TAMANIO_VAR=20;
 
 

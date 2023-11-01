@@ -18,9 +18,9 @@ public class AS8 extends AccionSemantica{
         }
 
         if (t.getLexema().length()>AccionSemantica.TAMANIO_VAR){
-            String e = t.getLexema();
+            String var = t.getLexema();
             t.truncarLexema(AccionSemantica.TAMANIO_VAR);
-            AnalizadorLexico.addWarning("la variable "+e+" supera la longitud maxima: "+ AccionSemantica.TAMANIO_VAR);
+            AnalizadorLexico.addWarning("la variable "+var+" supera la longitud maxima: "+ AccionSemantica.TAMANIO_VAR);
         }
         Integer idPR = AnalizadorLexico.isPR(t.getLexema());
         //DEBEMOS CHEQUEAR SI ES PR, YA QUE NO HAY MANERA DE DIFERENCIAR ENTRE IDENTIFICADORES Y PR

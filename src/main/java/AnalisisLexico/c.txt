@@ -1,13 +1,5 @@
 {
-  CLASS ca {
-      USHORT a,
-      VOID m() {
-          DOUBLE b,
-          VOID n(){
-              DOUBLE zz,
-              DOUBLE ww,
-              ww = zz + xx + a,
-          },
-      },
-  }
+    IF ( x < y ){
+        c = .0d-333,
+    }END_IF,
 }

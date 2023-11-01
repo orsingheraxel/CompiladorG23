@@ -5,6 +5,7 @@ import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AnalizadorLexico {
 
@@ -15,12 +16,12 @@ public class AnalizadorLexico {
     private static Reader entrada;
     private static int[][] matrizEstados  = GeneradorMatrices.getMatrizEstados();;
     private static AccionSemantica[][] matrizAS = GeneradorMatrices.getMatrizAS();;
-    static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
-    static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
+    static List<Error> erroresLexicos = new ArrayList<Error>();
+    static List<Error> erroresSintacticos = new ArrayList<Error>();
     //private static ArrayList<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
 
-    static ArrayList<String> estructuraReconocida = new ArrayList<String>();
-    static ArrayList<Error> warnings = new ArrayList<Error>();
+    static List<String> estructuraReconocida = new ArrayList<String>();
+    static List<Error> warnings = new ArrayList<Error>();
 
     public static int getLineaAct() {
         return lineaAct;
@@ -67,7 +68,7 @@ public class AnalizadorLexico {
         if ((Character.isUpperCase(c) && c != 'D')){
             return 'L';
         }
-        if ((Character.isLowerCase(c) && c != 'u' && c != 'i' && c != 's')) {
+        if ((Character.isLowerCase(c) && c != 'u' && c != 'i' && c != 's' && c != 'd')) {
             return 'l';
         }
         return c;
@@ -161,7 +162,8 @@ public class AnalizadorLexico {
             case 's':
                 valor = 17;
                 break;
-            case 'D':
+            case 'D' :
+            case 'd' :
                 valor = 18;
                 break;
             case ' ':

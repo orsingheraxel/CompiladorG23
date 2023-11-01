@@ -18,23 +18,21 @@ public class AS7 extends AccionSemantica{
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        String lexema = t.getLexema();
+        String lexema = t.getLexema().toUpperCase();
         int i =0;
         char caracter=' ';
+
         String digito=""; //parte numerica
         String exponente=""; //parte exponencial
-        while (!((caracter == 'D') || (caracter == 'd'))) {
-            caracter = lexema.charAt(i);
-            digito+= caracter;
-            i++;
-        }
+
+        int index = lexema.indexOf('D');
+        digito = lexema.substring(0, index);
+        exponente = lexema.substring(index + 1);
+
         Double d = Double.parseDouble(digito); //d va a tener la parte numerica
-        for (int j=i ; j < (lexema.length()); j++) {
-            caracter = lexema.charAt(j);
-            exponente += caracter;
-        }
         Double e = Double.parseDouble(exponente);
         Double numero = Math.pow(d, e); //numero del lexema convertido a double
+
         if ((numero < longMaxDOUBLE) || (numero > longMinDOUBLE)) {
             if (TablaSimbolos.existeSimbolo(t.getLexema())){
                 TablaSimbolos.addAtributo(t.getLexema(),AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());

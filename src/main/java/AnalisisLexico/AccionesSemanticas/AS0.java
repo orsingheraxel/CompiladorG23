@@ -19,8 +19,8 @@ public class AS0 extends AccionSemantica{
             case ">=" -> t.setId(MAYORIGUAL);
             case "==" -> t.setId(IGUAL);
             default -> {
-                int cod_asci = (int) t.getLexema().charAt(0); //obtenemos el cod asci
-                t.setId(cod_asci);
+                int cod_ascii = (int) t.getLexema().charAt(0); //Obtenemos el cod ASCII
+                t.setId(cod_ascii);
             }
         }
     }

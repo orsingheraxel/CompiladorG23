@@ -51,7 +51,7 @@ public class Main {
         System.out.println(" ");
         for (int i = 0; i < AnalizadorLexico.estructuraReconocida.size(); i++) {
             String elemento = AnalizadorLexico.estructuraReconocida.get(i);
-            System.out.println(": " + elemento);
+            System.out.println("Estructura: " + elemento);
         }
 
     }
