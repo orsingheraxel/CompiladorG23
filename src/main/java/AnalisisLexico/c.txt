@@ -1,5 +1,7 @@
 {
-    IF ( x < y ){
-        c = .0d-333,
-    }END_IF,
+    CLASS a {
+        VOID r ( DOUBLE x ){
+            c = .0d-333,
+        },
+    },
 }

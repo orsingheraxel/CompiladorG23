@@ -1,5 +1,7 @@
 package AnalisisLexico.TablaSimbolos;
 
+import java.io.PrintWriter;
+
 public class Simbolo {
     private int id; //ID CTE USHORT INT DOUBLE
     private int linea;
@@ -13,9 +15,9 @@ public class Simbolo {
     }
 
 
-    public void imprimir() {
-        System.out.println("ID: " + id);
-        System.out.println("Línea: " + linea);
+    public void imprimir(PrintWriter escritor) {
+        escritor.println("ID: " + id);
+        escritor.println("Línea: " + linea);
     }
     /*
 

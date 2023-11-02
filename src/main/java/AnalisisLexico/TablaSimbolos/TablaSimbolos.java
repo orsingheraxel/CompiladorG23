@@ -1,6 +1,7 @@
 package AnalisisLexico.TablaSimbolos;
 
 
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +12,12 @@ public class TablaSimbolos {
 
 
 
-    public static void imprimir(){
+    public static void imprimir(PrintWriter escritor){
         for (String key : simbolos.keySet()) {
             Simbolo simbolo = simbolos.get(key);
-            System.out.print("Clave: " + key + ", ");
-            System.out.print("Valor: ");
-            simbolo.imprimir();
+            escritor.print("Clave: " + key + ", ");
+            escritor.print("Valor: ");
+            simbolo.imprimir(escritor);
         }
 
     }
