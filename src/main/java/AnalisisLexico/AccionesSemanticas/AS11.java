@@ -13,7 +13,7 @@ public class AS11 extends AccionSemantica{
         t.eliminarNoDigitos();
         long valor = Integer.valueOf(t.getLexema());
 
-        if (valor>longMinINT && valor<longMaxINT ){
+        if (valor>=longMinINT && valor<=longMaxINT ){
             if (TablaSimbolos.existeSimbolo(t.getLexema())){
                 TablaSimbolos.addAtributo(t.getLexema(),AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
             } else{

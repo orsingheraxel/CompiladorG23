@@ -1,0 +1,17 @@
+{
+    **DENTRO DE RANGO**
+    entero_1 = 32767_i,
+    entero_2 = -32768_i,
+    ushort_1 = 0_us,
+    ushort_2 = 255_us,
+    coquito_1 = 1.7976931348623157D+308,
+    coquito_2 = -2.2250738585072014D-308,
+
+    **FUERA DE RANGO**
+    entero_1 = 32768_i,
+    entero_2 = -32769_i,
+    ushort_1 = -1_us,
+    ushort_2 = 256_us,
+    coquito_1 = 1.7976931348623159D+308,
+    coquito_2 = -2.2250738585072013D-308,
+}

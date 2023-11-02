@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class AS7 extends AccionSemantica{
-    private final Double longMinDOUBLE = Math.pow(1.17549435, -38.0);
+    private final Double longMinDOUBLE = Math.pow(-1.17549435, 38.0);
     private final Double longMaxDOUBLE = Math.pow(3.40282347, 38.0);
 
     @Override
@@ -30,10 +30,9 @@ public class AS7 extends AccionSemantica{
         exponente = lexema.substring(index + 1);
 
         Double d = Double.parseDouble(digito); //d va a tener la parte numerica
-        Double e = Double.parseDouble(exponente);
+        Integer e = Integer.parseInt(exponente);
         Double numero = Math.pow(d, e); //numero del lexema convertido a double
-
-        if ((numero < longMaxDOUBLE) || (numero > longMinDOUBLE)) {
+        if ((numero <= longMaxDOUBLE) && (numero >= longMinDOUBLE)) {
             if (TablaSimbolos.existeSimbolo(t.getLexema())){
                 TablaSimbolos.addAtributo(t.getLexema(),AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
             } else{
@@ -42,10 +41,8 @@ public class AS7 extends AccionSemantica{
             }
 
         }else{
-            //Fuera de rango
             AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
         }
         t.setId(PUNTOFLOTANTE);
     }
-
 }

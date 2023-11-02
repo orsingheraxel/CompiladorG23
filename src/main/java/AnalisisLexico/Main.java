@@ -28,7 +28,7 @@ public class Main {
             String salida = "salida-" + archivo;
             File archivoEntradaFile = new File(archivo);
             String directorioEntrada = archivoEntradaFile.getParent(); // Obtiene el directorio del archivo de entrada
-            String archivoSalida = directorioEntrada + File.separator + "salida.txt";
+            String archivoSalida = directorioEntrada + File.separator + "salida.txt"; // "salida.txt"
             FileWriter fw = new FileWriter(archivoSalida);
             PrintWriter escritor = new PrintWriter(fw);
 

@@ -1,7 +1,0 @@
-{
-    CLASS a {
-        VOID r ( DOUBLE x ){
-            c = .0d-333,
-        },
-    },
-}

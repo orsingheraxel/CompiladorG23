@@ -18,7 +18,7 @@ public class AnalizadorLexico {
     private static AccionSemantica[][] matrizAS = GeneradorMatrices.getMatrizAS();;
     static List<Error> erroresLexicos = new ArrayList<Error>();
     static List<Error> erroresSintacticos = new ArrayList<Error>();
-    //private static ArrayList<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
+    //private static List<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
 
     static List<String> estructuraReconocida = new ArrayList<String>();
     static List<Error> warnings = new ArrayList<Error>();
@@ -163,11 +163,13 @@ public class AnalizadorLexico {
                 valor = 17;
                 break;
             case 'D' :
-            case 'd' :
                 valor = 18;
                 break;
             case ' ':
                 valor = 19;
+                break;
+            case 'd':
+                valor = 20;
                 break;
             default:
                 valor = 13 ;

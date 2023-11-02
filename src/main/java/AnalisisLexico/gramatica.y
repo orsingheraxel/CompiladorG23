@@ -65,7 +65,16 @@ Constante: ENTERO
 	| '-' ENTEROCORTO {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
 	| PUNTOFLOTANTE
 	| '-' ENTERO
-	| '-' PUNTOFLOTANTE
+	| '-' PUNTOFLOTANTE {String lexema = AnalizadorLexico.obtenerToken().getLexema();
+                                          String digito=""; //parte numerica
+                                          String exponente=""; //parte exponencial
+                                          int index = lexema.indexOf('D');
+                                          digito = lexema.substring(0, index);
+                                          exponente = lexema.substring(index + 1);
+                                          Double d = Double.parseDouble(digito); //d va a tener la parte numerica
+                                          Integer e = Integer.parseInt(exponente);
+                                          Double numero = Math.pow(d, e); //numero del lexema convertido a double
+                                          if (numero >= Math.pow(-1.17549435, 38.0)) {AnalizadorLexico.agregarErrorLexico("Double fuera de rango");}
 	;
 
 Expresion: Termino '+' Expresion
@@ -189,6 +198,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
 */
 
 %%
+
   static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
   static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
   static ArrayList<String> estructuraReconocida = new ArrayList<String>();
