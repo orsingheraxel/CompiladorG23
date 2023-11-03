@@ -11,7 +11,7 @@ public class AS11 extends AccionSemantica{
     @Override
     public void ejecutar(Token t, Reader entrada) { //CHEQUEA RANGO ENTEROS Y AGREGA A TS
         t.eliminarNoDigitos();
-        long valor = Integer.valueOf(t.getLexema());
+        long valor = Integer.parseInt(t.getLexema());
 
         if (valor>=longMinINT && valor<=longMaxINT ){
             if (TablaSimbolos.existeSimbolo(t.getLexema())){

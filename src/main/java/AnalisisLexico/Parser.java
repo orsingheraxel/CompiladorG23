@@ -18,12 +18,13 @@
 
 //#line 2 "gramatica.y"
 package AnalisisLexico;
+import AnalisisLexico.TablaSimbolos.TablaSimbolos;
+import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-//#line 23 "Parser.java"
-
+//#line 25 "Parser.java"
 
 
 
@@ -486,11 +487,40 @@ final static String yyrule[] = {
 "FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'",
 };
 
-//#line 193 "gramatica.y"
+//#line 194 "gramatica.y"
 
   static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
   static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
   static ArrayList<String> estructuraReconocida = new ArrayList<String>();
+
+   public void chequearEnteroNegativo(String m){
+          Integer numero = Integer.parseInt(m);
+          if (numero <= 32767){
+               if (TablaSimbolos.existeSimbolo(m)) {
+                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+               } else {
+                     TablaSimbolos.addNuevoSimbolo(m);
+                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+               }
+          } else {
+               AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
+          }
+   }
+
+   public void chequearDoubleNegativo(String m){
+        String n = m.replace('D', 'e');
+        Double numero = Double.parseDouble(n);
+        if (((numero <= 2.2250738585072014e-308) && (numero >= 1.7976931348623157e+308)) || numero == 0.0) {
+             if (TablaSimbolos.existeSimbolo(m)) {
+                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+             } else {
+                   TablaSimbolos.addNuevoSimbolo(m);
+                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+             }
+        } else {
+             AnalizadorLexico.agregarErrorLexico("Double negativo fuera de rango");
+        }
+   }
 
    public static void agregarErrorLexico(String error){
           Error e = new Error(error, AnalizadorLexico.getLineaAct());
@@ -515,7 +545,7 @@ final static String yyrule[] = {
   public static void yyerror(String error){
     System.out.println(error);
   }
-//#line 447 "Parser.java"
+//#line 478 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -669,103 +699,98 @@ boolean doaction;
       {
 //########## USER-SUPPLIED ACTIONS ##########
 case 2:
-//#line 15 "gramatica.y"
+//#line 17 "gramatica.y"
 {agregarErrorSintactico("Se espera '}' en la linea ");}
 break;
 case 3:
-//#line 16 "gramatica.y"
+//#line 18 "gramatica.y"
 {agregarErrorSintactico("Se espera '{' en la linea ");}
 break;
 case 4:
-//#line 17 "gramatica.y"
+//#line 19 "gramatica.y"
 {agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
 break;
 case 7:
-//#line 22 "gramatica.y"
+//#line 24 "gramatica.y"
 {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 20:
-//#line 45 "gramatica.y"
+//#line 47 "gramatica.y"
 {agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
 break;
 case 21:
-//#line 46 "gramatica.y"
+//#line 48 "gramatica.y"
 {agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
 break;
 case 32:
-//#line 65 "gramatica.y"
+//#line 67 "gramatica.y"
 {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
 break;
+case 34:
+//#line 69 "gramatica.y"
+{chequearEnteroNegativo(val_peek(0).sval);}
+break;
 case 35:
-//#line 68 "gramatica.y"
-{String lexema = AnalizadorLexico.obtenerToken().getLexema();
-String digito=""; //parte numerica
-String exponente=""; //parte exponencial
-int index = lexema.indexOf('D');
-digito = lexema.substring(0, index);
-exponente = lexema.substring(index + 1);
-Double d = Double.parseDouble(digito); //d va a tener la parte numerica
-Integer e = Integer.parseInt(exponente);
-Double numero = Math.pow(d, e); //numero del lexema convertido a double
-if (numero >= Math.pow(-1.17549435, 38.0)) {AnalizadorLexico.agregarErrorLexico("Double fuera de rango");}}
+//#line 70 "gramatica.y"
+{chequearDoubleNegativo(val_peek(0).sval);}
 break;
 case 50:
-//#line 97 "gramatica.y"
+//#line 98 "gramatica.y"
 {agregarEstructura("Reconoce ELSE IF ");}
 break;
 case 51:
-//#line 98 "gramatica.y"
+//#line 99 "gramatica.y"
 {agregarEstructura("Reconoce IF ");}
 break;
 case 54:
-//#line 103 "gramatica.y"
+//#line 104 "gramatica.y"
 {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 65:
-//#line 120 "gramatica.y"
-{agregarEstructura("Reconoce funcion VOID ");}
-break;
-case 66:
 //#line 121 "gramatica.y"
 {agregarEstructura("Reconoce funcion VOID ");}
 break;
-case 75:
-//#line 136 "gramatica.y"
-{agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+case 66:
+//#line 122 "gramatica.y"
+{agregarEstructura("Reconoce funcion VOID ");}
 break;
-case 76:
+case 75:
 //#line 137 "gramatica.y"
 {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
+case 76:
+//#line 138 "gramatica.y"
+{agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+break;
 case 86:
-//#line 157 "gramatica.y"
+//#line 158 "gramatica.y"
 {agregarEstructura("Reconoce funcion DO UNTIL");}
 break;
 case 87:
-//#line 158 "gramatica.y"
+//#line 159 "gramatica.y"
 {agregarErrorSintactico("Se esperaba una condicion ");}
 break;
 case 88:
-//#line 163 "gramatica.y"
+//#line 164 "gramatica.y"
 {agregarEstructura("Reconoce funcion TOD ");}
 break;
 case 89:
-//#line 164 "gramatica.y"
+//#line 165 "gramatica.y"
 {agregarErrorSintactico("Se esperaba una Expresion ");}
 break;
 case 96:
-//#line 175 "gramatica.y"
+//#line 176 "gramatica.y"
 {agregarEstructura("Reconoce CLASE");}
 break;
 case 98:
-//#line 179 "gramatica.y"
+//#line 180 "gramatica.y"
 {agregarEstructura("Reconoce Funcion sin cuerpo");}
 break;
 case 100:
-//#line 183 "gramatica.y"
+//#line 184 "gramatica.y"
 {agregarEstructura("Reconoce funcion IMPL");}
 break;
-//#line 685 "Parser.java"
+//#line 719 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

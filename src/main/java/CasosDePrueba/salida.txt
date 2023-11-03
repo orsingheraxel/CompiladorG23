@@ -1,24 +1,51 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: .4, Valor: ID: 280
-Línea: 4
-Clave: double_sin_decimal, Valor: ID: 269
-Línea: 2
-Clave: 2.4, Valor: ID: 280
-Línea: 3
-Clave: 2., Valor: ID: 280
-Línea: 2
-Clave: double_sin_entera, Valor: ID: 269
-Línea: 4
-Clave: double_exp_negativo, Valor: ID: 269
-Línea: 6
-Clave: double_con_decimal, Valor: ID: 269
-Línea: 3
-Clave: double_exp_positivo, Valor: ID: 269
+Clave: 2.2250738585072014D-308, Valor: ID: 280
+Línea: 8
+Clave: coquito_1_positivo, Valor: ID: 269
+Línea: 15
+Clave: 1.7976931348623157D+308, Valor: ID: 280
+Línea: 7
+Clave: ushort_2, Valor: ID: 269
+Línea: 14
+Clave: ushort_1, Valor: ID: 269
+Línea: 13
+Clave: coquito_1_negativo, Valor: ID: 269
+Línea: 17
+Clave: coquito_2_negativo, Valor: ID: 269
+Línea: 18
+Clave: 0, Valor: ID: 279
 Línea: 5
+Clave: entero_2, Valor: ID: 269
+Línea: 12
+Clave: 1, Valor: ID: 279
+Línea: 13
+Clave: entero_1, Valor: ID: 269
+Línea: 11
+Clave: 255, Valor: ID: 279
+Línea: 6
+Clave: coquito_1, Valor: ID: 269
+Línea: 7
+Clave: coquito_2, Valor: ID: 269
+Línea: 8
+Clave: coquito_2_positivo, Valor: ID: 269
+Línea: 16
+Clave: 32767, Valor: ID: 278
+Línea: 3
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
-Error Lexico: Double fuera de rango en la linea: 5
-Error Lexico: Double fuera de rango en la linea: 6
+Error Lexico: Entero fuera de rango en la linea: 4
+Error Lexico: Entero negativo fuera de rango en la linea: 4
+Error Lexico: Double negativo fuera de rango en la linea: 8
+Error Lexico: Entero fuera de rango en la linea: 11
+Error Lexico: Entero fuera de rango en la linea: 12
+Error Lexico: Entero negativo fuera de rango en la linea: 12
+Error Lexico: Entero corto fuera de rango en la linea: 14
+Error Lexico: Double positivo fuera de rango en la linea: 15
+Error Lexico: Double positivo fuera de rango en la linea: 16
+Error Lexico: Double positivo fuera de rango en la linea: 17
+Error Lexico: Double negativo fuera de rango en la linea: 17
+Error Lexico: Double positivo fuera de rango en la linea: 18
+Error Lexico: Double negativo fuera de rango en la linea: 18
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  

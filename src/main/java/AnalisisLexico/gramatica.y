@@ -1,5 +1,7 @@
 %{
-package AnalisisLexico;;
+package AnalisisLexico;
+import AnalisisLexico.TablaSimbolos.TablaSimbolos;
+import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -64,17 +66,8 @@ Constante: ENTERO
 	| ENTEROCORTO
 	| '-' ENTEROCORTO {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
 	| PUNTOFLOTANTE
-	| '-' ENTERO
-	| '-' PUNTOFLOTANTE {String lexema = AnalizadorLexico.obtenerToken().getLexema();
-                                          String digito=""; //parte numerica
-                                          String exponente=""; //parte exponencial
-                                          int index = lexema.indexOf('D');
-                                          digito = lexema.substring(0, index);
-                                          exponente = lexema.substring(index + 1);
-                                          Double d = Double.parseDouble(digito); //d va a tener la parte numerica
-                                          Integer e = Integer.parseInt(exponente);
-                                          Double numero = Math.pow(d, e); //numero del lexema convertido a double
-                                          if (numero >= Math.pow(-1.17549435, 38.0)) {AnalizadorLexico.agregarErrorLexico("Double fuera de rango");}
+	| '-' ENTERO {chequearEnteroNegativo($2.sval);}
+	| '-' PUNTOFLOTANTE {chequearDoubleNegativo($2.sval);}
 	;
 
 Expresion: Termino '+' Expresion
@@ -202,6 +195,35 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
   static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
   static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
   static ArrayList<String> estructuraReconocida = new ArrayList<String>();
+
+   public void chequearEnteroNegativo(String m){
+          Integer numero = Integer.parseInt(m);
+          if (numero <= 32767){
+               if (TablaSimbolos.existeSimbolo(m)) {
+                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+               } else {
+                     TablaSimbolos.addNuevoSimbolo(m);
+                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+               }
+          } else {
+               AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
+          }
+   }
+
+   public void chequearDoubleNegativo(String m){
+        String n = m.replace('D', 'e');
+        Double numero = Double.parseDouble(n);
+        if (((numero <= 2.2250738585072014e-308) && (numero >= 1.7976931348623157e+308)) || numero == 0.0) {
+             if (TablaSimbolos.existeSimbolo(m)) {
+                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+             } else {
+                   TablaSimbolos.addNuevoSimbolo(m);
+                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+             }
+        } else {
+             AnalizadorLexico.agregarErrorLexico("Double negativo fuera de rango");
+        }
+   }
 
    public static void agregarErrorLexico(String error){
           Error e = new Error(error, AnalizadorLexico.getLineaAct());

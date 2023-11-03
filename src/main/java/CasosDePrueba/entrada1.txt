@@ -12,6 +12,8 @@
     entero_2 = -32769_i,
     ushort_1 = -1_us,
     ushort_2 = 256_us,
-    coquito_1 = 1.7976931348623159D+308,
-    coquito_2 = -2.2250738585072013D-308,
+    coquito_1_positivo = 2.0D+308,
+    coquito_2_positivo = 1.0D-309,
+    coquito_1_negativo = -1.0D-308,
+    coquito_2_negativo = -2.0D+308,
 }
