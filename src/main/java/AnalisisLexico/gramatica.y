@@ -14,14 +14,14 @@ import java.util.*;
 
 %%
 Programa:'{' ListSentencias '}'
-        | '{'ListSentencias {agregarErrorSintactico("Se espera '}' en la linea ");}
-	    | ListSentencias '}' {agregarErrorSintactico("Se espera '{' en la linea ");}
-	    | ListSentencias {agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
+        | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' en la linea ");}
+	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' en la linea ");}
+	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
         ;
 
 ListSentencias: Sentencia ','
 		| Sentencia ',' ListSentencias
-		| Sentencia  {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| Sentencia  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl
@@ -38,14 +38,14 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF
-		  | SalidaMensaje
+		          | SalidaMensaje
                   | ReferenciaObjetoFuncion
                   ;
 
 SentenciaDeclarativa: Tipo ListVariables
 			| Funcion
-			| ListVariables  {agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
-			| Tipo  {agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
+			| ListVariables  {AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
+			| Tipo  {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
 			| HerenciaComposicion
 			| Objeto_clase
             ;
@@ -62,12 +62,12 @@ Tipo : USHORT
      | DOUBLE
      ;
 
-Constante: ENTERO{chequearEnteroPositivo($1.sval);}
-	| ENTEROCORTO
-	| '-' ENTEROCORTO {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
-	| PUNTOFLOTANTE{chequearDoublePositivo($1.sval);}
+Constante: ENTERO {chequearEnteroPositivo($1.sval);}
+	| ENTEROCORTO {chequearEnteroCorto($1.sval);}
+	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
+	| PUNTOFLOTANTE{chequearDouble($1.sval);}
 	| '-' ENTERO {chequearEnteroNegativo($2.sval);}
-	| '-' PUNTOFLOTANTE {chequearDoubleNegativo($2.sval);}
+	| '-' PUNTOFLOTANTE {chequearDouble($2.sval);}
 	;
 
 Expresion: Termino '+' Expresion
@@ -95,13 +95,13 @@ Factor_RefObjeto: ReferenciaObjeto
 Condicion : Expresion Comparador Expresion
 	  ;
 
-BloqueIF: IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF {agregarEstructura("Reconoce ELSE IF ");}
-	| IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF {agregarEstructura("Reconoce IF ");}
+BloqueIF: IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF {AnalizadorLexico.agregarEstructura("Reconoce ELSE IF ");}
+	| IF '(' Condicion ')' '{' ListSentenciasIF '}' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ");}
         ;
 
 ListSentenciasIF: SentenciaEjecutable ','
                   | SentenciaEjecutable ',' ListSentenciasIF
-                  |SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+                  |SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
                   ;
 
 Comparador: '<'
@@ -118,8 +118,8 @@ ListFuncion: Funcion
 	| Funcion ListFuncion
 	;
 
-Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion '}' {agregarEstructura("Reconoce funcion VOID ");}
-      |VOID ID '(' ')''{' CuerpoFuncion '}'{agregarEstructura("Reconoce funcion VOID ");}
+Funcion: VOID ID '(' Parametro ')''{' CuerpoFuncion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
+      |VOID ID '(' ')''{' CuerpoFuncion '}'{AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
@@ -134,15 +134,15 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaDeclarativa ','
 		  | RETURN ','
 		  | RETURN ',' ListSentenciasFuncion
-		  | SentenciaEjecutable {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | SentenciaDeclarativa {agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		  | SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | SentenciaDeclarativa {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 LlamadoFuncion: ID '(' ')'
             | ID '(' Expresion ')'
             ;
 
-SalidaMensaje: PRINT CADENA
+SalidaMensaje: PRINT CADENA {}
             | PRINT Factor
             ;
 
@@ -155,14 +155,14 @@ Asignacion: ID OperadorAsignacion Expresion
 	| ReferenciaObjeto OperadorAsignacion Factor
 	;
 
-SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO '{' ListSentenciasIF '}' UNTIL {agregarErrorSintactico("Se esperaba una condicion ");}
+SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL '(' Condicion ')' {AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
+                  |DO '{' ListSentenciasIF '}' UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
 
-ConversionExplicita: TOD '(' Expresion ')' {agregarEstructura("Reconoce funcion TOD ");}
-                  | TOD '(' ')' {agregarErrorSintactico("Se esperaba una Expresion ");}
+ConversionExplicita: TOD '(' Expresion ')' {AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
+                  | TOD '(' ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
 ListHerencia: Tipo ListVariables
@@ -173,15 +173,15 @@ ListHerencia: Tipo ListVariables
 		| ListFuncion ',' ListHerencia
         ;
 
-HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {agregarEstructura("Reconoce CLASE");}
+HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
                   | CLASS ID
                   ;
 
-FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {agregarEstructura("Reconoce Funcion sin cuerpo");}
+FuncionSinCuerpo: VOID ID '(' Parametro ')' ',' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   |VOID ID '(' ')' ','
                   ;
 
-FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcion IMPL");}
+FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
 		;
 
 //TEMA 21 ----------------------------------------------------
@@ -198,12 +198,12 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
 
    public void chequearEnteroNegativo(String m){
           Integer numero = Integer.parseInt(m);
-          if (numero <= 32767){
+          if (numero <= 32768){
                if (TablaSimbolos.existeSimbolo(m)) {
-                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                     TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
                } else {
                      TablaSimbolos.addNuevoSimbolo(m);
-                     TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                     TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
                }
           } else {
                AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
@@ -212,37 +212,36 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
 
    public void chequearEnteroPositivo(String m){
              Integer numero = Integer.parseInt(m);
-             if (numero >= 32767){
+             if (numero <= 32767){
                   if (TablaSimbolos.existeSimbolo(m)) {
-                        TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                        TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
                   } else {
                         TablaSimbolos.addNuevoSimbolo(m);
-                        TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                        TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
                   }
              } else {
                   AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
              }
-      }
-
-   public void chequearDoubleNegativo(String m){
-        String n = m.replace('D', 'e').replace('d','e');
-        Double numero = Double.parseDouble(n);
-        if (((numero <= 2.2250738585072014e-308) && (numero >= 1.7976931348623157e+308)) || numero == 0.0) {
-             if (TablaSimbolos.existeSimbolo(m)) {
-                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
-             } else {
-                   TablaSimbolos.addNuevoSimbolo(m);
-                   TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
-             }
-        } else {
-             AnalizadorLexico.agregarErrorLexico("Double negativo fuera de rango");
-        }
    }
 
-   public void chequearDoublePositivo(String m){
+   public void chequearEnteroCorto(String m){
+                Integer numero = Integer.parseInt(m);
+                if (numero <= 255){
+                     if (TablaSimbolos.existeSimbolo(m)) {
+                           TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
+                     } else {
+                           TablaSimbolos.addNuevoSimbolo(m);
+                           TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
+                     }
+                } else {
+                     AnalizadorLexico.agregarErrorLexico("Entero corto fuera de rango");
+                }
+         }
+
+   public void chequearDouble(String m){
            String n = m.replace('D', 'e').replace('d','e');
            Double numero = Double.parseDouble(n);
-           if (((numero >= 2.2250738585072014e-308) && (numero <= 1.7976931348623157e+308)) || numero == 0.0){
+           if (((numero >= 2.2250738585072014E-308) && (numero <= 1.7976931348623157E308)) || numero == 0.0){
                 if (TablaSimbolos.existeSimbolo(m)) {
                       TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
                 } else {
@@ -250,23 +249,9 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
                       TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
                 }
            } else {
-                AnalizadorLexico.agregarErrorLexico("Double positivo fuera de rango");
+                AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
            }
       }
-
-   public static void agregarErrorLexico(String error){
-          Error e = new Error(error, AnalizadorLexico.getLineaAct());
-          erroresLexicos.add(e);
-   }
-
-   public static void agregarErrorSintactico(String error){
-          Error e = new Error(error, AnalizadorLexico.getLineaAct());
-          erroresSintacticos.add(e);
-   }
-
-   public static void agregarEstructura(String error){
-             estructuraReconocida.add(error);
-   }
 
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();

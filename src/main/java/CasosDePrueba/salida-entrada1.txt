@@ -1,0 +1,48 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: 2.2250738585072014D-308, Valor: ID: 280
+Línea: 10
+Clave: 1.7976931348623157D+308, Valor: ID: 280
+Línea: 9
+Clave: ushort_2, Valor: ID: 269
+Línea: 16
+Clave: double_1_negativo, Valor: ID: 269
+Línea: 19
+Clave: ushort_1, Valor: ID: 269
+Línea: 15
+Clave: double_2_positivo, Valor: ID: 269
+Línea: 18
+Clave: 0, Valor: ID: 279
+Línea: 5
+Clave: entero_2, Valor: ID: 269
+Línea: 14
+Clave: entero_1, Valor: ID: 269
+Línea: 13
+Clave: 255, Valor: ID: 279
+Línea: 6
+Clave: double_2_negativo, Valor: ID: 269
+Línea: 20
+Clave: double_1_positivo, Valor: ID: 269
+Línea: 17
+Clave: 32768, Valor: ID: 278
+Línea: 4
+Clave: 32767, Valor: ID: 278
+Línea: 3
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Entero positivo fuera de rango en la linea: 13
+Error Lexico: Entero negativo fuera de rango en la linea: 14
+Error Lexico: Un entero corto no puede ser negativo en la linea  en la linea: 15
+Error Lexico: Entero corto fuera de rango en la linea: 16
+Error Lexico: Double fuera de rango en la linea: 17
+Error Lexico: Double fuera de rango en la linea: 18
+Error Lexico: Double fuera de rango en la linea: 19
+Error Lexico: Double fuera de rango en la linea: 20
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 

@@ -1,14 +1,3 @@
 {
-    a = nohayquetruncar,
-    b = estesihayquetruncarlo,
-    c = as45_as,
-    d = as-as!,
-    else,
-    IF,
-    **COMENTARIO BIEN ESCRITO**,
-    **COMENTARIO MAL,
-       ESCRITO**,
-    # Cadena bien escrita #,
-    #Cadena,
-    mal escrita #,
+    PRINT #Cadena bien escrita#,
 }

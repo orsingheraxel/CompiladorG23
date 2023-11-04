@@ -89,7 +89,9 @@ public class AnalizadorLexico {
             token.agregarCaracter(caracterComoString);
             int valorCaracter = getCaracter(caracter);
             matrizAS[estadoAct][valorCaracter].ejecutar(token, entrada);
+            System.out.println("estadoAct: " + estadoAct + "valorCaracter: " + valorCaracter);
             estadoAct = matrizEstados[estadoAct][valorCaracter];
+            System.out.println("estadoAct: " + estadoAct + "valorCaracter: " + valorCaracter);
             entrada.mark(1);
             if (estadoAct == 0){
                 val = 100;

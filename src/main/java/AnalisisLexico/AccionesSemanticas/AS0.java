@@ -34,5 +34,3 @@ public class AS0 extends AccionSemantica{
         }
     }
     }
-
-}

@@ -11,7 +11,7 @@ public class GeneradorMatrices {
     private static final AccionSemantica AS3 = new AS3();
     private static final AccionSemantica AS5 = new AS5();
     private static final AccionSemantica AS6 = new AS6();
-    private static final AccionSemantica AS7 = new AS7();
+    //private static final AccionSemantica AS5 = new AS5();
     private static final AccionSemantica AS8 = new AS8();
     private static final AccionSemantica AS9 = new AS9();
     private static final AccionSemantica AS10 = new AS10();
@@ -42,9 +42,9 @@ public class GeneradorMatrices {
         as_matrix[13] = new AccionSemantica[]{AS2, AS8, AS8, AS8, AS8, AS8, AS8, AS8, AS8, AS8, AS2, AS8, AS8, AS8, AS8, AS8, AS8, AS8, AS2,AS8,AS8};
         as_matrix[14] = new AccionSemantica[]{AS9, AS9, AS9, AS3, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9, AS9,AS9,AS9};
         as_matrix[15] = new AccionSemantica[]{AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS1, AS2, AS2, AS2, AS2, AS2, AS2,AS2,AS2};
-        as_matrix[16] = new AccionSemantica[]{AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS6, E, AS2, AS2, AS2, AS2, AS2, AS2,AS2,AS2};
+        as_matrix[16] = new AccionSemantica[]{AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS2, AS6, AS6, AS2, AS2, AS2, AS2, AS2, AS2,AS2,AS2}; //CUANDO HAY ENTER ESTADO = E
         as_matrix[17] = new AccionSemantica[]{AS5, AS5, AS2, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2, AS5, AS5, AS5, AS5, AS5, AS5, AS5, AS2,AS5,AS2};
-        as_matrix[18] = new AccionSemantica[]{AS7,AS7,AS2,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7,AS7};
+        as_matrix[18] = new AccionSemantica[]{AS5,AS5,AS2,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5,AS5};
         return as_matrix;
     }
     public static int[][] getMatrizEstados() {
@@ -53,7 +53,7 @@ public class GeneradorMatrices {
 
         int[][] te_matrix = new int[rows][columns];
 
-        // Llena la matriz te_matrix con valores
+        // Llena la matriz te_mat0   1  2   3  4  5  6  7  8  9  10 11  12 13 14 15 16 17 18 19 20
         te_matrix[0] = new int[]{13, 1, 6, 14, 5, 2, 4, 4, 3, 0, 1, 16, 0, 0, 9, 1, 1, 1, 13,0,1};
         te_matrix[1] = new int[]{0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 0,0,1};
         te_matrix[2] = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0};
@@ -70,7 +70,7 @@ public class GeneradorMatrices {
         te_matrix[13] = new int[]{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 0, 0, 0, 0, 13,0,0};
         te_matrix[14] = new int[]{0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0};
         te_matrix[15] = new int[]{15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 0, 15, 15, 15, 15, 15, 15,15,15};
-        te_matrix[16] = new int[]{16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, -1, 16, 16, 16, 16, 16, 16,16,16};
+        te_matrix[16] = new int[]{16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 0, 0, 16, 16, 16, 16, 16, 16,16,16};
         te_matrix[17] = new int[]{0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11,0,11};
         te_matrix[18] = new int[]{0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0};
         return te_matrix;
