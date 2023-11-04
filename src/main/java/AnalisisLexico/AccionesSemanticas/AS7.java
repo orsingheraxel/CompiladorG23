@@ -19,7 +19,7 @@ public class AS7 extends AccionSemantica{
             e1.printStackTrace();
         }
 
-        String n = t.getLexema().replace('D', 'e');
+        /*String n = t.getLexema().replace('D', 'e');
         Double numero = Double.parseDouble(n);
 
         if ((numero <= longMaxDOUBLE_positivo) && (numero >= longMinDOUBLE_positivo)) {
@@ -32,5 +32,7 @@ public class AS7 extends AccionSemantica{
         } else {
             AnalizadorLexico.agregarErrorLexico("Double positivo fuera de rango");
         }
+
+         */
         t.setId(PUNTOFLOTANTE); }
 }

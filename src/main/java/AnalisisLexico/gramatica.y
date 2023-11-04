@@ -62,10 +62,10 @@ Tipo : USHORT
      | DOUBLE
      ;
 
-Constante: ENTERO
+Constante: ENTERO{chequearEnteroPositivo($1.sval);}
 	| ENTEROCORTO
 	| '-' ENTEROCORTO {agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
-	| PUNTOFLOTANTE
+	| PUNTOFLOTANTE{chequearDoublePositivo($1.sval);}
 	| '-' ENTERO {chequearEnteroNegativo($2.sval);}
 	| '-' PUNTOFLOTANTE {chequearDoubleNegativo($2.sval);}
 	;
@@ -210,8 +210,22 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
           }
    }
 
+   public void chequearEnteroPositivo(String m){
+             Integer numero = Integer.parseInt(m);
+             if (numero >= 32767){
+                  if (TablaSimbolos.existeSimbolo(m)) {
+                        TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                  } else {
+                        TablaSimbolos.addNuevoSimbolo(m);
+                        TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                  }
+             } else {
+                  AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
+             }
+      }
+
    public void chequearDoubleNegativo(String m){
-        String n = m.replace('D', 'e');
+        String n = m.replace('D', 'e').replace('d','e');
         Double numero = Double.parseDouble(n);
         if (((numero <= 2.2250738585072014e-308) && (numero >= 1.7976931348623157e+308)) || numero == 0.0) {
              if (TablaSimbolos.existeSimbolo(m)) {
@@ -224,6 +238,21 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {agregarEstructura("Reconoce funcio
              AnalizadorLexico.agregarErrorLexico("Double negativo fuera de rango");
         }
    }
+
+   public void chequearDoublePositivo(String m){
+           String n = m.replace('D', 'e').replace('d','e');
+           Double numero = Double.parseDouble(n);
+           if (((numero >= 2.2250738585072014e-308) && (numero <= 1.7976931348623157e+308)) || numero == 0.0){
+                if (TablaSimbolos.existeSimbolo(m)) {
+                      TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                } else {
+                      TablaSimbolos.addNuevoSimbolo(m);
+                      TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                }
+           } else {
+                AnalizadorLexico.agregarErrorLexico("Double positivo fuera de rango");
+           }
+      }
 
    public static void agregarErrorLexico(String error){
           Error e = new Error(error, AnalizadorLexico.getLineaAct());
