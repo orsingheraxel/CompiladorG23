@@ -63,8 +63,8 @@ public class Main {
             escritor.println("-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------");
             escritor.println(" ");
             for (int i = 0; i < AnalizadorLexico.estructuraReconocida.size(); i++) {
-                String elemento = AnalizadorLexico.estructuraReconocida.get(i);
-                escritor.println("Estructura: " + elemento);
+                    Error elemento = AnalizadorLexico.estructuraReconocida.get(i);
+                    escritor.println("Estructura: " + elemento.getError() + " en la linea: " + elemento.getLinea());
             }
             br.close();
             escritor.close();

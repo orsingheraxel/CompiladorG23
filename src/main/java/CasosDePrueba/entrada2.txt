@@ -1,7 +1,7 @@
 {
-    double_sin_decimal = 2.,
+    double_sin_decimal = 2_uj + 45_i,
     double_con_decimal = 2.4,
     double_sin_entera = .4,
-    double_exp_positivo = 2.3D+4,
+    double_exp_positivo = 2.3D+X,
     double_exp_negativo = 2.3D-4,
 }

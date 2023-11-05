@@ -18,9 +18,8 @@ public class AnalizadorLexico {
     private static AccionSemantica[][] matrizAS = GeneradorMatrices.getMatrizAS();;
     static List<Error> erroresLexicos = new ArrayList<Error>();
     static List<Error> erroresSintacticos = new ArrayList<Error>();
-    //private static List<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
 
-    static List<Error> estructuraReconocida = new ArrayList<String>();
+    static List<Error> estructuraReconocida = new ArrayList<Error>();
     static List<Error> warnings = new ArrayList<Error>();
 
     public static int getLineaAct() {
@@ -91,7 +90,6 @@ public class AnalizadorLexico {
             int valorCaracter = getCaracter(caracter);
             matrizAS[estadoAct][valorCaracter].ejecutar(token, entrada);
             estadoAct = matrizEstados[estadoAct][valorCaracter];
-            System.out.println("estadoAct: " + estadoAct + "valorCaracter: " + valorCaracter);
             entrada.mark(1);
             if (estadoAct == 0){
                 val = 100;

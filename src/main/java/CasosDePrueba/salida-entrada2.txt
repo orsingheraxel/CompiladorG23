@@ -1,6 +1,10 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: 2.3D+4, Valor: ID: 280
+Clave: 45, Valor: ID: 278
+Línea: 2
+Clave: 23, Valor: ID: 269
 Línea: 5
+Clave: 2, Valor: ID: 269
+Línea: 2
 Clave: .4, Valor: ID: 280
 Línea: 4
 Clave: 2.3D-4, Valor: ID: 280
@@ -9,8 +13,6 @@ Clave: double_sin_decimal, Valor: ID: 269
 Línea: 2
 Clave: 2.4, Valor: ID: 280
 Línea: 3
-Clave: 2., Valor: ID: 280
-Línea: 2
 Clave: double_sin_entera, Valor: ID: 269
 Línea: 4
 Clave: double_exp_negativo, Valor: ID: 269
@@ -21,6 +23,8 @@ Clave: double_exp_positivo, Valor: ID: 269
 Línea: 5
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Variable númerica mal definida en la linea: 2
+Error Lexico: Variable númerica mal definida en la linea: 5
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  
@@ -30,3 +34,4 @@ Línea: 5
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
+Estructura: Reconoce programa  en la linea: 7
