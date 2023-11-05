@@ -46,7 +46,7 @@ public class Token{
         this.lexema = auxiliarnuevo;
     }
 
-    // Usamos una expresión regular para reemplazar todo lo que no sea dígito por una cadena vacía
+    // Usamos una expresión regular para reemplazartodo lo que no sea dígito por una cadena vacía
     public void eliminarNoDigitos() {
         this.lexema = lexema.replaceAll("[^\\d]", "");
     }

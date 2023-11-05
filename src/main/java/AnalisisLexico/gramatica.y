@@ -13,7 +13,7 @@ import java.util.*;
 %start Programa
 
 %%
-Programa:'{' ListSentencias '}'
+Programa:'{' ListSentencias '}' {AnalizadorLexico.agregarEstructura("Reconoce programa ");}
         | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' en la linea ");}
 	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' en la linea ");}
 	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
@@ -138,12 +138,16 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
           | SentenciaDeclarativa {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')'
-            | ID '(' Expresion ')'
+LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID '(' Expresion ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID '('  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
+            | ID  ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
+            | ID  Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
+            | ID '(' Expresion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
             ;
 
-SalidaMensaje: PRINT CADENA {}
-            | PRINT Factor
+SalidaMensaje: PRINT CADENA {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
+            | PRINT Factor {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
             ;
 
 OperadorAsignacion: '='

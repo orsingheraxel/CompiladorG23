@@ -20,7 +20,7 @@ public class AnalizadorLexico {
     static List<Error> erroresSintacticos = new ArrayList<Error>();
     //private static List<ErrorSintactico> erroresYACC = new ArrayList<ErrorSintactico>();
 
-    static List<String> estructuraReconocida = new ArrayList<String>();
+    static List<Error> estructuraReconocida = new ArrayList<String>();
     static List<Error> warnings = new ArrayList<Error>();
 
     public static int getLineaAct() {
@@ -46,7 +46,8 @@ public class AnalizadorLexico {
     }
 
     public static void agregarEstructura(String error){
-        estructuraReconocida.add(error);
+        Error e = new Error(error, AnalizadorLexico.getLineaAct());
+        estructuraReconocida.add(e);
     }
 
     public static void addWarning(String s) {
@@ -89,7 +90,6 @@ public class AnalizadorLexico {
             token.agregarCaracter(caracterComoString);
             int valorCaracter = getCaracter(caracter);
             matrizAS[estadoAct][valorCaracter].ejecutar(token, entrada);
-            System.out.println("estadoAct: " + estadoAct + "valorCaracter: " + valorCaracter);
             estadoAct = matrizEstados[estadoAct][valorCaracter];
             System.out.println("estadoAct: " + estadoAct + "valorCaracter: " + valorCaracter);
             entrada.mark(1);

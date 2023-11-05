@@ -1,0 +1,13 @@
+{
+CLASS clase1
+ {
+     USHORT x,
+     VOID f1(DOUBLE y){
+         IF (x>y){
+             f2(x),}
+         ELSE{ PRINT #Hola#,}
+         END_IF,
+         RETURN,
+     },
+ },
+}
