@@ -1,32 +1,40 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: 2.3D+4, Valor: ID: 280
-Línea: 5
-Clave: .4, Valor: ID: 280
-Línea: 4
-Clave: 2.3D-4, Valor: ID: 280
-Línea: 6
-Clave: double_sin_decimal, Valor: ID: 269
+Clave: a, Valor: ID: 269
 Línea: 2
-Clave: 2.4, Valor: ID: 280
+Clave: estesihayquetruncarl, Valor: ID: 269
 Línea: 3
-Clave: 2., Valor: ID: 280
-Línea: 2
-Clave: double_sin_entera, Valor: ID: 269
-Línea: 4
-Clave: double_exp_negativo, Valor: ID: 269
-Línea: 6
-Clave: double_con_decimal, Valor: ID: 269
+Clave: ESCRITO, Valor: ID: 269
+Línea: 10
+Clave: b, Valor: ID: 269
 Línea: 3
-Clave: double_exp_positivo, Valor: ID: 269
+Clave: as, Valor: ID: 269
 Línea: 5
+Clave: c, Valor: ID: 269
+Línea: 4
+Clave: d, Valor: ID: 269
+Línea: 5
+Clave: double, Valor: ID: 269
+Línea: 6
+Clave: nohayquetruncar, Valor: ID: 269
+Línea: 2
+Clave: #Cadena bien escrita#, Valor: ID: 277
+Línea: 11
+Clave: as45_as, Valor: ID: 269
+Línea: 4
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Las cadenas deben finalizar con un # en la linea: 11
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  
+Error Sintactico: Se espera el tipo de la variable en la linea  en la linea: 6
+Error Sintactico: Se espera identificador de la variable en la linea  en la linea: 7
+Error Sintactico: Se espera el tipo de la variable en la linea  en la linea: 10
+Error Sintactico: Se esperaba una ',' al final de la linea  en la linea: 13
 
 -------------------------------------------WARNINGS-------------------------------------------
  
+Warning: la variable estesihayquetruncarlo supera la longitud maxima: 20 en la linea: 3
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  

@@ -10,7 +10,7 @@ public class AS_Error extends AccionSemantica {
     public void ejecutar(Token t, Reader entrada) {
         t.resetLexema();
         System.out.println("ENTRA A ERRRORRRR AS");
-        AnalizadorLexico.agregarErrorSintactico("Error! Hubo una variable mal definida");
+        AnalizadorLexico.agregarErrorLexico("Error! Hubo una variable mal definida");
         //t.resetLexema();
     }
 }

@@ -101,7 +101,7 @@ BloqueIF: IF '(' Condicion ')' '{' ListSentenciasIF '}' ELSE '{' ListSentenciasI
 
 ListSentenciasIF: SentenciaEjecutable ','
                   | SentenciaEjecutable ',' ListSentenciasIF
-                  |SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+                  | SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
                   ;
 
 Comparador: '<'
