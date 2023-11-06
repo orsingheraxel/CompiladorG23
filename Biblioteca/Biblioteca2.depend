@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1634825712 source:c:\users\mateo\desktop\mateo\facu\2do año 2do trimestre\ayda ii\lab\tpe\biblioteca_2do intento\main.cpp
+	<iostream>
+	<fstream>
+	<list>
+	<map>
+

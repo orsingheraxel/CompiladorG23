@@ -1,0 +1,32 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: a, Valor: ID: 269
+Lexema: a
+Línea: 2
+Clave: b, Valor: ID: 269
+Lexema: b
+Línea: 6
+Clave: 5, Valor: ID: 279
+Lexema: 5
+Línea: 4
+Clave: x, Valor: ID: 269
+Lexema: x
+Línea: 4
+Clave: y, Valor: ID: 269
+Lexema: y
+Línea: 3
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+Error Sintactico: Falta un '{' en la linea: 5
+Error Sintactico: Se espera '}'  en la linea: 9
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce IF  en la linea: 5
+Estructura: Se reconocio un comentario en la linea: 7
+Estructura: Se reconocio un comentario en la linea: 8

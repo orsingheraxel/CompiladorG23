@@ -1,0 +1,8 @@
+{
+    USHORT a,
+    IF (x > y)
+        x = 5_us,
+    } END_IF,
+	DOUBLE b,
+    **Faltara una llave para cerrar programa
+    **Falta llave para abrir IF

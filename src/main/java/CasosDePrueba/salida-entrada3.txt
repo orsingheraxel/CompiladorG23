@@ -1,0 +1,56 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: a, Valor: ID: 269
+Lexema: a
+Línea: 2
+Clave: estesihayquetruncarl, Valor: ID: 269
+Lexema: estesihayquetruncarl
+Línea: 3
+Clave: ESCRITO, Valor: ID: 269
+Lexema: ESCRITO
+Línea: 10
+Clave: b, Valor: ID: 269
+Lexema: b
+Línea: 3
+Clave: as, Valor: ID: 269
+Lexema: as
+Línea: 5
+Clave: c, Valor: ID: 269
+Lexema: c
+Línea: 4
+Clave: d, Valor: ID: 269
+Lexema: d
+Línea: 5
+Clave: double, Valor: ID: 269
+Lexema: double
+Línea: 6
+Clave: nohayquetruncar, Valor: ID: 269
+Lexema: nohayquetruncar
+Línea: 2
+Clave: #Cadena bien escrita#, Valor: ID: 277
+Lexema: #Cadena bien escrita#
+Línea: 11
+Clave: as45_as, Valor: ID: 269
+Lexema: as45_as
+Línea: 4
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Las cadenas deben finalizar con un # en la linea: 12
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+Error Sintactico: Se espera el tipo de la variable  en la linea: 6
+Error Sintactico: Se espera identificador de la variable  en la linea: 7
+Error Sintactico: Se espera el tipo de la variable  en la linea: 10
+Error Sintactico: Se esperaba una ',' al final de la linea  en la linea: 13
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+Warning: la variable estesihayquetruncarlo supera la longitud maxima: 20 en la linea: 3
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Se reconocio un comentario en la linea: 8
+Estructura: Se reconocio un comentario en la linea: 9
+Estructura: Reconoce salida de mensaje por pantalla  en la linea: 11
+Estructura: Reconoce salida de mensaje por pantalla  en la linea: 12
+Estructura: Reconoce programa  en la linea: 13

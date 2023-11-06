@@ -1,14 +1,12 @@
 package AnalisisLexico;
 
-
-import AnalisisLexico.Token;
-
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TablaSimbolos {
 
-    private static HashMap<String, Token> simbolos = new HashMap<>(); // Lexema, y atributos del mismo.
+    private static Map<String, Token> simbolos = new HashMap<>(); // Lexema, y atributos del mismo.
 
     public static void imprimir(PrintWriter escritor) {
         for (String key : simbolos.keySet()) {

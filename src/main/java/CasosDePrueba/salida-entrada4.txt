@@ -1,0 +1,49 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: #Hola#, Valor: ID: 277
+Lexema: #Hola#
+Línea: 10
+Clave: a, Valor: ID: 269
+Lexema: a
+Línea: 2
+Clave: f, Valor: ID: 269
+Lexema: f
+Línea: 3
+Clave: x, Valor: ID: 269
+Lexema: x
+Línea: 9
+Clave: clase1, Valor: ID: 269
+Lexema: clase1
+Línea: 4
+Clave: y, Valor: ID: 269
+Lexema: y
+Línea: 8
+Clave: xrtr_#r, Valor: ID: 269
+Lexema: xrtr_#r
+Línea: 6
+Clave: f1, Valor: ID: 269
+Lexema: f1
+Línea: 7
+Clave: f2, Valor: ID: 269
+Lexema: f2
+Línea: 9
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 6
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce llamado funcion  en la linea: 3
+Estructura: Reconoce funcion DO UNTIL en la linea: 3
+Estructura: Reconoce funcion TOD  en la linea: 8
+Estructura: Reconoce llamado funcion  en la linea: 9
+Estructura: Reconoce salida de mensaje por pantalla  en la linea: 10
+Estructura: Reconoce IF ELSE  en la linea: 11
+Estructura: Reconoce funcion VOID  en la linea: 13
+Estructura: Reconoce CLASE en la linea: 14
+Estructura: Reconoce programa  en la linea: 15

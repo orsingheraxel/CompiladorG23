@@ -1,0 +1,27 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: clase1, Valor: ID: 269
+Lexema: clase1
+Línea: 2
+Clave: xrtr_#r, Valor: ID: 269
+Lexema: xrtr_#r
+Línea: 5
+Clave: f1, Valor: ID: 269
+Lexema: f1
+Línea: 4
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 5
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+Error Sintactico: Se esperaba una ',' al final de la linea  en la linea: 8
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce Funcion sin cuerpo en la linea: 4
+Estructura: Reconoce CLASE en la linea: 6
+Estructura: Se reconocio un comentario en la linea: 7
+Estructura: Reconoce programa  en la linea: 8

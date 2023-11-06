@@ -14,9 +14,9 @@ import java.util.*;
 
 %%
 Programa:'{' ListSentencias '}' {AnalizadorLexico.agregarEstructura("Reconoce programa ");}
-        | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' en la linea ");}
-	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' en la linea ");}
-	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' en la linea ");}
+        | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
+	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
+	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' ");}
         ;
 
 ListSentencias: Sentencia ','
@@ -44,10 +44,11 @@ SentenciaEjecutable: Asignacion
 
 SentenciaDeclarativa: Tipo ListVariables
 			| Funcion
-			| ListVariables  {AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable en la linea ");}
-			| Tipo  {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable en la linea ");}
+			| ListVariables  {AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
+			| Tipo  {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
 			| HerenciaComposicion
 			| Objeto_clase
+			| FuncionIMPL
             ;
 
 ListVariables : ID
@@ -64,7 +65,7 @@ Tipo : USHORT
 
 Constante: ENTERO {chequearEnteroPositivo($1.sval);}
 	| ENTEROCORTO {chequearEnteroCorto($1.sval);}
-	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo en la linea ");}
+	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{chequearDouble($1.sval);}
 	| '-' ENTERO {chequearEnteroNegativo($2.sval);}
 	| '-' PUNTOFLOTANTE {chequearDouble($2.sval);}
@@ -97,14 +98,21 @@ Condicion : '(' Expresion Comparador Expresion ')'
             | Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
 
-BloqueIF: IF Condicion '{' ListSentenciasIF '}' ELSE '{' ListSentenciasIF '}' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
-	| IF Condicion '{' ListSentenciasIF '}' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ");}
+BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
+	| IF Condicion ListSentenciasIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ");}
         ;
 
-ListSentenciasIF: SentenciaEjecutable ','
-                  | SentenciaEjecutable ',' ListSentenciasIF
-                  | SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
-                  ;
+ListSentenciasIF: '{' SentenciasIF '}'
+		|  SentenciasIF '}' {AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
+                | '{' '}' {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
+
+SentenciasIF: ListaSentencias
+                ;
+
+ListaSentencias: SentenciaEjecutable ','
+               | SentenciaEjecutable ',' ListaSentencias
+               | SentenciaEjecutable ListaSentencias {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
+               ;
 
 Comparador: '<'
           | '>'
@@ -116,13 +124,10 @@ Comparador: '<'
 
 ListFuncion: Funcion
 	| FuncionSinCuerpo
-	| FuncionSinCuerpo ListFuncion
-	| Funcion ListFuncion
 	;
 
-Funcion: VOID ID  Parametro '{' CuerpoFuncion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
-      | VOID ID '(' ')''{' CuerpoFuncion '}'{AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
-      | VOID ID '(' ')' CuerpoFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+Funcion: VOID ID  Parametro CuerpoFuncion {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
+      | VOID ID '(' ')' CuerpoFuncion  {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
@@ -131,7 +136,8 @@ Parametro: '(' Tipo ID ')'
         |  Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
-CuerpoFuncion: ListSentenciasFuncion
+CuerpoFuncion: '{' ListSentenciasFuncion '}'
+		|  ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
                   ;
 
 ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
@@ -144,13 +150,10 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
           | SentenciaDeclarativa {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
+
+
 LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
-            | ID '(' Expresion ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
-            | ID '('  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
-            | ID  ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
-            | ID  Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
-            | ID '(' Expresion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
-            ;
+            | ID LlamadoExpresion  {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
 
 SalidaMensaje: PRINT CADENA {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
             | PRINT Factor {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
@@ -163,40 +166,41 @@ OperadorAsignacion: '='
 Asignacion: ID OperadorAsignacion Expresion
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
-	| ID OperadorAsignacion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando de lado derecho de la asignación ");}
-	| ReferenciaObjeto OperadorAsignacion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando de lado derecho de la asignación ");}
 	;
 
-SentenciaControl: DO '{' ListSentenciasIF '}' UNTIL Condicion {AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO '{' ListSentenciasIF '}' UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+SentenciaControl: DO ListSentenciasIF UNTIL Condicion {AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
+                  |DO ListSentenciasIF UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
 
-ConversionExplicita: TOD '(' Expresion ')' {AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
+LlamadoExpresion:'(' Expresion ')'
+		| Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+		;
+
+ConversionExplicita: TOD LlamadoExpresion {AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
                   | TOD '(' ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
-                  | TOD  Expresion')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
                   ;
 
-ListHerencia: Tipo ListVariables ','
-		|FuncionIMPL ','
-		|FuncionIMPL ',' ListHerencia
-		| Tipo ListVariables ',' ListHerencia
+ListHerencia:'{' SentenciaListHerencia '}'
+		//| SentenciaListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
+		;
+
+SentenciaListHerencia: Tipo ListVariables ','
+		| Tipo ListVariables ',' SentenciaListHerencia
 		| ListFuncion ','
-		| ListFuncion ',' ListHerencia
+		| ListFuncion ',' SentenciaListHerencia
         ;
 
-HerenciaComposicion: CLASS ID '{' ListHerencia '}'  {AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
-                  | CLASS ID
-                  | CLASS ID  ListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+HerenciaComposicion: CLASS ID  ListHerencia   {AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
+
                   ;
 
-FuncionSinCuerpo: VOID ID  Parametro  ',' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
-                  | VOID ID '(' ')' ',' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
+FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
+                  | VOID ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
-            | IMPL FOR ID ':' '{' Funcion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
             | IMPL FOR ID ':' Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 		;
 

@@ -1,0 +1,8 @@
+{
+    CLASS clase1
+    {
+         VOID f1(),
+         USHORT xrtr_#r,
+    }
+    **Falta una coma en la llave anterior
+}

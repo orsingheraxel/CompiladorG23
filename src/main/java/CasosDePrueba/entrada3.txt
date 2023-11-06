@@ -1,3 +1,13 @@
 {
+    a = nohayquetruncar,
+    b = estesihayquetruncarlo,
+    c = as45_as,
+    d = as-as,
+    double,
+    DOUBLE,
+    **COMENTARIO BIEN ESCRITO
+    **COMENTARIO MAL
+    ESCRITO,
     PRINT #Cadena bien escrita#,
+    PRINT #Cadena mal escrita,
 }
