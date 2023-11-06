@@ -1,7 +1,6 @@
 package AnalisisLexico.AccionesSemanticas;
 
 import AnalisisLexico.*;
-import AnalisisLexico.TablaSimbolos.TablaSimbolos;
 
 import java.io.Reader;
 

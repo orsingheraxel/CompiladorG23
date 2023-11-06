@@ -18,11 +18,8 @@
 
 //#line 2 "gramatica.y"
 package AnalisisLexico;
-import AnalisisLexico.TablaSimbolos.TablaSimbolos;
 import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 //#line 25 "Parser.java"
 

@@ -1,7 +1,7 @@
 package AnalisisLexico.AccionesSemanticas;
 
 import AnalisisLexico.AnalizadorLexico;
-import AnalisisLexico.TablaSimbolos.TablaSimbolos;
+import AnalisisLexico.TablaSimbolos;
 import AnalisisLexico.Token;
 
 import java.io.IOException;

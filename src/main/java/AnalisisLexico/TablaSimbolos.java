@@ -1,4 +1,4 @@
-package AnalisisLexico.TablaSimbolos;
+package AnalisisLexico;
 
 
 import AnalisisLexico.Token;
