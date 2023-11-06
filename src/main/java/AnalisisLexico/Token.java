@@ -1,16 +1,21 @@
 package AnalisisLexico;
 
+import java.io.PrintWriter;
+
 public class Token{
     private int id;
     private String lexema;
+    private int linea;
 
+
+    public Token(int id, String lexema, int linea) {
+        this.id = id;
+        this.lexema = lexema;
+        this.linea = linea;
+    }
 
     public Token(){
         this.lexema= "";
-    }
-    public Token(int i, String l){
-        id=i;
-        lexema=l;
     }
 
     public Token(Token t){
@@ -46,13 +51,18 @@ public class Token{
         this.lexema = auxiliarnuevo;
     }
 
-    // Usamos una expresión regular para reemplazartodo lo que no sea dígito por una cadena vacía
     public void eliminarNoDigitos() {
         this.lexema = lexema.replaceAll("[^\\d]", "");
     }
 
     public void resetLexema(){
         this.lexema = "";
+    }
+
+    public void imprimir(PrintWriter escritor) {
+        escritor.println("ID: " + id);
+        escritor.println("Lexema: " + lexema);
+        escritor.println("Línea: " + linea);
     }
 
 
