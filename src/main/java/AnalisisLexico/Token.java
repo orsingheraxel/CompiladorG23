@@ -3,15 +3,37 @@ package AnalisisLexico;
 import java.io.PrintWriter;
 
 public class Token{
-    private int id;
+    private Integer id;
     private String lexema;
-    private int linea;
+    private Integer linea;
+    private String uso;
 
+    public Token(String lexema) {
+        this.id = null;
+        this.lexema = lexema;
+        this.linea = null;
+        this.uso = "";
+    }
+
+    public Token(int id, String lexema) {
+        this.id = id;
+        this.lexema = lexema;
+        this.linea = null;
+        this.uso = "";
+    }
 
     public Token(int id, String lexema, int linea) {
         this.id = id;
         this.lexema = lexema;
         this.linea = linea;
+        this.uso = "";
+    }
+
+    public Token(int id, String lexema, int linea, String uso) {
+        this.id = id;
+        this.lexema = lexema;
+        this.linea = linea;
+        this.uso = uso;
     }
 
     public Token(){
@@ -27,8 +49,28 @@ public class Token{
         return id;
     }
 
+    public int getLinea() {
+        return linea;
+    }
+
+    public String getUso() {
+        return uso;
+    }
+
     public String getLexema() {
         return lexema;
+    }
+
+    public void setLexema(String lexema) {
+        this.lexema = lexema;
+    }
+
+    public void setLinea(int linea) {
+        this.linea = linea;
+    }
+
+    public void setUso(String uso) {
+        this.uso = uso;
     }
 
     public void setId(int id) {
