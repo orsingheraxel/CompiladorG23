@@ -1,0 +1,9 @@
+{
+    CLASS a {
+        USHORT b,
+        VOID f(),
+    },
+    a.b = 4_us,
+    a.f(),
+    **Sabemos que no es la forma correcta de usar los objetos, es a modo de ejemplo
+}

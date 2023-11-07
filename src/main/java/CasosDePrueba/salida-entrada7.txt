@@ -1,0 +1,29 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Clave: a, Valor: ID: 269
+Lexema: a
+Línea: 7
+Clave: b, Valor: ID: 269
+Lexema: b
+Línea: 6
+Clave: 4, Valor: ID: 279
+Lexema: 4
+Línea: 6
+Clave: f, Valor: ID: 269
+Lexema: f
+Línea: 7
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce Funcion sin cuerpo en la linea: 4
+Estructura: Reconoce CLASE en la linea: 5
+Estructura: Reconoce llamado funcion  en la linea: 7
+Estructura: Se reconocio un comentario en la linea: 8
+Estructura: Reconoce programa  en la linea: 9

@@ -100,7 +100,6 @@ public class AnalizadorLexico {
 
         }
         val =0;
-        System.out.println("Lexema = " + token.getLexema() + " | ID = " +  token.getId());
         Token ret = new Token(token);
         token.resetLexema();
         return ret;

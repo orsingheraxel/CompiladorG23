@@ -17,6 +17,7 @@ Programa:'{' ListSentencias '}' {AnalizadorLexico.agregarEstructura("Reconoce pr
         | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
 	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
 	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' ");}
+	    |'{''}' {AnalizadorLexico.agregarErrorSintactico("Programa vacio ");}
         ;
 
 ListSentencias: Sentencia ','
@@ -29,10 +30,10 @@ Sentencia: SentenciaControl
         | SentenciaDeclarativa
         ;
 
-ReferenciaObjeto: ID '.' ID
+ReferenciaObjeto: ID '.' ID {AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion {AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
                        ;
 
 SentenciaEjecutable: Asignacion
