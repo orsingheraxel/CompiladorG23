@@ -7,12 +7,15 @@ public class Token{
     private String lexema;
     private Integer linea;
     private String uso;
+    private String tipo;
+    private String ambito;
 
     public Token(String lexema) {
         this.id = null;
         this.lexema = lexema;
         this.linea = null;
-        this.uso = "";
+        this.uso = null;
+        this.tipo = null;
     }
 
     public void setId(Integer id) {
@@ -21,6 +24,14 @@ public class Token{
 
     public void setLinea(Integer linea) {
         this.linea = linea;
+    }
+
+    public void setTipo(String tipo){
+        this.tipo = tipo;
+    }
+
+    public String getTipo(){
+        return tipo;
     }
 
     public Token(int id, String lexema) {
@@ -46,6 +57,14 @@ public class Token{
 
     public Token(){
         this.lexema= "";
+    }
+
+    public void setAmbito(String ambito) {
+        this.ambito = ambito;
+    }
+
+    public String getAmbito() {
+        return ambito;
     }
 
     public Token(Token t){

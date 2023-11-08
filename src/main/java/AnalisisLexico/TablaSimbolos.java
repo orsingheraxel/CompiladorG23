@@ -31,6 +31,17 @@ public class TablaSimbolos {
         simbolos.put(lexema, t);
     }
 
+    public static void addUso (String lexema,String uso){
+        Token t = simbolos.get(lexema);
+        t.setUso(uso);
+        simbolos.put(lexema, t);
+    }
+
+    public static void addAmbito (String lexema,String ambito){
+        Token t = simbolos.get(lexema);
+        t.setAmbito(ambito);
+        simbolos.put(lexema, t);
+    }
     public static Token getAtributo(String lexema) {
         return simbolos.get(lexema);
     }

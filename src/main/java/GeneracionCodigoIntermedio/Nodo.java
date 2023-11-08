@@ -19,6 +19,18 @@ public class Nodo {
 
     public Token getToken(){return this.t;}
     public void setToken(Token t){this.t = t;}
+
+    public String getTipo(){
+        return t.getTipo();
+    }
+    public String getUso(){
+        return t.getUso();
+    }
+
+    public void setUso(String uso){
+        t.setUso(uso);
+    }
+
     public Nodo getIzq(){return this.izq;}
     public Nodo getDer(){return this.der;}
     public void setIzq(Nodo izq) { this.izq = izq; }

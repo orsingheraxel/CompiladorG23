@@ -41,10 +41,10 @@ SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF   {$$=$1;}
 		          | SalidaMensaje {$$=$1;}
-                  | ReferenciaObjetoFuncion
+                  | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-SentenciaDeclarativa: Tipo ListVariables { for (String e : ListVariables){
+SentenciaDeclarativa: Tipo ListVariables { for (String e : (Nodo)$2.getLista()){
                                                 e.setTipo($1.sval);
                                             }
                                           }
@@ -78,16 +78,24 @@ Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);
 
 Expresion: Termino '+' Expresion { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                                     if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
-                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")
+                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")//hacer conversiones cuando sea posible
+                                    }ConversionExplicita
                                     }
-                                    }
-| Termino '-' Expresion
+| Termino '-' Expresion {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
 | Termino {$$=$1;}
-| ConversionExplicita
+| ConversionExplicita {$$ = $1}
         ;
 
 
-Termino: Factor '*' Termino
+Termino: Factor '*' Termino {
+                                $$ = new NodoComun("*",(Nodo)$1, (Nodo)$3)
+                                if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())))
+                                    if //Not conversion valida
+                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.")
+                                else {
+                                    ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
+                                }
+                            }
 | Factor '/' Termino
 | Factor {$$ = $1;}
 | Factor_RefObjeto '*' Termino
@@ -103,10 +111,10 @@ Factor_RefObjeto: ReferenciaObjeto {$$=$1;}
                 ;
 
 Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,(Nodo)$2,(Nodo)$4);
-                                                    ((Nodo)$$).getToken().setTipo(((Nodo)$2).getTipo());
-                                                    ((Nodo)$$).getToken().setUso("Condicion");
-                                                     if (!((((Nodo)$2).getToken().getTipo()).equals(((Nodo)$4).getToken().getTipo()))){
-                                                         AnalizadorLexico.agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos");
+                                                    ((Nodo)$$).setTipo(((Nodo)$2).getTipo());
+                                                    ((Nodo)$$).setUso("Condicion");
+                                                     if (!((((Nodo)$2).getTipo()).equals(((Nodo)$4).getTipo()))){
+                                                         AnalizadorLexico.agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
                                                      }
                                                      }
             | '(' Expresion Comparador Expresion {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
@@ -145,8 +153,33 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: VOID ID  Parametro CuerpoFuncion {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
-      | VOID ID '(' ')' CuerpoFuncion  {AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
+Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
+                                            actualizarAmbito(ambitoActual, ambito);
+                                            //chequear si las variables pasadas por parametro estan en el ambito anterior
+
+                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
+
+                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoActual)){
+                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoActual);
+                                                (Nodo)$2.getToken().setUso("Funcion");
+                                                TablaSimbolos.addAmbito($2.sval":"+ambitoActual, ambitoActual);
+                                            }
+
+                                            AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
+
+      | VOID ID '(' ')' CuerpoFuncion  {    String ambito = $2.sval;
+                                            actualizarAmbito(ambitoActual, ambito);
+                                            //chequear si las variables pasadas por parametro estan en el ambito anterior
+
+                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
+
+                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoActual)){
+                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoActual);
+                                                (Nodo)$2.getToken().setUso("Funcion");
+                                                TablaSimbolos.addAmbito($2.sval":"+ambitoActual, ambitoActual);
+                                            }
+
+                                            AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
@@ -201,7 +234,9 @@ LlamadoExpresion:'(' Expresion ')'
 		| Expresion ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 		;
 
-ConversionExplicita: TOD LlamadoExpresion {AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
+ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);)
+                                            AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
+                                           }
                   | TOD '(' ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
@@ -215,7 +250,9 @@ SentenciaListHerencia: Tipo ListVariables ','
 		| ListFuncion ',' SentenciaListHerencia
         ;
 
-HerenciaComposicion: CLASS ID  ListHerencia   {AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
+HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
+                                                actualizarAmbito(ambitoActual, ambito);
+                                                AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
 
                   ;
 
@@ -235,9 +272,31 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 
 %%
   private NodoControl raiz;
+  private String ambitoAct = "main";
   static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
   static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
   static ArrayList<String> estructuraReconocida = new ArrayList<String>();
+
+   public String buscarAmbito(String ambitoActual,String lexema){
+            String ambito = ambitoActual;
+            while(!TablaSimbolos.existeSimbolo(lexema+":"+ambito)){
+                    if(ambito.equals("main")){
+                            //yyerror("La variable " + lexema + " no se encuentra declarada en el ambito " + ambitoActual);
+                            ambito = "";
+                            break;
+                    }else{
+                            //retrocede de ambito hasta encontrar el correcto
+                            char [] a = ambito.toCharArray();
+                            for (int i = a.length;i>=0;i--){
+                                    if(a[i-1] == ':'){
+                                            ambito = ambito.substring(0,i-1);
+                                            break;
+                                    }
+                            }
+                    }
+            }
+            return ambito;
+    }
 
    public void chequearEnteroNegativo(String m){
           Integer numero = Integer.parseInt(m);
@@ -295,6 +354,10 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
                 AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
            }
       }
+
+   public void actualizarAmbito(String ambitoActual, String a){
+        ambitoActual += ":"+a;
+   }
 
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();
