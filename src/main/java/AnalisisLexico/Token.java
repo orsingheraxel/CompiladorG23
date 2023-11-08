@@ -15,6 +15,14 @@ public class Token{
         this.uso = "";
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setLinea(Integer linea) {
+        this.linea = linea;
+    }
+
     public Token(int id, String lexema) {
         this.id = id;
         this.lexema = lexema;

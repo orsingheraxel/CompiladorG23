@@ -20,14 +20,14 @@ Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); An
 	    |'{''}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Programa vacio ");}
         ;
 
-ListSentencias: Sentencia ','
-		| Sentencia ',' ListSentencias {}
+ListSentencias: Sentencia ','{$$=$1;}
+		| Sentencia ',' ListSentencias {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
 		| Sentencia  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
-Sentencia: SentenciaControl {$$=$1}
-        | SentenciaEjecutable {$$=$1}
-        | SentenciaDeclarativa {$$=$1}
+Sentencia: SentenciaControl {$$=$1;}
+        | SentenciaEjecutable {$$=$1;}
+        | SentenciaDeclarativa {$$=$1;}
         ;
 
 ReferenciaObjeto: ID '.' ID {    /* $$= new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
@@ -44,7 +44,7 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion {AnalizadorLexico.agregarEstructu
 
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
-                  | BloqueIF
+                  | BloqueIF   {$$=$1;}
 		          | SalidaMensaje
                   | ReferenciaObjetoFuncion
                   ;
@@ -114,13 +114,17 @@ Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,
             | Expresion Comparador Expresion ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
 
-BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
-	| IF Condicion ListSentenciasIF END_IF { = new NodoControl("PROGRAMA",(Nodo)$2);AnalizadorLexico.agregarEstructura("Reconoce IF ");}
+BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3, new NodoControl("SentenciasELSE",(Nodo)$5);
+                                                                      $$= NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), SentenciasIF);
+                                                                      AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
+	    | IF Condicion ListSentenciasIF END_IF {$$=NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3);
+	                                            AnalizadorLexico.agregarEstructura("Reconoce IF ");}
         ;
 
 ListSentenciasIF: '{' SentenciasIF '}'
-		|  SentenciasIF '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
+		        |  SentenciasIF '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
                 | '{' '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
+                ;
 
 SentenciasIF: ListaSentencias
                 ;
@@ -185,7 +189,8 @@ Asignacion: ID OperadorAsignacion Expresion
 	| ReferenciaObjeto OperadorAsignacion Factor
 	;
 
-SentenciaControl: DO ListSentenciasIF UNTIL Condicion {AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
+SentenciaControl: DO ListSentenciasIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
+                                                        AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
                   |DO ListSentenciasIF UNTIL {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
