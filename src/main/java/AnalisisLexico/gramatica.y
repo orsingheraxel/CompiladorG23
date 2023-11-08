@@ -30,22 +30,17 @@ Sentencia: SentenciaControl {$$=$1;}
         | SentenciaDeclarativa {$$=$1;}
         ;
 
-ReferenciaObjeto: ID '.' ID {    /* $$= new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
-                                 ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                                 ((Nodo)$$).setUso("Condicion");
-                                 if (!((((ArbolSintactico)$1).getTipo()).equals(((ArbolSintactico)$3).getTipo()))){
-                                    AnalizadorLexico.agregarErrorSemantico("error en la comparacion entre expresiones de distintos tipos ");
-                                 } */
-                                AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
+ReferenciaObjeto: ID '.' ID {AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion {AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
+                                                AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
                        ;
 
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF   {$$=$1;}
-		          | SalidaMensaje
+		          | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion
                   ;
 
@@ -81,7 +76,11 @@ Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);
 	| '-' PUNTOFLOTANTE {$$ = new NodoHoja($1.sval) ; chequearDouble($2.sval);}
 	;
 
-Expresion: Termino '+' Expresion
+Expresion: Termino '+' Expresion { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
+                                    if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
+                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")
+                                    }
+                                    }
 | Termino '-' Expresion
 | Termino {$$=$1;}
 | ConversionExplicita
@@ -176,8 +175,10 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
             | ID LlamadoExpresion  {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
 
-SalidaMensaje: PRINT CADENA {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
-            | PRINT Factor {AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
+SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
+                             AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
+            | PRINT Factor {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
+                            AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
             ;
 
 OperadorAsignacion: '=' {$$=$1;}
