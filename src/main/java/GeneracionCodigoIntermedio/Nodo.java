@@ -16,6 +16,12 @@ public class Nodo {
         this.t = new Token(lex);
     }
 
+    public Nodo(String lex,Nodo izq,Nodo der){
+        this.t = new Token(lex);
+        this.izq = izq;
+        this.der = der;
+    }
+
 
     public Token getToken(){return this.t;}
     public void setToken(Token t){this.t = t;}

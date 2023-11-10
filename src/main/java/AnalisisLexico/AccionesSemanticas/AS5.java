@@ -15,5 +15,6 @@ public class AS5 extends AccionSemantica{
             e1.printStackTrace();
         }
         t.setId(PUNTOFLOTANTE);
+        t.setTipo("DOUBLE");
     }
 }

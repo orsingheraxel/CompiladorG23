@@ -2,6 +2,7 @@ package GeneracionCodigoIntermedio;
 import AnalisisLexico.*;
 
 public class NodoHoja extends Nodo{
+    
     public NodoHoja(String lex) {
         super(lex);
     }

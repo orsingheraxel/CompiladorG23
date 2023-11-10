@@ -38,5 +38,10 @@ public class AS8 extends AccionSemantica{
 
     }
 
+    INT a;b;c, ListVariables = {a,b,c}
+    VOID f(){
+        INT a,
+    }
+
 }
 

@@ -44,9 +44,16 @@ SentenciaEjecutable: Asignacion
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-SentenciaDeclarativa: Tipo ListVariables { for (String e : (Nodo)$2.getLista()){
-                                                e.setTipo($1.sval);
-                                            }
+SentenciaDeclarativa: Tipo ListVariables {for (String var : ((List)$2)) {
+                                                //chequear que no exista una variable igual en el ambito
+                                                //setear tipo de las variable en la tabla de simbolos
+                                                //Token t = TablaSimbolos.getSimbolo(var);
+                                                // if (t==null) 
+                                                        Token nuevo = new Token()
+                                                //        t.setUso("variable")
+                                                //else {AnalizadorLexico.agregarErrorSemantico("Variable ya declarada en este ambito");}\
+
+                                        }
                                           }
 			| Funcion
 			| ListVariables  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
@@ -56,16 +63,21 @@ SentenciaDeclarativa: Tipo ListVariables { for (String e : (Nodo)$2.getLista()){
 			| FuncionIMPL {$$ = new NodoHoja("Sentencia declarativa");}
             ;
 
-ListVariables : ID
-              | ID ';' ListVariables
+ListVariables : ID {$$ = new List<String> ids; 
+                if(!existe(id:ambitoActual))
+                    TablaSimbolos.getSimbolo($1.sval).setLexema()    
+                        ids.add($1.sval + ":" + ambitoAct)} //CUANDO AGREGAMOS, DEBEMOS AGREGARLO CON EL AMBITO
+                else
+                        remove().
+              | ID ';' ListVariables {$$ = $3 ;((List)$$).add($1.sval)}
               ;
 
 Objeto_clase: ID ListVariables
     ;
 
-Tipo : USHORT {$$ = new NodoHoja($1.sval) ; (NodoHoja)$$.getToken().setTipo("Entero corto");}
-     | INT {$$ = new NodoHoja($1.sval); (NodoHoja)$$.getToken().setTipo("Entero");}
-     | DOUBLE {$$ = new NodoHoja($1.sval); (NodoHoja)$$.getToken().setTipo("Punto flotante");}
+Tipo : USHORT {$$ = new NodoHoja($1.sval) ; (NodoHoja)$$.setTipo("USHORT");}
+     | INT {$$ = new NodoHoja($1.sval); (NodoHoja)$$.setTipo("INT");}
+     | DOUBLE {$$ = new NodoHoja($1.sval); (NodoHoja)$$.setTipo("DOUBLE");}
      ;
 
 Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);}
@@ -103,7 +115,7 @@ Termino: Factor '*' Termino {
 | Factor_RefObjeto
 ;
 
-Factor: ID
+Factor: ID //chequear si existe la variable, y a su vez ver si esta al alcance (chequear ambito)
 	| Constante {$$=$1;}
 	;
 
@@ -136,7 +148,7 @@ ListSentenciasIF: '{' SentenciasIF '}'
 SentenciasIF: ListaSentencias
                 ;
 
-ListaSentencias: SentenciaEjecutable ','
+ListaSentencias: SentenciaEjecutable ',' 
                | SentenciaEjecutable ',' ListaSentencias
                | SentenciaEjecutable ListaSentencias {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
                ;
@@ -154,29 +166,29 @@ ListFuncion: Funcion
 	;
 
 Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
-                                            actualizarAmbito(ambitoActual, ambito);
+                                            actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
                                             $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
 
-                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoActual)){
-                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoActual);
+                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
+                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
                                                 (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.addAmbito($2.sval":"+ambitoActual, ambitoActual);
+                                                TablaSimbolos.addAmbito($2.sval":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
 
       | VOID ID '(' ')' CuerpoFuncion  {    String ambito = $2.sval;
-                                            actualizarAmbito(ambitoActual, ambito);
+                                            actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
                                             $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
 
-                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoActual)){
-                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoActual);
+                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
+                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
                                                 (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.addAmbito($2.sval":"+ambitoActual, ambitoActual);
+                                                TablaSimbolos.addAmbito($2.sval":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
@@ -230,7 +242,7 @@ SentenciaControl: DO ListSentenciasIF UNTIL Condicion {$$=new NodoComun("Sentenc
 
 //TEMA 29 --------------------------------------------------
 
-LlamadoExpresion:'(' Expresion ')'
+LlamadoExpresion:'(' Expresion ')' {}
 		| Expresion ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 		;
 
@@ -251,7 +263,7 @@ SentenciaListHerencia: Tipo ListVariables ','
         ;
 
 HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
-                                                actualizarAmbito(ambitoActual, ambito);
+                                                actualizarAmbito(ambitoAct, ambito);
                                                 AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
 
                   ;
@@ -277,11 +289,11 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
   static ArrayList<String> estructuraReconocida = new ArrayList<String>();
 
-   public String buscarAmbito(String ambitoActual,String lexema){
-            String ambito = ambitoActual;
+   public String buscarAmbito(String ambitoAct,String lexema){
+            String ambito = ambitoAct;
             while(!TablaSimbolos.existeSimbolo(lexema+":"+ambito)){
                     if(ambito.equals("main")){
-                            //yyerror("La variable " + lexema + " no se encuentra declarada en el ambito " + ambitoActual);
+                            //yyerror("La variable " + lexema + " no se encuentra declarada en el ambito " + ambitoAct);
                             ambito = "";
                             break;
                     }else{
@@ -355,8 +367,8 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
            }
       }
 
-   public void actualizarAmbito(String ambitoActual, String a){
-        ambitoActual += ":"+a;
+   public void actualizarAmbito(String ambitoAct, String a){
+        ambitoAct += ":"+a;
    }
 
   public int yylex() throws IOException{
