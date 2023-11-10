@@ -22,6 +22,10 @@ public class TablaSimbolos {
         simbolos.put(lexema, t);
     }
 
+    public static void addSimbolo(String lexema,Token t){
+        simbolos.put(lexema,t);
+    }
+
     public static boolean existeSimbolo(String lexema) {
         return simbolos.containsKey(lexema);
     }
@@ -31,22 +35,22 @@ public class TablaSimbolos {
         simbolos.put(lexema, t);
     }
 
-    public static void addUso (String lexema,String uso){
+    public static void setUso (String lexema,String uso){
         Token t = simbolos.get(lexema);
         t.setUso(uso);
         simbolos.put(lexema, t);
     }
 
-    public static void addAmbito (String lexema,String ambito){
+    public static void setAmbito (String lexema,String ambito){
         Token t = simbolos.get(lexema);
         t.setAmbito(ambito);
         simbolos.put(lexema, t);
     }
-    public static Token getAtributo(String lexema) {
+    public static Token getToken(String lexema) {
         return simbolos.get(lexema);
     }
 
-    public static void removeAtributo(String lexema) {
+    public static void removeToken(String lexema) {
         simbolos.remove(lexema);
     }
 }

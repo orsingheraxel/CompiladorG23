@@ -44,16 +44,20 @@ SentenciaEjecutable: Asignacion
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-SentenciaDeclarativa: Tipo ListVariables {for (String var : ((List)$2)) {
-                                                //chequear que no exista una variable igual en el ambito
-                                                //setear tipo de las variable en la tabla de simbolos
-                                                //Token t = TablaSimbolos.getSimbolo(var);
-                                                // if (t==null) 
-                                                        Token nuevo = new Token()
-                                                //        t.setUso("variable")
-                                                //else {AnalizadorLexico.agregarErrorSemantico("Variable ya declarada en este ambito");}\
-
-                                        }
+SentenciaDeclarativa: Tipo ListVariables {  for (String var : ((List)$2)) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
+                                            Token t = TablaSimbolos.getToken(var);
+                                            if (t != null){
+                                                t.setLexema($1.sval + ":" + ambitoAct);
+                                                t.setAmbito(ambitoAct);
+                                                t.setUso("variable");
+                                                t.setTipo($1.sval);
+                                                TablaSimbolos.removeToken($1.sval);
+                                                TablaSimbolos.addSimbolo(t.getLexema(),t);
+                                                }
+                                            else {
+                                                //ERROR SEMANTICO = VARIABLE YA FUE DECLARADA
+                                                }
+                                            }
                                           }
 			| Funcion
 			| ListVariables  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
@@ -63,13 +67,8 @@ SentenciaDeclarativa: Tipo ListVariables {for (String var : ((List)$2)) {
 			| FuncionIMPL {$$ = new NodoHoja("Sentencia declarativa");}
             ;
 
-ListVariables : ID {$$ = new List<String> ids; 
-                if(!existe(id:ambitoActual))
-                    TablaSimbolos.getSimbolo($1.sval).setLexema()    
-                        ids.add($1.sval + ":" + ambitoAct)} //CUANDO AGREGAMOS, DEBEMOS AGREGARLO CON EL AMBITO
-                else
-                        remove().
-              | ID ';' ListVariables {$$ = $3 ;((List)$$).add($1.sval)}
+ListVariables : ID {$$ = new List<String> ids; ((List)$$).add($1.sval);}
+              | ID ';' ListVariables {$$ = $3 ; ((List)$$).add($1.sval);}
               ;
 
 Objeto_clase: ID ListVariables
@@ -174,7 +173,7 @@ Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
                                             if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
                                                 (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
                                                 (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.addAmbito($2.sval":"+ambitoAct, ambitoAct);
+                                                TablaSimbolos.setAmbito($2.sval":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
@@ -188,7 +187,7 @@ Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
                                             if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
                                                 (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
                                                 (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.addAmbito($2.sval":"+ambitoAct, ambitoAct);
+                                                TablaSimbolos.setAmbito($2.sval":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
