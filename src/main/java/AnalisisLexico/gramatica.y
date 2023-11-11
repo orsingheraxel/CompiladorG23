@@ -51,7 +51,7 @@ SentenciaDeclarativa: Tipo ListVariables {  for (String var : ((List)$2)) { //CH
                                                 t.setAmbito(ambitoAct);
                                                 t.setUso("variable");
                                                 t.setTipo($1.sval);
-                                                TablaSimbolos.removeToken($1.sval);
+                                                TablaSimbolos.removeToken(var);
                                                 TablaSimbolos.addSimbolo(t.getLexema(),t);
                                                 }
                                             else {
@@ -74,9 +74,9 @@ ListVariables : ID {$$ = new List<String> ids; ((List)$$).add($1.sval);}
 Objeto_clase: ID ListVariables
     ;
 
-Tipo : USHORT {$$ = new NodoHoja($1.sval) ; (NodoHoja)$$.setTipo("USHORT");}
-     | INT {$$ = new NodoHoja($1.sval); (NodoHoja)$$.setTipo("INT");}
-     | DOUBLE {$$ = new NodoHoja($1.sval); (NodoHoja)$$.setTipo("DOUBLE");}
+Tipo : USHORT
+     | INT
+     | DOUBLE
      ;
 
 Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);}
@@ -89,7 +89,7 @@ Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);
 
 Expresion: Termino '+' Expresion { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                                     if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
-                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")//hacer conversiones cuando sea posible
+                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")//hacer conversiones cuando sea posible
                                     }ConversionExplicita
                                     }
 | Termino '-' Expresion {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
@@ -102,7 +102,7 @@ Termino: Factor '*' Termino {
                                 $$ = new NodoComun("*",(Nodo)$1, (Nodo)$3)
                                 if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())))
                                     if //Not conversion valida
-                                        AnalizadorLexico.agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.")
+                                        agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.");
                                 else {
                                     ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
                                 }
@@ -125,7 +125,7 @@ Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,
                                                     ((Nodo)$$).setTipo(((Nodo)$2).getTipo());
                                                     ((Nodo)$$).setUso("Condicion");
                                                      if (!((((Nodo)$2).getTipo()).equals(((Nodo)$4).getTipo()))){
-                                                         AnalizadorLexico.agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
+                                                         agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
                                                      }
                                                      }
             | '(' Expresion Comparador Expresion {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
@@ -298,9 +298,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 %%
   private NodoControl raiz;
   private String ambitoAct = "main";
-  static ArrayList<Error> erroresLexicos = new ArrayList<Error>();
-  static ArrayList<Error> erroresSintacticos = new ArrayList<Error>();
-  static ArrayList<String> estructuraReconocida = new ArrayList<String>();
+  static ArrayList<String> erroresSemanticos = new ArrayList<String>();
 
    public String buscarAmbito(String ambitoAct,String lexema){
             String ambito = ambitoAct;
