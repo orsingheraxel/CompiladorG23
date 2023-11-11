@@ -1,9 +1,10 @@
 package GeneracionCodigoIntermedio;
 import AnalisisLexico.*;
 
-public class Nodo {
-    private Nodo izq;
-    private Nodo der;
+
+public class Nodo extends ParserVal{
+    protected Nodo izq;
+    protected Nodo der;
     private Token t;
 
     //Incorporar un atributo Uso en la Tabla de Símbolos,
@@ -29,6 +30,15 @@ public class Nodo {
     public String getTipo(){
         return t.getTipo();
     }
+
+    public void setTipo(String tipo){
+        t.setTipo(tipo);
+    }
+
+    public void setLexema(String lex){
+        t.setTipo(lex);
+    }
+
     public String getUso(){
         return t.getUso();
     }
