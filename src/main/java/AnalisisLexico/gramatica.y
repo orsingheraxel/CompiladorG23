@@ -40,13 +40,13 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { $$ = new NodoComun("ReferenciaF
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF   {$$=$1;}
-		          | SalidaMensaje {$$=$1;}
+		  | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
 SentenciaDeclarativa: Tipo ListVariables {  for (String var : ((List)$2)) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
                                             Token t = TablaSimbolos.getToken(var);
-                                            if (t != null){
+                                            if (t.getTipo() != null){ //Buscamos si una variable tiene tipo
                                                 t.setLexema($1.sval + ":" + ambitoAct);
                                                 t.setAmbito(ambitoAct);
                                                 t.setUso("variable");
@@ -55,7 +55,7 @@ SentenciaDeclarativa: Tipo ListVariables {  for (String var : ((List)$2)) { //CH
                                                 TablaSimbolos.addSimbolo(t.getLexema(),t);
                                                 }
                                             else {
-                                                //ERROR SEMANTICO = VARIABLE YA FUE DECLARADA
+                                                AnalizadorLexico.agregarErrorSintactico("Ya existe una variable + var + definida en otro ambito");
                                                 }
                                             }
                                           }
@@ -164,7 +164,7 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
+Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
                                             actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
@@ -194,8 +194,9 @@ Funcion: VOID ID  Parametro CuerpoFuncion { String ambito = $2.sval;
       ;
 
 
-Parametro: '(' Tipo ID ')' {$$ = new NodoHoja($3.sval)
-                            ()}
+Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval)
+
+                           }
         | '(' Tipo ID {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  Tipo ID ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
@@ -229,7 +230,19 @@ OperadorAsignacion: '=' {$$=$1;}
                   | ASIG {$$=$1;}
                   ;
 
-Asignacion: ID OperadorAsignacion Expresion
+Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear asignacion valida
+						$$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
+						Token t = TablaSimbolos.getToken($1.sval);
+						if (t.getTipo() != null){
+							if (t.getLexema() ...) //ambito alcanzable
+								//chequear tipo expresion?
+								//set uso
+						}
+						else{
+							AnalizadorSintactico.agregarError("Variable " + var + " no definida");
+						}
+
+					    }
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
 	;
@@ -246,8 +259,9 @@ LlamadoExpresion:'(' Expresion ')' {}
 		;
 
 ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);)
-                                            AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");}
-                                           }
+                                            AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
+                                            }
+
                   | TOD '(' ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
