@@ -14,15 +14,15 @@ import java.util.*;
 
 %%
 Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); AnalizadorLexico.agregarEstructura("Reconoce programa ");}
-        | '{'ListSentencias {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
-	    | ListSentencias '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
-	    | ListSentencias {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' ");}
-	    |'{''}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Programa vacio ");}
+        | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
+	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
+	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' ");}
+	    |'{''}' {AnalizadorLexico.agregarErrorSintactico("Programa vacio ");}
         ;
 
 ListSentencias: Sentencia ','{$$=$1;}
 		| Sentencia ',' ListSentencias {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
-		| Sentencia  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| Sentencia  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$=$1;}
@@ -40,35 +40,37 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { $$ = new NodoComun("ReferenciaF
 SentenciaEjecutable: Asignacion
                   | LlamadoFuncion
                   | BloqueIF   {$$=$1;}
-		  | SalidaMensaje {$$=$1;}
+		          | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-SentenciaDeclarativa: Tipo ListVariables {  for (String var : ((List)$2)) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
-                                            Token t = TablaSimbolos.getToken(var);
-                                            if (t.getTipo() != null){ //Buscamos si una variable tiene tipo
-                                                t.setLexema($1.sval + ":" + ambitoAct);
-                                                t.setAmbito(ambitoAct);
-                                                t.setUso("variable");
-                                                t.setTipo($1.sval);
-                                                TablaSimbolos.removeToken(var);
-                                                TablaSimbolos.addSimbolo(t.getLexema(),t);
-                                                }
-                                            else {
-                                                AnalizadorLexico.agregarErrorSintactico("Ya existe una variable + var + definida en otro ambito");
-                                                }
+SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariable() != null) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
+                                                String var = ((ListVariables)$2).getVariable();
+                                                Token t = TablaSimbolos.getToken(var);
+                                                if (t != null){
+                                                    t.setLexema($1.sval + ":" + ambitoAct);
+                                                    t.setAmbito(ambitoAct);
+                                                    t.setUso("variable");
+                                                    t.setTipo($1.sval);
+                                                    TablaSimbolos.removeToken(var);
+                                                    TablaSimbolos.addSimbolo(t.getLexema(),t);
+                                                    }
+                                                else {
+                                                   agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
+                                                    }
                                             }
                                           }
 			| Funcion
-			| ListVariables  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
-			| Tipo  {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
-			| HerenciaComposicion {$$ = new NodoHoja("Sentencia declarativa");}
-			| Objeto_clase {$$ = new NodoHoja("Sentencia declarativa");}
-			| FuncionIMPL {$$ = new NodoHoja("Sentencia declarativa");}
+			| ListVariables{AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
+			| Tipo  {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
+			| HerenciaComposicion
+			| Objeto_clase
+			| FuncionIMPL
             ;
 
-ListVariables : ID {$$ = new List<String> ids; ((List)$$).add($1.sval);}
-              | ID ';' ListVariables {$$ = $3 ; ((List)$$).add($1.sval);}
+ListVariables : ID { $$ = new ListVariables();
+                    ((ListVariables)$$).addVariable($1.sval);}
+              | ID ';' ListVariables {$$ = $3 ; ((ListVariables)$$).addVariable($1.sval);}
               ;
 
 Objeto_clase: ID ListVariables
@@ -81,7 +83,7 @@ Tipo : USHORT
 
 Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);}
 	| ENTEROCORTO {$$ = new NodoHoja($1.sval) ; chequearEnteroCorto($1.sval);}
-	| '-' ENTEROCORTO {$$ = new NodoHoja($1.sval) ; $$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
+	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{$$ = new NodoHoja($1.sval) ; chequearDouble($1.sval);}
 	| '-' ENTERO {$$ = new NodoHoja($1.sval) ;chequearEnteroNegativo($2.sval);}
 	| '-' PUNTOFLOTANTE {$$ = new NodoHoja($1.sval) ; chequearDouble($2.sval);}
@@ -89,23 +91,23 @@ Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);
 
 Expresion: Termino '+' Expresion { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                                     if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
-                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.")//hacer conversiones cuando sea posible
-                                    }ConversionExplicita
+                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.");//hacer conversiones cuando sea posible
+                                    }
                                     }
 | Termino '-' Expresion {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
 | Termino {$$=$1;}
-| ConversionExplicita {$$ = $1}
+| ConversionExplicita {$$ = $1;}
         ;
 
 
-Termino: Factor '*' Termino {
-                                $$ = new NodoComun("*",(Nodo)$1, (Nodo)$3)
-                                if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())))
-                                    if //Not conversion valida
-                                        agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.");
-                                else {
-                                    ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                                }
+Termino: Factor '*' Termino {/*
+                                yyval = new NodoComun("*",(Nodo)val_peek(2), (Nodo)val_peek(0))
+                                 if (!(((Nodo)val_peek(2)).getTipo().equals(((Nodo)val_peek(0)).getTipo())))
+                                   if Not conversion valida
+                                                                     agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.");
+                                                             else {
+                                                                 ((Nodo)yyval).setTipo(((Nodo)val_peek(2)).getTipo());
+                                                             } */
                             }
 | Factor '/' Termino
 | Factor {$$ = $1;}
@@ -128,20 +130,20 @@ Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,
                                                          agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
                                                      }
                                                      }
-            | '(' Expresion Comparador Expresion {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
-            | Expresion Comparador Expresion ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
+            | '(' Expresion Comparador Expresion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
+            | Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
 
-BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3, new NodoControl("SentenciasELSE",(Nodo)$5);
-                                                                      $$= NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), SentenciasIF);
+BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3), new NodoControl("SentenciasELSE",(Nodo)$5));
+                                                                      $$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), SentenciasIF);
                                                                       AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
-	    | IF Condicion ListSentenciasIF END_IF {$$=NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3);
+	    | IF Condicion ListSentenciasIF END_IF {$$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3));
 	                                            AnalizadorLexico.agregarEstructura("Reconoce IF ");}
         ;
 
 ListSentenciasIF: '{' SentenciasIF '}'
-		        |  SentenciasIF '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
-                | '{' '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
+		        |  SentenciasIF '}' {AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
+                | '{' '}' {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
                 ;
 
 SentenciasIF: ListaSentencias
@@ -149,7 +151,7 @@ SentenciasIF: ListaSentencias
 
 ListaSentencias: SentenciaEjecutable ',' 
                | SentenciaEjecutable ',' ListaSentencias
-               | SentenciaEjecutable ListaSentencias {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
+               | SentenciaEjecutable ListaSentencias {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
                ;
 
 Comparador: '<' {$$=$1;}
@@ -168,12 +170,12 @@ Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
                                             actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
-                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
+                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3), new NodoControl("SentenciasFuncion",(Nodo)$3));
 
                                             if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
-                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
-                                                (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.setAmbito($2.sval":"+ambitoAct, ambitoAct);
+                                                ((Nodo)$2).setLexema($2.sval+":"+ambitoAct);
+                                                ((Nodo)$2).setUso("Funcion");
+                                                TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
@@ -182,27 +184,27 @@ Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
                                             actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
-                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3.sval), new NodoControl("SentenciasFuncion"),(Nodo)$3.sval));
+                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3), new NodoControl("SentenciasFuncion",(Nodo)$3));
 
                                             if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
-                                                (Nodo)$2.getToken().setLexema($2.sval":"+ambitoAct);
-                                                (Nodo)$2.getToken().setUso("Funcion");
-                                                TablaSimbolos.setAmbito($2.sval":"+ambitoAct, ambitoAct);
+                                                ((Nodo)$2).getToken().setLexema($2.sval+":"+ambitoAct);
+                                                ((Nodo)$2).setUso("Funcion");
+                                                TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
       ;
 
 
-Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval)
+Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
 
                            }
-        | '(' Tipo ID {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-        |  Tipo ID ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+        | '(' Tipo ID {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
+        |  Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
 CuerpoFuncion: '{' ListSentenciasFuncion '}'
-		|  ListSentenciasFuncion '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+		|  ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
                   ;
 
 ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
@@ -211,8 +213,8 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaDeclarativa ','
 		  | RETURN ','
 		  | RETURN ',' ListSentenciasFuncion
-		  | SentenciaEjecutable {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | SentenciaDeclarativa {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		  | SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | SentenciaDeclarativa {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 
@@ -231,7 +233,7 @@ OperadorAsignacion: '=' {$$=$1;}
                   ;
 
 Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear asignacion valida
-						$$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
+						/* $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
 						Token t = TablaSimbolos.getToken($1.sval);
 						if (t.getTipo() != null){
 							if (t.getLexema() ...) //ambito alcanzable
@@ -239,9 +241,10 @@ Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear 
 								//set uso
 						}
 						else{
-							AnalizadorSintactico.agregarError("Variable " + var + " no definida");
+							agregarErrorSemantico("Variable " + var + " no definida"); //SE DEBE CORTAR LA EJECUCION
+						    //break;
 						}
-
+                        */
 					    }
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
@@ -249,24 +252,24 @@ Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear 
 
 SentenciaControl: DO ListSentenciasIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO ListSentenciasIF UNTIL {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  |DO ListSentenciasIF UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
 
 LlamadoExpresion:'(' Expresion ')' {}
-		| Expresion ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+		| Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 		;
 
-ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);)
+ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 
-                  | TOD '(' ')' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
+                  | TOD '(' ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
 ListHerencia:'{' SentenciaListHerencia '}'
-		//| SentenciaListHerencia '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
+		//| SentenciaListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
 SentenciaListHerencia: Tipo ListVariables ','
@@ -286,7 +289,7 @@ FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Recono
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
-            | IMPL FOR ID ':' Funcion '}' {$$=new NodoHoja("Error sintactico"); AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+            | IMPL FOR ID ':' Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 		;
 
 //TEMA 21 ----------------------------------------------------
@@ -298,7 +301,12 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 %%
   private NodoControl raiz;
   private String ambitoAct = "main";
-  static ArrayList<String> erroresSemanticos = new ArrayList<String>();
+  static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
+
+  public void agregarErrorSemantico(String error){
+      Error e = new Error(error,AnalizadorLexico.getLineaAct());
+      erroresSemanticos.add(e);
+    }
 
    public String buscarAmbito(String ambitoAct,String lexema){
             String ambito = ambitoAct;

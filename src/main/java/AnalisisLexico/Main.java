@@ -50,6 +50,13 @@ public class Main {
                 escritor.println("Error Sintactico: " + elemento.getError() + " en la linea: " + elemento.getLinea());
             }
             escritor.println("");
+            escritor.println("-------------------------------------------ERRORES SEMANTICOS-------------------------------------------");
+            escritor.println(" ");
+            for (int i = 0; i < Parser.erroresSemanticos.size(); i++) {
+                Error elemento = Parser.erroresSemanticos.get(i);
+                escritor.println("Error Semantico: " + elemento.getError() + " en la linea: " + elemento.getLinea());
+            }
+            escritor.println("");
             escritor.println("-------------------------------------------WARNINGS-------------------------------------------");
             escritor.println(" ");
             for (int i = 0; i < AnalizadorLexico.warnings.size(); i++) {
