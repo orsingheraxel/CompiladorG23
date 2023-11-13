@@ -12,6 +12,11 @@ public class AS_Error_Digitos extends AccionSemantica{
     public void ejecutar(Token t, Reader entrada) throws IOException {
         AnalizadorLexico.agregarErrorLexico("Variable númerica mal definida");
         t.eliminarNoDigitos();
-        t.setId(ENTERO); //generamos un id para que siga compilando
+        try {
+            entrada.reset();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        t.setId(ENTERO); //Generamos un id para que siga compilando
     }
 }

@@ -14,20 +14,20 @@ import java.util.*;
 
 %%
 Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); AnalizadorLexico.agregarEstructura("Reconoce programa ");}
-        | '{'ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
-	    | ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
-	    | ListSentencias {AnalizadorLexico.agregarErrorSintactico("Se esperan '{' '}' ");}
-	    |'{''}' {AnalizadorLexico.agregarErrorSintactico("Programa vacio ");}
+        //| '{'ListSentencias error {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
+	    | error ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
         ;
 
 ListSentencias: Sentencia ','{$$=$1;}
 		| Sentencia ',' ListSentencias {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
-		| Sentencia  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| Sentencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$=$1;}
         | SentenciaEjecutable {$$=$1;}
         | SentenciaDeclarativa {$$=$1;}
+        | RETURN error {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
 ReferenciaObjeto: ID '.' ID {AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
@@ -61,8 +61,8 @@ SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariab
                                             }
                                           }
 			| Funcion
-			| ListVariables{AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
-			| Tipo  {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
+			| error ListVariables{AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
+			| Tipo error {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
 			| HerenciaComposicion
 			| Objeto_clase
 			| FuncionIMPL
@@ -130,29 +130,56 @@ Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,
                                                          agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
                                                      }
                                                      }
-            | '(' Expresion Comparador Expresion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
-            | Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
+            | '(' Expresion Comparador Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
+            | error Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
 
-BloqueIF: IF Condicion ListSentenciasIF ELSE ListSentenciasIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3), new NodoControl("SentenciasELSE",(Nodo)$5));
+BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3), new NodoControl("SentenciasELSE",(Nodo)$5));
                                                                       $$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), SentenciasIF);
                                                                       AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
-	    | IF Condicion ListSentenciasIF END_IF {$$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3));
+	    | IF Condicion CuerpoIF END_IF {$$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3));
 	                                            AnalizadorLexico.agregarEstructura("Reconoce IF ");}
+	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF al final del programa ");}
+	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF al final del programa ");}
+	    //| IF Condicion CuerpoIF error CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+        | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
+        | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
+        | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
+        | IF Condicion SentenciaEjecutable ',' error CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+        | IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+        //| IF Condicion CuerpoIF error SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+        | IF Condicion SentenciaEjecutable error ELSE  CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
+        //| IF Condicion SentenciaEjecutable error ELSE SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
+        | IF Condicion CuerpoIF ELSE SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' " );}
+        //| IF Condicion SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
+        | IF Condicion SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
-ListSentenciasIF: '{' SentenciasIF '}'
-		        |  SentenciasIF '}' {AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
-                | '{' '}' {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
-                ;
+CuerpoIF: '{' SentenciasIF '}'
+        | RETURN ','
+        | RETURN error {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
+        | '{' SentenciasIF RETURN ',' '}'
+        | '{' SentenciasIF RETURN error '}' {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
+        | error SentenciasIF '}' {AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
+		|'{' SentenciasIF error {AnalizadorLexico.agregarErrorSintactico("Falta un '}'"); }
+        | '{' '}' {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
+        ;
 
 SentenciasIF: ListaSentencias
                 ;
 
-ListaSentencias: SentenciaEjecutable ',' 
+ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
+               | SentenciaEjecutable ','
+               | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
                | SentenciaEjecutable ',' ListaSentencias
-               | SentenciaEjecutable ListaSentencias {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
+               | SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
+               | SentenciaEjecutable error ListaSentencias {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
                ;
+
+
 
 Comparador: '<' {$$=$1;}
           | '>' {$$=$1;}
@@ -193,18 +220,23 @@ Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
                                             }
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
+
+      | VOID error Parametro CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
+      | VOID ID error ')' CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+      | VOID ID '(' error CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
       ;
 
 
 Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
 
                            }
-        | '(' Tipo ID {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-        |  Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+        | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
+        |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
 CuerpoFuncion: '{' ListSentenciasFuncion '}'
-		|  ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+		| error ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+		| '{' ListSentenciasFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
                   ;
 
 ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
@@ -213,26 +245,30 @@ ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
 		  | SentenciaDeclarativa ','
 		  | RETURN ','
 		  | RETURN ',' ListSentenciasFuncion
-		  | SentenciaEjecutable {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | SentenciaDeclarativa {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		  // | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          // | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          // | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-
-
 LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+            | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID LlamadoExpresion  {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
 
 SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
             | PRINT Factor {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
                             AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
+            | PRINT error {AnalizadorLexico.agregarErrorSintactico("La funcion PRINT no acepta esa declaracion ");}
             ;
 
 OperadorAsignacion: '=' {$$=$1;}
                   | ASIG {$$=$1;}
                   ;
 
-Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear asignacion valida
+Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");}
+
+                        {//Chequear ambito de ID y chequear asignacion valida
 						/* $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
 						Token t = TablaSimbolos.getToken($1.sval);
 						if (t.getTipo() != null){
@@ -246,13 +282,14 @@ Asignacion: ID OperadorAsignacion Expresion {//Chequear ambito de ID y chequear 
 						}
                         */
 					    }
+
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
 	;
 
-SentenciaControl: DO ListSentenciasIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
+SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO ListSentenciasIF UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  |DO CuerpoIF UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
@@ -276,6 +313,10 @@ SentenciaListHerencia: Tipo ListVariables ','
 		| Tipo ListVariables ',' SentenciaListHerencia
 		| ListFuncion ','
 		| ListFuncion ',' SentenciaListHerencia
+        | Tipo ListVariables error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | Tipo ListVariables error SentenciaListHerencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | ListFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | ListFuncion error SentenciaListHerencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
@@ -286,10 +327,13 @@ HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
 
 FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   | VOID ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
+                  //| VOID ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+                  //| VOID ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
-            | IMPL FOR ID ':' Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+            | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+            | IMPL FOR ID ':' '{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
 //TEMA 21 ----------------------------------------------------
@@ -330,7 +374,11 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
     }
 
    public void chequearEnteroNegativo(String m){
-          Integer numero = Integer.parseInt(m);
+          try {
+                Integer numero = Integer.parseInt(m);
+          } catch (Exception e) {
+                AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
+          }
           if (numero <= 32768){
                if (TablaSimbolos.existeSimbolo(m)) {
                      TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
@@ -344,7 +392,11 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
    }
 
    public void chequearEnteroPositivo(String m){
-             Integer numero = Integer.parseInt(m);
+             try {
+                  Integer numero = Integer.parseInt(m);
+             } catch (Exception e) {
+                  AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
+             }
              if (numero <= 32767){
                   if (TablaSimbolos.existeSimbolo(m)) {
                         TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
@@ -358,7 +410,11 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
    }
 
    public void chequearEnteroCorto(String m){
-                Integer numero = Integer.parseInt(m);
+                try {
+                     Integer numero = Integer.parseInt(m);
+                } catch (Exception e) {
+                     AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
+                }
                 if (numero <= 255){
                      if (TablaSimbolos.existeSimbolo(m)) {
                            TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
@@ -373,6 +429,12 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 
    public void chequearDouble(String m){
            String n = m.replace('D', 'e').replace('d','e');
+           try {
+                Double numero = Double.parseDouble(n);
+           }
+           } catch (Exception e) {
+                AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
+           }
            Double numero = Double.parseDouble(n);
            if (((numero >= 2.2250738585072014E-308) && (numero <= 1.7976931348623157E308)) || numero == 0.0){
                 if (TablaSimbolos.existeSimbolo(m)) {
