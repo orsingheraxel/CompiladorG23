@@ -98,18 +98,11 @@ Constante: ENTERO  {
                    ((Nodo)$$).setUso("Constante");
                    TablaSimbolos.setUso($1.sval, "Constante");
                    }
-    | ENTEROCORTO {
-                    chequearEnteroCorto($1.sval);
-                    $$ = new NodoHoja($1.sval)
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);
-                    ((Nodo)$$).setUso("Constante");
-                    TablaSimbolos.setUso($1.sval, "Constante");
-                  }
 	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{
-	                chequearDouble($1.sval);}
+	                chequearDouble($1.sval);
 	                $$ = new NodoHoja($1.sval);
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
                     ((Nodo)$$).setUso("Constante");
                     TablaSimbolos.setUso($1.sval, "Constante");
                     }
@@ -122,9 +115,9 @@ Constante: ENTERO  {
                     TablaSimbolos.setUso($1.sval, "Constante");
 	                }
 	| '-' PUNTOFLOTANTE {
-                            chequearDouble($1.sval);}
+                            chequearDouble($1.sval);
                             $$ = new NodoHoja($1.sval);
-                            ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);\
+                            ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
                             ((Nodo)$$).setUso("Constante");
                             TablaSimbolos.setUso($1.sval, "Constante");
                         }
@@ -251,7 +244,7 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
+Funcion: VOID ID Parametro '{'ListSentenciasFuncion'}' { String ambito = $2.sval;
                                             actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
@@ -265,7 +258,7 @@ Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
 
-      | VOID error Parametro CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
+      | VOID error Parametro ListSentenciasFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
 
@@ -277,11 +270,6 @@ Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
         | '(' ')'
         | '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
-        ;
-
-CuerpoFuncion: '{' ListSentenciasFuncion '}'
-		| error ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
-		| '{' ListSentenciasFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
         ;
 
 ListSentenciasFuncion:ListSentenciasFuncion ',' SentenciaDeclarativa
