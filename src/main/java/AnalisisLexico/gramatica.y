@@ -19,9 +19,8 @@ Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); An
         ;
 
 ListSentencias: Sentencia ','{$$=$1;}
-		| Sentencia ',' ListSentencias {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
-		| Sentencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-		//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		| ListSentencias','Sentencia   {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
+		| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$=$1;}
@@ -70,7 +69,7 @@ SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariab
 
 ListVariables : ID { $$ = new ListVariables();
                     ((ListVariables)$$).addVariable($1.sval);}
-              | ID ';' ListVariables {$$ = $3 ; ((ListVariables)$$).addVariable($1.sval);}
+              | ListVariables';'ID   {$$ = $3 ; ((ListVariables)$$).addVariable($3.sval);}
               ;
 
 Objeto_clase: ID ListVariables
@@ -89,18 +88,18 @@ Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);
 	| '-' PUNTOFLOTANTE {$$ = new NodoHoja($1.sval) ; chequearDouble($2.sval);}
 	;
 
-Expresion: Termino '+' Expresion { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
+Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                                     if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
                                         agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.");//hacer conversiones cuando sea posible
                                     }
                                     }
-| Termino '-' Expresion {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
+| Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
 | Termino {$$=$1;}
 | ConversionExplicita {$$ = $1;}
         ;
 
 
-Termino: Factor '*' Termino {/*
+Termino: Termino'*'Factor   {/*
                                 yyval = new NodoComun("*",(Nodo)val_peek(2), (Nodo)val_peek(0))
                                  if (!(((Nodo)val_peek(2)).getTipo().equals(((Nodo)val_peek(0)).getTipo())))
                                    if Not conversion valida
@@ -109,10 +108,10 @@ Termino: Factor '*' Termino {/*
                                                                  ((Nodo)yyval).setTipo(((Nodo)val_peek(2)).getTipo());
                                                              } */
                             }
-| Factor '/' Termino
+| Termino'/'Factor
 | Factor {$$ = $1;}
-| Factor_RefObjeto '*' Termino
-| Factor_RefObjeto '/' Termino
+| Termino'*' Factor_RefObjeto
+| Termino'/' Factor_RefObjeto
 | Factor_RefObjeto
 ;
 
@@ -139,9 +138,8 @@ BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {Nodo SentenciasIF = new No
                                                                       AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
 	    | IF Condicion CuerpoIF END_IF {$$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3));
 	                                            AnalizadorLexico.agregarEstructura("Reconoce IF ");}
-	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF al final del programa ");}
-	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF al final del programa ");}
-	    //| IF Condicion CuerpoIF error CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
+	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
@@ -149,12 +147,9 @@ BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {Nodo SentenciasIF = new No
         | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable ',' error CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
-        | IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
-        //| IF Condicion CuerpoIF error SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
+        | IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
         | IF Condicion SentenciaEjecutable error ELSE  CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
-        //| IF Condicion SentenciaEjecutable error ELSE SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' " );}
-        //| IF Condicion SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
@@ -168,15 +163,13 @@ CuerpoIF: '{' SentenciasIF '}'
         | '{' '}' {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
         ;
 
-SentenciasIF: ListaSentencias
+SentenciasIF: ListaSentenciasIF
                 ;
 
 ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
                | SentenciaEjecutable ','
-               | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
-               | SentenciaEjecutable ',' ListaSentencias
-               | SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
-               | SentenciaEjecutable error ListaSentencias {AnalizadorLexico.agregarErrorSintactico("Falta una ','"); }
+               | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
+               | ListaSentenciasIF',' SentenciaEjecutable
                ;
 
 
@@ -207,23 +200,7 @@ Funcion: VOID ID Parametro CuerpoFuncion { String ambito = $2.sval;
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
 
-      | VOID ID '(' ')' CuerpoFuncion  {    String ambito = $2.sval;
-                                            actualizarAmbito(ambitoAct, ambito);
-                                            //chequear si las variables pasadas por parametro estan en el ambito anterior
-
-                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3), new NodoControl("SentenciasFuncion",(Nodo)$3));
-
-                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
-                                                ((Nodo)$2).getToken().setLexema($2.sval+":"+ambitoAct);
-                                                ((Nodo)$2).setUso("Funcion");
-                                                TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
-                                            }
-
-                                            AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
-
       | VOID error Parametro CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
-      | VOID ID error ')' CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
-      | VOID ID '(' error CuerpoFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
       ;
 
 
@@ -232,22 +209,25 @@ Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+        | '(' ')'
+        | '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
+        | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
 CuerpoFuncion: '{' ListSentenciasFuncion '}'
 		| error ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 		| '{' ListSentenciasFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
-                  ;
+        ;
 
-ListSentenciasFuncion:SentenciaDeclarativa ',' ListSentenciasFuncion
-		  | SentenciaEjecutable ',' ListSentenciasFuncion
+ListSentenciasFuncion:ListSentenciasFuncion ',' SentenciaDeclarativa
+		  | ListSentenciasFuncion ',' SentenciaEjecutable
 		  | SentenciaEjecutable ','
 		  | SentenciaDeclarativa ','
 		  | RETURN ','
-		  | RETURN ',' ListSentenciasFuncion
-		  // | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          // | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          // | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		  | ListSentenciasFuncion ',' RETURN
+		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
@@ -289,7 +269,7 @@ Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura(
 
 SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO CuerpoIF UNTIL {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  |DO CuerpoIF UNTIL error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
@@ -310,13 +290,13 @@ ListHerencia:'{' SentenciaListHerencia '}'
 		;
 
 SentenciaListHerencia: Tipo ListVariables ','
-		| Tipo ListVariables ',' SentenciaListHerencia
+		| SentenciaListHerencia ',' Tipo ListVariables
 		| ListFuncion ','
-		| ListFuncion ',' SentenciaListHerencia
+		| SentenciaListHerencia ',' ListFuncion
         | Tipo ListVariables error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        | Tipo ListVariables error SentenciaListHerencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | SentenciaListHerencia error Tipo ListVariables {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         | ListFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        | ListFuncion error SentenciaListHerencia {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | SentenciaListHerencia error ListFuncion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
@@ -326,9 +306,7 @@ HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
                   ;
 
 FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
-                  | VOID ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
-                  //| VOID ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
-                  //| VOID ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
+                  //si hay un parentesis mal escrito lo reconoce Funcion.
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
