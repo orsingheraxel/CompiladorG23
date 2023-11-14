@@ -29,15 +29,18 @@ Sentencia: SentenciaControl {$$=$1;}
         | RETURN error {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
-ReferenciaObjeto: ID '.' ID {AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
+ReferenciaObjeto: ID '.' ID {//chequear q exista y bla bla
+                            $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
+                            AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
+                                                $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
                                                 AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
                        ;
 
-SentenciaEjecutable: Asignacion
-                  | LlamadoFuncion
+SentenciaEjecutable: Asignacion {$$=$1;}
+                  | LlamadoFuncion {$$=$1;}
                   | BloqueIF   {$$=$1;}
 		          | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
@@ -80,26 +83,73 @@ Tipo : USHORT
      | DOUBLE
      ;
 
-Constante: ENTERO {$$ = new NodoHoja($1.sval) ; chequearEnteroPositivo($1.sval);}
-	| ENTEROCORTO {$$ = new NodoHoja($1.sval) ; chequearEnteroCorto($1.sval);}
+Constante: ENTERO  {
+                    chequearEnteroPositivo($1.sval);
+                    $$ = new NodoHoja($1.sval) ;
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setUso("Constante");
+                    TablaSimbolos.setUso($1.sval, "Constante");
+                   }
+
+	| ENTEROCORTO {$$ = new NodoHoja($1.sval)
+	               chequearEnteroCorto($1.sval);
+	               ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                   chequearEnteroPositivo($1.sval);
+                   ((Nodo)$$).setUso("Constante");
+                   TablaSimbolos.setUso($1.sval, "Constante");
+                   }
+    | ENTEROCORTO {
+                    chequearEnteroCorto($1.sval);
+                    $$ = new NodoHoja($1.sval)
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);
+                    ((Nodo)$$).setUso("Constante");
+                    TablaSimbolos.setUso($1.sval, "Constante");
+                  }
 	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
-	| PUNTOFLOTANTE{$$ = new NodoHoja($1.sval) ; chequearDouble($1.sval);}
-	| '-' ENTERO {$$ = new NodoHoja($1.sval) ;chequearEnteroNegativo($2.sval);}
-	| '-' PUNTOFLOTANTE {$$ = new NodoHoja($1.sval) ; chequearDouble($2.sval);}
+	| PUNTOFLOTANTE{
+	                chequearDouble($1.sval);}
+	                $$ = new NodoHoja($1.sval);
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);
+                    ((Nodo)$$).setUso("Constante");
+                    TablaSimbolos.setUso($1.sval, "Constante");
+                    }
+
+	| '-' ENTERO    {
+                    $$ = new NodoHoja($1.sval);
+                    chequearEnteroNegativo($2.sval);
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setUso("Constante");
+                    TablaSimbolos.setUso($1.sval, "Constante");
+	                }
+	| '-' PUNTOFLOTANTE {
+                            chequearDouble($1.sval);}
+                            $$ = new NodoHoja($1.sval);
+                            ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval);\
+                            ((Nodo)$$).setUso("Constante");
+                            TablaSimbolos.setUso($1.sval, "Constante");
+                        }
 	;
 
 Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
-                                    if (!(((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))){
-                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles.");//hacer conversiones cuando sea posible
+                                    if (!((Nodo)($1).getTipo().equals((Nodo)($3).getTipo()))){
+                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
                                     }
+                                    if (!(Nodo)($1).getAmbito().equals((Nodo)($3).getAmbito())){
+                                          agregarErrorSemantico("Variable fuera de alcance ");
                                     }
+
+
+
+                                    }
+
 | Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
 | Termino {$$=$1;}
 | ConversionExplicita {$$ = $1;}
         ;
 
 
-Termino: Termino'*'Factor   {/*
+Termino: Termino '*' Factor   {$$=new NodoComun("*",(Nodo)$1.sval,(Nodo)$2.sval);}
+                                /*
                                 yyval = new NodoComun("*",(Nodo)val_peek(2), (Nodo)val_peek(0))
                                  if (!(((Nodo)val_peek(2)).getTipo().equals(((Nodo)val_peek(0)).getTipo())))
                                    if Not conversion valida
@@ -107,15 +157,30 @@ Termino: Termino'*'Factor   {/*
                                                              else {
                                                                  ((Nodo)yyval).setTipo(((Nodo)val_peek(2)).getTipo());
                                                              } */
-                            }
-| Termino'/'Factor
+
+| Termino'/'Factor {$$=new NodoComun("/",(Nodo)$1.sval,(Nodo)$2.sval);}
 | Factor {$$ = $1;}
-| Termino'*' Factor_RefObjeto
-| Termino'/' Factor_RefObjeto
-| Factor_RefObjeto
+| Termino'*' Factor_RefObjeto {$$=new NodoComun("*",(Nodo)$1.sval,(Nodo)$2.sval);}
+| Termino'/' Factor_RefObjeto {$$=new NodoComun("/",(Nodo)$1.sval,(Nodo)$2.sval);}
+| Factor_RefObjeto {$$=$1;}
 ;
 
-Factor: ID //chequear si existe la variable, y a su vez ver si esta al alcance (chequear ambito)
+Factor: ID {$$ = new NodoHoja($1.sval);
+            String var = $1.sval + ":" + ambitoAct
+            if (!TablaSimbolos.existeSimbolo(var)){
+                agregarErrorSemantico("Variable no declarada en este ambito ");
+            }
+            else {
+                if(!TablaSimbolos.getUso(var).equals("Variable")){
+                    agregarErrorSemantico("El ID en uso no es una variable ");
+                }
+                else {
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setUso(TablaSimbolos.getUso($1.sval));
+                    ((Nodo)$$).setAmbito(TablaSimbolos.getAmbito($1.sval));
+                }
+            }
+            }
 	| Constante {$$=$1;}
 	;
 
@@ -230,10 +295,10 @@ ListSentenciasFuncion:ListSentenciasFuncion ',' SentenciaDeclarativa
           | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')' {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+LlamadoFuncion: ID '(' ')' {$$=new NodoComun("Llamado Funcion",(Nodo)$1, null);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-            | ID LlamadoExpresion  {AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,(Nodo)$2);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
 
 SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
@@ -274,8 +339,9 @@ SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UN
 
 //TEMA 29 --------------------------------------------------
 
-LlamadoExpresion:'(' Expresion ')' {}
-		| Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+LlamadoExpresion:'(' Expresion ')' {$$ = $2;}
+		| error Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 		;
 
 ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);

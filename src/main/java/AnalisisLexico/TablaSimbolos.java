@@ -41,6 +41,21 @@ public class TablaSimbolos {
         simbolos.put(lexema, t);
     }
 
+    public static String getUso(String lexema){
+        Token t = simbolos.get(lexema);
+        return t.getUso();
+    }
+
+    public static String getTipo(String lexema){
+        Token t = simbolos.get(lexema);
+        return t.getTipo();
+    }
+
+    public static String getAmbito(String lexema){
+        Token t = simbolos.get(lexema);
+        return t.getAmbito();
+    }
+
     public static void setAmbito (String lexema,String ambito){
         Token t = simbolos.get(lexema);
         t.setAmbito(ambito);

@@ -9,6 +9,6 @@ public class AS11 extends AccionSemantica{
     public void ejecutar(Token t, Reader entrada) { //CHEQUEA RANGO ENTEROS Y AGREGA A TS
         t.eliminarNoDigitos();
         t.setId(ENTERO);
-        t.setTipo("INT");
+        t.setTipo("ENTERO");
     }
 }
