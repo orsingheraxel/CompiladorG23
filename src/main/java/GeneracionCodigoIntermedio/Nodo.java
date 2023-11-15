@@ -35,6 +35,14 @@ public class Nodo extends ParserVal{
         t.setTipo(tipo);
     }
 
+    public void setAmbito(String amb){
+        t.setAmbito(amb);
+    }
+
+    public String getAmbito(){
+        return t.getAmbito();
+    }
+
     public void setLexema(String lex){
         t.setTipo(lex);
     }

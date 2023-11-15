@@ -70,6 +70,11 @@ public class Main {
                     Error elemento = AnalizadorLexico.estructuraReconocida.get(i);
                     escritor.println("Estructura: " + elemento.getError() + " en la linea: " + elemento.getLinea());
             }
+            escritor.println(" ");
+            escritor.println("-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------");
+            escritor.println(" ");
+
+
             br.close();
             escritor.close();
             fw.close();

@@ -1,7 +1,8 @@
 package GeneracionCodigoIntermedio;
-import AnalisisLexico.ParserVal;
+
 import java.util.ArrayList;
 import java.util.List;
+import AnalisisLexico.*;
 
 public class ListVariables extends ParserVal {
 

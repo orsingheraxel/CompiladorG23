@@ -91,7 +91,7 @@ Constante: ENTERO  {
                     TablaSimbolos.setUso($1.sval, "Constante");
                    }
 
-	| ENTEROCORTO {$$ = new NodoHoja($1.sval)
+	| ENTEROCORTO {$$ = new NodoHoja($1.sval);
 	               chequearEnteroCorto($1.sval);
 	               ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
                    chequearEnteroPositivo($1.sval);
@@ -124,10 +124,10 @@ Constante: ENTERO  {
 	;
 
 Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
-                                    if (!((Nodo)($1).getTipo().equals((Nodo)($3).getTipo()))){
+                                    if {(!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))
                                         agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
                                     }
-                                    if (!(Nodo)($1).getAmbito().equals((Nodo)($3).getAmbito())){
+                                    if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                                           agregarErrorSemantico("Variable fuera de alcance ");
                                     }
 
@@ -135,31 +135,61 @@ Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
 
                                     }
 
-| Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);}
+| Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
+                        if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                            agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
+                        }
+                        if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
+                            agregarErrorSemantico("Variable fuera de alcance ");
+                        }
+
+                      }
 | Termino {$$=$1;}
 | ConversionExplicita {$$ = $1;}
         ;
 
 
-Termino: Termino '*' Factor   {$$=new NodoComun("*",(Nodo)$1.sval,(Nodo)$2.sval);}
-                                /*
-                                yyval = new NodoComun("*",(Nodo)val_peek(2), (Nodo)val_peek(0))
-                                 if (!(((Nodo)val_peek(2)).getTipo().equals(((Nodo)val_peek(0)).getTipo())))
-                                   if Not conversion valida
-                                                                     agregarErrorSemantico("No se puede realizar la multiplicacion. Tipos incompatibles.");
-                                                             else {
-                                                                 ((Nodo)yyval).setTipo(((Nodo)val_peek(2)).getTipo());
-                                                             } */
+Termino: Termino '*' Factor   {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
+                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
+                               }
+                               if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
+                                    agregarErrorSemantico("Variable fuera de alcance ");
+                               }
 
-| Termino'/'Factor {$$=new NodoComun("/",(Nodo)$1.sval,(Nodo)$2.sval);}
+                              }
+
+| Termino'/'Factor {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
+                    if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
+                    }
+                    if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
+                        agregarErrorSemantico("Variable fuera de alcance ");
+                    }
+                    }
 | Factor {$$ = $1;}
-| Termino'*' Factor_RefObjeto {$$=new NodoComun("*",(Nodo)$1.sval,(Nodo)$2.sval);}
-| Termino'/' Factor_RefObjeto {$$=new NodoComun("/",(Nodo)$1.sval,(Nodo)$2.sval);}
+| Termino'*' Factor_RefObjeto {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
+                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
+                               }
+                               if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
+                                    agregarErrorSemantico("Variable fuera de alcance ");
+                               }
+
+                               }
+| Termino'/' Factor_RefObjeto {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
+                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
+                               }
+                               if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
+                                    agregarErrorSemantico("Variable fuera de alcance ");
+                               }
+                               }
 | Factor_RefObjeto {$$=$1;}
 ;
 
 Factor: ID {$$ = new NodoHoja($1.sval);
-            String var = $1.sval + ":" + ambitoAct
+            String var = $1.sval + ":" + ambitoAct;
             if (!TablaSimbolos.existeSimbolo(var)){
                 agregarErrorSemantico("Variable no declarada en este ambito ");
             }
@@ -244,7 +274,8 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: VOID ID Parametro '{'ListSentenciasFuncion'}' { String ambito = $2.sval;
+Funcion: VOID ID Parametro '{' ListSentenciasFuncion '}'
+                                            { String ambito = $2.sval;
                                             actualizarAmbito(ambitoAct, ambito);
                                             //chequear si las variables pasadas por parametro estan en el ambito anterior
 
@@ -258,10 +289,10 @@ Funcion: VOID ID Parametro '{'ListSentenciasFuncion'}' { String ambito = $2.sval
 
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
 
-      | VOID error Parametro ListSentenciasFuncion {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
+      | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
-
+//chequear
 Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
 
                            }
@@ -283,10 +314,12 @@ ListSentenciasFuncion:ListSentenciasFuncion ',' SentenciaDeclarativa
           | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')' {$$=new NodoComun("Llamado Funcion",(Nodo)$1, null);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+//chequear que ID sea una clase realmente
+LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-            | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,(Nodo)$2);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            ;
 
 SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
@@ -318,6 +351,9 @@ Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura(
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
+	| ReferenciaObjeto OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
+	| ID OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
+	| OperadorAsignacion ID {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 	;
 
 SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
@@ -332,7 +368,7 @@ LlamadoExpresion:'(' Expresion ')' {$$ = $2;}
 		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 		;
 
-ConversionExplicita: TOD LlamadoExpresion { $$ = new NodoControl("TOD",(Nodo)$2);
+ConversionExplicita: TOD LlamadoExpresion {$$ = new NodoControl("TOD",(Nodo)$2);
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 
@@ -343,7 +379,9 @@ ListHerencia:'{' SentenciaListHerencia '}'
 		//| SentenciaListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
-SentenciaListHerencia: Tipo ListVariables ','
+SentenciaListHerencia: Tipo ListVariables ',' {
+
+                                               }
 		| SentenciaListHerencia ',' Tipo ListVariables
 		| ListFuncion ','
 		| SentenciaListHerencia ',' ListFuncion
@@ -353,11 +391,18 @@ SentenciaListHerencia: Tipo ListVariables ','
         | SentenciaListHerencia error ListFuncion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
-HerenciaComposicion: CLASS ID ListHerencia   { String ambito = $2.sval;
-                                                actualizarAmbito(ambitoAct, ambito);
-                                                AnalizadorLexico.agregarEstructura("Reconoce CLASE");}
-
-                  ;
+HerenciaComposicion: CLASS ID ListHerencia   {
+                                               if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct){
+                                                   String ambito = $2.sval;
+                                                   actualizarAmbito(ambitoAct, ambito);
+                                                   TablaSimbolos.getToken($2.sval).setLexema($2.sval+":"+ambitoAct);
+                                                   TablaSimbolos.getToken($2.sval).setUso("Clase");
+                                                   TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
+                                                   AnalizadorLexico.agregarEstructura("Reconoce CLASE");
+                                               } else {
+                                                    agregarErrorSemantico("Clase " + t + " ya definida en el ambito actual");}
+                                              }
+                         ;
 
 FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   //si hay un parentesis mal escrito lo reconoce Funcion.
@@ -406,76 +451,75 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
     }
 
    public void chequearEnteroNegativo(String m){
-          try {
-                Integer numero = Integer.parseInt(m);
-          } catch (Exception e) {
-                AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
-          }
-          if (numero <= 32768){
-               if (TablaSimbolos.existeSimbolo(m)) {
-                     TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
-               } else {
-                     TablaSimbolos.addNuevoSimbolo(m);
-                     TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
-               }
-          } else {
-               AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
-          }
+             try {
+                   Integer numero = Integer.parseInt(m);
+                   if (numero <= 32768){
+                       if (TablaSimbolos.existeSimbolo(m)) {
+                         TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
+                       } else {
+                         TablaSimbolos.addNuevoSimbolo(m);
+                         TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
+                       }
+                 } else {
+                   AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
+                 }
+             } catch (Exception e) {
+                   AnalizadorLexico.agregarErrorLexico("Entero negativo fuera de rango");
+             }
    }
 
    public void chequearEnteroPositivo(String m){
-             try {
-                  Integer numero = Integer.parseInt(m);
-             } catch (Exception e) {
-                  AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
-             }
-             if (numero <= 32767){
-                  if (TablaSimbolos.existeSimbolo(m)) {
+                try {
+                     Integer numero = Integer.parseInt(m);
+                    if (numero <= 32767){
+                      if (TablaSimbolos.existeSimbolo(m)) {
                         TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
-                  } else {
+                      } else {
                         TablaSimbolos.addNuevoSimbolo(m);
                         TablaSimbolos.addAtributo(m, AccionSemantica.ENTERO, AnalizadorLexico.getLineaAct());
-                  }
-             } else {
-                  AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
-             }
+                      }
+                    } else {
+                      AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
+                    }
+                } catch (Exception e) {
+                     AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
+                }
    }
 
    public void chequearEnteroCorto(String m){
                 try {
                      Integer numero = Integer.parseInt(m);
+                     if (numero <= 255){
+                                          if (TablaSimbolos.existeSimbolo(m)) {
+                                                TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
+                                          } else {
+                                                TablaSimbolos.addNuevoSimbolo(m);
+                                                TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
+                                          }
+                                     } else {
+                                          AnalizadorLexico.agregarErrorLexico("Entero corto fuera de rango");
+                                     }
                 } catch (Exception e) {
                      AnalizadorLexico.agregarErrorLexico("Entero positivo fuera de rango");
                 }
-                if (numero <= 255){
-                     if (TablaSimbolos.existeSimbolo(m)) {
-                           TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
-                     } else {
-                           TablaSimbolos.addNuevoSimbolo(m);
-                           TablaSimbolos.addAtributo(m, AccionSemantica.ENTEROCORTO, AnalizadorLexico.getLineaAct());
-                     }
-                } else {
-                     AnalizadorLexico.agregarErrorLexico("Entero corto fuera de rango");
-                }
+
          }
 
    public void chequearDouble(String m){
            String n = m.replace('D', 'e').replace('d','e');
            try {
                 Double numero = Double.parseDouble(n);
-           }
-           } catch (Exception e) {
-                AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
-           }
-           Double numero = Double.parseDouble(n);
-           if (((numero >= 2.2250738585072014E-308) && (numero <= 1.7976931348623157E308)) || numero == 0.0){
-                if (TablaSimbolos.existeSimbolo(m)) {
-                      TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                if (((numero >= 2.2250738585072014E-308) && (numero <= 1.7976931348623157E308)) || numero == 0.0){
+                    if (TablaSimbolos.existeSimbolo(m)) {
+                         TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                     } else {
+                         TablaSimbolos.addNuevoSimbolo(m);
+                         TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                    }
                 } else {
-                      TablaSimbolos.addNuevoSimbolo(m);
-                      TablaSimbolos.addAtributo(m, AccionSemantica.PUNTOFLOTANTE, AnalizadorLexico.getLineaAct());
+                     AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
                 }
-           } else {
+           } catch (Exception e) {
                 AnalizadorLexico.agregarErrorLexico("Double fuera de rango");
            }
       }
