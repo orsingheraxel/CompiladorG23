@@ -42,11 +42,13 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
 SentenciaEjecutable: Asignacion {$$=$1;}
                   | LlamadoFuncion {$$=$1;}
                   | BloqueIF   {$$=$1;}
-		          | SalidaMensaje {$$=$1;}
+		  | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
 SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declaradas) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
+                                                System.out.println(var);
+                                                System.out.println(t.getId());
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
                                                     t.setLexema($1.sval + ":" + ambitoAct);
@@ -60,6 +62,7 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
                                                    agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
                                                 }
                                             }
+                                            t.toString();
                                             variables_declaradas.clear();
                                           }
 			| Funcion
@@ -71,7 +74,7 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
             ;
 
 ListVariables : ID {variables_declaradas.add($1.sval);}
-              | ListVariables ';' ID   {$$ = $1 ; variables_declaradas.add($1.sval);}
+              | ListVariables ';' ID   {$$ = $1 ; variables_declaradas.add($3.sval);}
               ;
 
 Objeto_clase: ID ListVariables
@@ -390,16 +393,17 @@ SentenciaListHerencia: Tipo ListVariables ',' {
         | SentenciaListHerencia error ListFuncion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
-HerenciaComposicion: CLASS ID ListHerencia   { if (!(TablaSimbolos.existeSimbolo($2.sval))) && (){
+HerenciaComposicion: CLASS ID ListHerencia   { 	String ambito = $2.sval;
+						if (!(TablaSimbolos.existeSimbolo($2.sval))) { //PREGUNTAR TMB X USO EN COND
                                                    TablaSimbolos.getToken($2.sval).setAmbito(ambitoAct);
-                                                   String ambito = $2.sval;
                                                    actualizarAmbito(ambitoAct, ambito);
                                                    TablaSimbolos.getToken($2.sval).setUso("Clase");
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
                                                     agregarErrorSemantico("Clase " + $2.sval + " ya definida en el ambito actual");
                                                }
-                                              ambitoAct -= ":"+ambito;
+                                              int index = ambitoAct.lastIndexOf(":");
+                                              ambitoAct = ambitoAct.substring(0, index);
                                               }
 
                          ;

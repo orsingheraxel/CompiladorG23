@@ -7,6 +7,7 @@
  * This class provides some of the functionality
  * of the yacc/C 'union' directive
  */
+
 package AnalisisLexico;
 public class ParserVal
 {

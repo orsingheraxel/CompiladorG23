@@ -62,7 +62,11 @@ public class TablaSimbolos {
         simbolos.put(lexema, t);
     }
     public static Token getToken(String lexema) {
-        return simbolos.get(lexema);
+        try{
+            return simbolos.get(lexema);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static void removeToken(String lexema) {

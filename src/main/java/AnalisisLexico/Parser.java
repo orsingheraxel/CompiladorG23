@@ -18,6 +18,8 @@
 
 //#line 2 "gramatica.y"
 package AnalisisLexico;
+
+
 import GeneracionCodigoIntermedio.*;
 import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
@@ -623,7 +625,7 @@ final static String yyrule[] = {
 "FuncionIMPL : IMPL FOR ID ':' '{' Funcion error",
 };
 
-//#line 422 "gramatica.y"
+//#line 424 "gramatica.y"
   private NodoControl raiz;
   private String ambitoAct = "main";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
@@ -965,8 +967,13 @@ case 16:
 break;
 case 17:
 //#line 49 "gramatica.y"
-{  for (String var : variables_declaradas) { /*CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE*/
+{   for (String var : variables_declaradas) { /*CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE*/
+                                                //System.out.println("up");
                                                 Token t = TablaSimbolos.getToken(var);
+                                                //System.out.println("down");
+                                                //assert t != null;
+                                                //System.out.println(t.getId());
+                                                //System.out.println(var);
                                                 if (t != null){
                                                     t.setLexema(val_peek(1).sval + ":" + ambitoAct);
                                                     t.setAmbito(ambitoAct);
@@ -974,11 +981,12 @@ case 17:
                                                     t.setTipo(val_peek(1).sval);
                                                     TablaSimbolos.removeToken(var);
                                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
-                                                    }
+                                                    t.toString();
+                                                }
                                                 else {
-                                                   agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
-                                                    }
-                                            }
+                                                  agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
+                                                }
+}
                                             variables_declaradas.clear();
                                           }
 break;
@@ -996,7 +1004,7 @@ case 24:
 break;
 case 25:
 //#line 74 "gramatica.y"
-{yyval = val_peek(2) ; variables_declaradas.add(val_peek(2).sval);}
+{yyval = val_peek(2) ; variables_declaradas.add(val_peek(0).sval);}
 break;
 case 30:
 //#line 85 "gramatica.y"
@@ -1480,35 +1488,36 @@ case 136:
 break;
 case 137:
 //#line 393 "gramatica.y"
-{
-                                               if (!TablaSimbolos.existeSimbolo(val_peek(1).sval+":"+ambitoAct)){
-                                                   String ambito = val_peek(1).sval;
+{ 	String ambito = val_peek(1).sval;
+						if (!(TablaSimbolos.existeSimbolo(val_peek(1).sval))) { /*PREGUNTAR TMB X USO EN COND*/
+                                                   TablaSimbolos.getToken(val_peek(1).sval).setAmbito(ambitoAct);
                                                    actualizarAmbito(ambitoAct, ambito);
-                                                   TablaSimbolos.getToken(val_peek(1).sval).setLexema(val_peek(1).sval+":"+ambitoAct);
                                                    TablaSimbolos.getToken(val_peek(1).sval).setUso("Clase");
-                                                   TablaSimbolos.setAmbito(val_peek(1).sval+":"+ambitoAct, ambitoAct);
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
-                                                    agregarErrorSemantico("Clase " + t + " ya definida en el ambito actual");}
+                                                    agregarErrorSemantico("Clase " + val_peek(1).sval + " ya definida en el ambito actual");
+                                               }
+                                              int index = ambitoAct.lastIndexOf(":");
+                                              ambitoAct = ambitoAct.substring(0, index);
                                               }
 break;
 case 138:
-//#line 406 "gramatica.y"
+//#line 408 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
 break;
 case 139:
-//#line 410 "gramatica.y"
+//#line 412 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
 break;
 case 140:
-//#line 411 "gramatica.y"
+//#line 413 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 break;
 case 141:
-//#line 412 "gramatica.y"
+//#line 414 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 break;
-//#line 1436 "Parser.java"
+//#line 1437 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

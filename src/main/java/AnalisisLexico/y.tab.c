@@ -487,7 +487,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 422 "gramatica.y"
+#line 423 "gramatica.y"
   private NodoControl raiz;
   private String ambitoAct = "main";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
@@ -816,7 +816,7 @@ case 16:
 break;
 case 17:
 #line 49 "gramatica.y"
-{  for (String var : variables_declaradas) { /*CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE*/
+{   for (String var : variables_declaradas) { /*CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE*/
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
                                                     t.setLexema(yyvsp[-1].sval + ":" + ambitoAct);
@@ -825,10 +825,10 @@ case 17:
                                                     t.setTipo(yyvsp[-1].sval);
                                                     TablaSimbolos.removeToken(var);
                                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
-                                                    }
+                                                }
                                                 else {
                                                    agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
-                                                    }
+                                                }
                                             }
                                             variables_declaradas.clear();
                                           }
@@ -906,7 +906,7 @@ break;
 case 36:
 #line 125 "gramatica.y"
 { yyval = new NodoComun("+",(Nodo)yyvsp[-2],(Nodo)yyvsp[0]);
-                                    if {(!((Nodo)yyvsp[-2]).getTipo().equals(((Nodo)yyvsp[0]).getTipo()))
+                                    if (!((Nodo)yyvsp[-2]).getTipo().equals(((Nodo)yyvsp[0]).getTipo())){
                                         agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
                                     }
                                     if (!((Nodo)yyvsp[-2]).getAmbito().equals(((Nodo)yyvsp[0]).getAmbito())){
@@ -1331,32 +1331,32 @@ case 136:
 break;
 case 137:
 #line 393 "gramatica.y"
-{
-                                               if (!TablaSimbolos.existeSimbolo(yyvsp[-1].sval+":"+ambitoAct){
+{ if (!(TablaSimbolos.existeSimbolo(yyvsp[-1].sval))) && (){
+                                                   TablaSimbolos.getToken(yyvsp[-1].sval).setAmbito(ambitoAct);
                                                    String ambito = yyvsp[-1].sval;
                                                    actualizarAmbito(ambitoAct, ambito);
-                                                   TablaSimbolos.getToken(yyvsp[-1].sval).setLexema(yyvsp[-1].sval+":"+ambitoAct);
                                                    TablaSimbolos.getToken(yyvsp[-1].sval).setUso("Clase");
-                                                   TablaSimbolos.setAmbito(yyvsp[-1].sval+":"+ambitoAct, ambitoAct);
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
-                                                    agregarErrorSemantico("Clase " + t + " ya definida en el ambito actual");}
+                                                    agregarErrorSemantico("Clase " + yyvsp[-1].sval + " ya definida en el ambito actual");
+                                               }
+                                              ambitoAct -= ":"+ambito;
                                               }
 break;
 case 138:
-#line 406 "gramatica.y"
+#line 407 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
 break;
 case 139:
-#line 410 "gramatica.y"
+#line 411 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
 break;
 case 140:
-#line 411 "gramatica.y"
+#line 412 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 break;
 case 141:
-#line 412 "gramatica.y"
+#line 413 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 break;
 #line 1363 "y.tab.c"

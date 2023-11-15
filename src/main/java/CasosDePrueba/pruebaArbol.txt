@@ -1,3 +1,4 @@
 {
-    USHORT a;b;a,
+    USHORT a,
+    a = 4_us,
 }

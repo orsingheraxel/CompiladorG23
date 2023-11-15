@@ -134,6 +134,15 @@ public class Token{
         escritor.println("Línea: " + linea);
     }
 
-
-
+    @Override
+    public String toString() {
+        return "Token{" +
+                "id=" + id +
+                ", lexema='" + lexema + '\'' +
+                ", linea=" + linea +
+                ", uso='" + uso + '\'' +
+                ", tipo='" + tipo + '\'' +
+                ", ambito='" + ambito + '\'' +
+                '}';
+    }
 }
