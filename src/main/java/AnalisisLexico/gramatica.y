@@ -46,8 +46,7 @@ SentenciaEjecutable: Asignacion {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariable() != null) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
-                                                String var = ((ListVariables)$2).getVariable();
+SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declaradas) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
                                                     t.setLexema($1.sval + ":" + ambitoAct);
@@ -56,11 +55,12 @@ SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariab
                                                     t.setTipo($1.sval);
                                                     TablaSimbolos.removeToken(var);
                                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
-                                                    }
+                                                }
                                                 else {
                                                    agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
-                                                    }
+                                                }
                                             }
+                                            variables_declaradas.clear();
                                           }
 			| Funcion
 			| error ListVariables{AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
@@ -70,9 +70,8 @@ SentenciaDeclarativa: Tipo ListVariables {  while (((ListVariables)$2).getVariab
 			| FuncionIMPL
             ;
 
-ListVariables : ID { $$ = new ListVariables();
-                    ((ListVariables)$$).addVariable($1.sval);}
-              | ListVariables';'ID   {$$ = $3 ; ((ListVariables)$$).addVariable($3.sval);}
+ListVariables : ID {variables_declaradas.add($1.sval);}
+              | ListVariables ';' ID   {$$ = $1 ; variables_declaradas.add($1.sval);}
               ;
 
 Objeto_clase: ID ListVariables
@@ -124,7 +123,7 @@ Constante: ENTERO  {
 	;
 
 Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
-                                    if {(!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo()))
+                                    if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
                                         agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
                                     }
                                     if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
@@ -391,17 +390,18 @@ SentenciaListHerencia: Tipo ListVariables ',' {
         | SentenciaListHerencia error ListFuncion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
-HerenciaComposicion: CLASS ID ListHerencia   {
-                                               if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct){
+HerenciaComposicion: CLASS ID ListHerencia   { if (!(TablaSimbolos.existeSimbolo($2.sval))) && (){
+                                                   TablaSimbolos.getToken($2.sval).setAmbito(ambitoAct);
                                                    String ambito = $2.sval;
                                                    actualizarAmbito(ambitoAct, ambito);
-                                                   TablaSimbolos.getToken($2.sval).setLexema($2.sval+":"+ambitoAct);
                                                    TablaSimbolos.getToken($2.sval).setUso("Clase");
-                                                   TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
-                                                    agregarErrorSemantico("Clase " + t + " ya definida en el ambito actual");}
+                                                    agregarErrorSemantico("Clase " + $2.sval + " ya definida en el ambito actual");
+                                               }
+                                              ambitoAct -= ":"+ambito;
                                               }
+
                          ;
 
 FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
@@ -423,6 +423,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   private NodoControl raiz;
   private String ambitoAct = "main";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
+  static ArrayList<String> variables_declaradas = new ArrayList<String>();
 
   public void agregarErrorSemantico(String error){
       Error e = new Error(error,AnalizadorLexico.getLineaAct());
