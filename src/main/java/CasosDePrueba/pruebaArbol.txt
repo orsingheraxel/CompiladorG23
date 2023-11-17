@@ -1,4 +1,4 @@
 {
-    USHORT a,
-    a = 4_us,
+    PRINT #aaaaa#,
+    PRINT #Hola#,
 }

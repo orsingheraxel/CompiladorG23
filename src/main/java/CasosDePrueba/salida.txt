@@ -1,17 +1,17 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: a, Valor: ID: 269
-Lexema: a
-Línea: 3
-Clave: b, Valor: ID: 269
-Lexema: b
-Línea: 2
-Clave: 4, Valor: ID: 279
-Lexema: 4
-Línea: 3
+Clave: #Hola#, Valor: ID: 277
+Lexema: #Hola#
+LÃ­nea: 3
+Clave: #aaaaa#, Valor: ID: 277
+Lexema: #aaaaa#
+LÃ­nea: 2
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
 
 -------------------------------------------WARNINGS-------------------------------------------
@@ -19,4 +19,7 @@ Línea: 3
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce programa  en la linea: 4
+Estructura: Reconoce salida de mensaje por pantalla  en la linea: 2
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 

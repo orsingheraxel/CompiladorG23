@@ -4,6 +4,9 @@ import java.io.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException{
+
+        args = new String[]{"C:\\Users\\Axel\\Desktop\\Compiladores\\src\\main\\java\\CasosDePrueba\\pruebaArbol.txt"};
+
         if (args.length < 1) {
             System.out.println("Debe proporcionar el nombre del archivo como argumento.");
             return;
@@ -18,7 +21,7 @@ public class Main {
             // Abre un archivo de salida para guardar la salida
 
             AnalizadorLexico.setEntrada(br);
-            Parser parser = new Parser();
+            Parser parser = new Parser(true);
             parser.run();
 
             ///////////////////////////////////////////////////// Escribe en el archivo de salida

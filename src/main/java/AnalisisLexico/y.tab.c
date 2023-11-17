@@ -487,7 +487,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 423 "gramatica.y"
+#line 424 "gramatica.y"
   private NodoControl raiz;
   private String ambitoAct = "main";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
@@ -819,7 +819,7 @@ case 17:
 {   for (String var : variables_declaradas) { /*CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE*/
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
-                                                    t.setLexema(yyvsp[-1].sval + ":" + ambitoAct);
+                                                    t.setLexema(var + ":" + ambitoAct);
                                                     t.setAmbito(ambitoAct);
                                                     t.setUso("variable");
                                                     t.setTipo(yyvsp[-1].sval);
@@ -847,7 +847,19 @@ case 24:
 break;
 case 25:
 #line 74 "gramatica.y"
-{yyval = yyvsp[-2] ; variables_declaradas.add(yyvsp[-2].sval);}
+{yyval = yyvsp[-2] ; variables_declaradas.add(yyvsp[0].sval);}
+break;
+case 27:
+#line 80 "gramatica.y"
+{yyval = yyvsp[0] ;}
+break;
+case 28:
+#line 81 "gramatica.y"
+{yyval = yyvsp[0] ;}
+break;
+case 29:
+#line 82 "gramatica.y"
+{yyval = yyvsp[0] ;}
 break;
 case 30:
 #line 85 "gramatica.y"
@@ -1331,35 +1343,36 @@ case 136:
 break;
 case 137:
 #line 393 "gramatica.y"
-{ if (!(TablaSimbolos.existeSimbolo(yyvsp[-1].sval))) && (){
+{ 	String ambito = yyvsp[-1].sval;
+						if (!(TablaSimbolos.existeSimbolo(yyvsp[-1].sval))) { /*PREGUNTAR TMB X USO EN COND*/
                                                    TablaSimbolos.getToken(yyvsp[-1].sval).setAmbito(ambitoAct);
-                                                   String ambito = yyvsp[-1].sval;
                                                    actualizarAmbito(ambitoAct, ambito);
                                                    TablaSimbolos.getToken(yyvsp[-1].sval).setUso("Clase");
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
                                                     agregarErrorSemantico("Clase " + yyvsp[-1].sval + " ya definida en el ambito actual");
                                                }
-                                              ambitoAct -= ":"+ambito;
+                                              int index = ambitoAct.lastIndexOf(":");
+                                              ambitoAct = ambitoAct.substring(0, index);
                                               }
 break;
 case 138:
-#line 407 "gramatica.y"
+#line 408 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
 break;
 case 139:
-#line 411 "gramatica.y"
+#line 412 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
 break;
 case 140:
-#line 412 "gramatica.y"
+#line 413 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 break;
 case 141:
-#line 413 "gramatica.y"
+#line 414 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 break;
-#line 1363 "y.tab.c"
+#line 1376 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

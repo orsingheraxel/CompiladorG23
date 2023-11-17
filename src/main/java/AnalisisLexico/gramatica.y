@@ -1,6 +1,7 @@
 %{
 package AnalisisLexico;
-import AnalisisLexico.TablaSimbolos.TablaSimbolos;
+import AnalisisLexico.ParserVal;
+import GeneracionCodigoIntermedio.*;
 import AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
 import java.nio.file.Files;
@@ -20,7 +21,7 @@ Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); An
 
 ListSentencias: Sentencia ','{$$=$1;}
 		| ListSentencias','Sentencia   {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
-		| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+		//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$=$1;}
@@ -47,11 +48,9 @@ SentenciaEjecutable: Asignacion {$$=$1;}
                   ;
 
 SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declaradas) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
-                                                System.out.println(var);
-                                                System.out.println(t.getId());
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
-                                                    t.setLexema($1.sval + ":" + ambitoAct);
+                                                    t.setLexema(var + ":" + ambitoAct);
                                                     t.setAmbito(ambitoAct);
                                                     t.setUso("variable");
                                                     t.setTipo($1.sval);
@@ -62,7 +61,6 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
                                                    agregarErrorSemantico("Ya existe una variable + var + definida en este ambito");
                                                 }
                                             }
-                                            t.toString();
                                             variables_declaradas.clear();
                                           }
 			| Funcion
@@ -80,9 +78,9 @@ ListVariables : ID {variables_declaradas.add($1.sval);}
 Objeto_clase: ID ListVariables
     ;
 
-Tipo : USHORT
-     | INT
-     | DOUBLE
+Tipo : USHORT {$$ = $1;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
+     | INT {$$ = $1;}
+     | DOUBLE {$$ = $1;}
      ;
 
 Constante: ENTERO  {
@@ -432,27 +430,6 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   public void agregarErrorSemantico(String error){
       Error e = new Error(error,AnalizadorLexico.getLineaAct());
       erroresSemanticos.add(e);
-    }
-
-   public String buscarAmbito(String ambitoAct,String lexema){
-            String ambito = ambitoAct;
-            while(!TablaSimbolos.existeSimbolo(lexema+":"+ambito)){
-                    if(ambito.equals("main")){
-                            //yyerror("La variable " + lexema + " no se encuentra declarada en el ambito " + ambitoAct);
-                            ambito = "";
-                            break;
-                    }else{
-                            //retrocede de ambito hasta encontrar el correcto
-                            char [] a = ambito.toCharArray();
-                            for (int i = a.length;i>=0;i--){
-                                    if(a[i-1] == ':'){
-                                            ambito = ambito.substring(0,i-1);
-                                            break;
-                                    }
-                            }
-                    }
-            }
-            return ambito;
     }
 
    public void chequearEnteroNegativo(String m){

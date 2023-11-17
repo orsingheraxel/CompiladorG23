@@ -3,7 +3,7 @@ package AnalisisLexico;
 import java.io.PrintWriter;
 
 public class Token{
-    private Integer id;
+    private int id;
     private String lexema;
     private Integer linea;
     private String uso;
@@ -11,7 +11,7 @@ public class Token{
     private String ambito;
 
     public Token(String lexema) {
-        this.id = null;
+        this.id = 0;
         this.lexema = lexema;
         this.linea = null;
         this.uso = null;
