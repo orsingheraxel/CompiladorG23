@@ -43,7 +43,7 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
 SentenciaEjecutable: Asignacion {$$=$1;}
                   | LlamadoFuncion {$$=$1;}
                   | BloqueIF   {$$=$1;}
-		  | SalidaMensaje {$$=$1;}
+		          | SalidaMensaje {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
@@ -53,7 +53,7 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
                                                     t.setLexema(var + ":" + ambitoAct);
                                                     t.setAmbito(ambitoAct);
                                                     t.setUso("variable");
-                                                    t.setTipo($1.sval);
+                                                    t.setTipo(tipoActual);
                                                     TablaSimbolos.removeToken(var);
                                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
                                                 }
@@ -78,9 +78,9 @@ ListVariables : ID {variables_declaradas.add($1.sval);}
 Objeto_clase: ID ListVariables
     ;
 
-Tipo : USHORT {$$ = $1;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
-     | INT {$$ = $1;}
-     | DOUBLE {$$ = $1;}
+Tipo : USHORT {tipoActual = $1.sval;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
+     | INT {tipoActual = $1.sval;}
+     | DOUBLE {tipoActual = $1.sval;}
      ;
 
 Constante: ENTERO  {
@@ -190,7 +190,8 @@ Termino: Termino '*' Factor   {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
 
 Factor: ID {$$ = new NodoHoja($1.sval);
             String var = $1.sval + ":" + ambitoAct;
-            if (!TablaSimbolos.existeSimbolo(var)){
+            String var = estaAlAlcance(var);
+            if (var.equals($1.sval)){
                 agregarErrorSemantico("Variable no declarada en este ambito ");
             }
             else {
@@ -198,12 +199,12 @@ Factor: ID {$$ = new NodoHoja($1.sval);
                     agregarErrorSemantico("El ID en uso no es una variable ");
                 }
                 else {
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
-                    ((Nodo)$$).setUso(TablaSimbolos.getUso($1.sval));
-                    ((Nodo)$$).setAmbito(TablaSimbolos.getAmbito($1.sval));
+                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo(var));
+                    ((Nodo)$$).setUso(TablaSimbolos.getUso(var));
+                    ((Nodo)$$).setAmbito(TablaSimbolos.getAmbito(var));
                 }
             }
-            }
+          }
 	| Constante {$$=$1;}
 	;
 
@@ -332,13 +333,22 @@ OperadorAsignacion: '=' {$$=$1;}
                   | ASIG {$$=$1;}
                   ;
 
-Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");}
-
-                        {//Chequear ambito de ID y chequear asignacion valida
-						/* $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
-						Token t = TablaSimbolos.getToken($1.sval);
-						if (t.getTipo() != null){
-							if (t.getLexema() ...) //ambito alcanzable
+Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+						                        $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
+						                        Token t1 = TablaSimbolos.getToken($1.sval);
+						                        if (t1.getUso() != null){
+						                            if (!estaAlAlcance($1.sval + ":" + ambitoAct).equals($1.sval)){
+                                                        //completar expresion y termino
+                                                        //comparar tipos de ID y expresion
+						                            }
+						                            else {
+						                                agregarErrorSemantico("Variable " + $1.sval " fuera de alcance");
+						                            }
+						                        }
+						                        else {
+						                            agregarErrorSemantico("Variable " + t1.getLexema() + " no definida");
+						                        }
+							                    if (t.getLexema() ...) //ambito alcanzable
 								//chequear tipo expresion?
 								//set uso
 						}
@@ -426,6 +436,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   private String ambitoAct = "main";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
+  static String tipoActual;
 
   public void agregarErrorSemantico(String error){
       Error e = new Error(error,AnalizadorLexico.getLineaAct());
@@ -509,6 +520,21 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
    public void actualizarAmbito(String ambitoAct, String a){
         ambitoAct += ":"+a;
    }
+
+   public String estaAlAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
+           if (!TablaSimbolos.existeSimbolo(lexema)){
+                char [] a = lexema.toCharArray();
+                for (int i = a.length;i>0;i--){
+                   if(a[i-1] == ':'){
+                       lexema = lexema.substring(0,i-1);
+                       lexema = estaAlAlcance(lexema);
+                   }
+                }
+           }
+           return lexema;
+   }
+
+
 
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();

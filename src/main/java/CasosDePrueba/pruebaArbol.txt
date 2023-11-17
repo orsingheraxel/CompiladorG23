@@ -1,4 +1,3 @@
 {
-    PRINT #aaaaa#,
-    PRINT #Hola#,
+x = 4_us
 }

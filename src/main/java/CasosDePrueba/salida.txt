@@ -1,9 +1,9 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: #Hola#, Valor: ID: 277
-Lexema: #Hola#
-Línea: 3
-Clave: #aaaaa#, Valor: ID: 277
-Lexema: #aaaaa#
+Clave: 4, Valor: ID: 278
+Lexema: 4
+Línea: 2
+Clave: x, Valor: ID: 269
+Lexema: x
 Línea: 2
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
@@ -19,7 +19,7 @@ Línea: 2
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce salida de mensaje por pantalla  en la linea: 2
+Estructura: Reconoce asignacion  en la linea: 3
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  
