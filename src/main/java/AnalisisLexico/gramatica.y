@@ -19,14 +19,14 @@ Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); An
 	    | error ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
         ;
 
-ListSentencias: Sentencia ','{$$=$1;}
-		| ListSentencias','Sentencia   {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $3);}
+ListSentencias:  ListSentencias Sentencia ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
+        | Sentencia ','{$$=$1;}
 		//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$=$1;}
         | SentenciaEjecutable {$$=$1;}
-        | SentenciaDeclarativa {$$=$1;}
+        | SentenciaDeclarativa {$$= new NodoHoja("SENTENCIA DECLARATIVA");}
         | RETURN error {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
@@ -86,111 +86,88 @@ Tipo : USHORT {tipoActual = $1.sval;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yy
 Constante: ENTERO  {
                     chequearEnteroPositivo($1.sval);
                     $$ = new NodoHoja($1.sval) ;
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
-                    TablaSimbolos.setUso($1.sval, "Constante");
                    }
 
 	| ENTEROCORTO {$$ = new NodoHoja($1.sval);
 	               chequearEnteroCorto($1.sval);
-	               ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+	               ((Nodo)$$).setTipo("USHORT");
                    chequearEnteroPositivo($1.sval);
                    ((Nodo)$$).setUso("Constante");
-                   TablaSimbolos.setUso($1.sval, "Constante");
                    }
 	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{
 	                chequearDouble($1.sval);
 	                $$ = new NodoHoja($1.sval);
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setTipo("DOUBLE");
                     ((Nodo)$$).setUso("Constante");
-                    TablaSimbolos.setUso($1.sval, "Constante");
                     }
 
 	| '-' ENTERO    {
                     $$ = new NodoHoja($1.sval);
                     chequearEnteroNegativo($2.sval);
-                    ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                    ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
-                    TablaSimbolos.setUso($1.sval, "Constante");
 	                }
 	| '-' PUNTOFLOTANTE {
                             chequearDouble($1.sval);
                             $$ = new NodoHoja($1.sval);
-                            ((Nodo)$$).setTipo(TablaSimbolos.getTipo($1.sval));
+                            ((Nodo)$$).setTipo("DOUBLE");
                             ((Nodo)$$).setUso("Constante");
-                            TablaSimbolos.setUso($1.sval, "Constante");
                         }
 	;
 
 Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
-                                    if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                                    }
                                     if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                                           agregarErrorSemantico("Variable fuera de alcance ");
                                     }
-
-
-
+                                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                                     }
 
 | Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                        if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                            agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                        }
                         if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                             agregarErrorSemantico("Variable fuera de alcance ");
                         }
-
+                            ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                       }
 | Termino {$$=$1;}
 | ConversionExplicita {$$ = $1;}
         ;
 
 
-Termino: Termino '*' Factor   {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                               }
+Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
                                if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                                     agregarErrorSemantico("Variable fuera de alcance ");
                                }
-
+                                    ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                               }
 
-| Termino'/'Factor {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                    if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                        agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                    }
+| Termino'/'Factor {$$ = new NodoComun("/",(Nodo)$1,(Nodo)$3);
                     if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                         agregarErrorSemantico("Variable fuera de alcance ");
                     }
+                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                     }
 | Factor {$$ = $1;}
-| Termino'*' Factor_RefObjeto {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                               }
+| Termino'*' Factor_RefObjeto {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
                                if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                                     agregarErrorSemantico("Variable fuera de alcance ");
                                }
-
+                                     ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                                }
-| Termino'/' Factor_RefObjeto {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                               if (!((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
-                                    agregarErrorSemantico("No se puede realizar la suma. Tipos incompatibles ");
-                               }
+| Termino'/' Factor_RefObjeto {$$ = new NodoComun("/",(Nodo)$1,(Nodo)$3);
                                if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
                                     agregarErrorSemantico("Variable fuera de alcance ");
                                }
+                                    ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                                }
 | Factor_RefObjeto {$$=$1;}
 ;
 
 Factor: ID {$$ = new NodoHoja($1.sval);
             String var = $1.sval + ":" + ambitoAct;
-            String var = estaAlAlcance(var);
+            var = estaAlAlcance(var);
             if (var.equals($1.sval)){
                 agregarErrorSemantico("Variable no declarada en este ambito ");
             }
@@ -338,25 +315,15 @@ Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura(
 						                        Token t1 = TablaSimbolos.getToken($1.sval);
 						                        if (t1.getUso() != null){
 						                            if (!estaAlAlcance($1.sval + ":" + ambitoAct).equals($1.sval)){
-                                                        //completar expresion y termino
-                                                        //comparar tipos de ID y expresion
+                                                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
 						                            }
 						                            else {
-						                                agregarErrorSemantico("Variable " + $1.sval " fuera de alcance");
+						                                agregarErrorSemantico("Variable " + $1.sval +" fuera de alcance");
 						                            }
 						                        }
 						                        else {
 						                            agregarErrorSemantico("Variable " + t1.getLexema() + " no definida");
 						                        }
-							                    if (t.getLexema() ...) //ambito alcanzable
-								//chequear tipo expresion?
-								//set uso
-						}
-						else{
-							agregarErrorSemantico("Variable " + var + " no definida"); //SE DEBE CORTAR LA EJECUCION
-						    //break;
-						}
-                        */
 					    }
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
@@ -534,6 +501,15 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
            return lexema;
    }
 
+   public String tipoPredominante(String a, String b){
+            if ((a.equals("DOUBLE"))|| (b.equals("DOUBLE"))){
+                  return "DOUBLE";
+            } else { if ((a.equals("INT"))|| (b.equals("INT"))) {
+                        return "INT";
+                    }
+            }
+            return "USHORT";
+   }
 
 
   public int yylex() throws IOException{
