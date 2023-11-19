@@ -1,6 +1,11 @@
 {
     USHORT x,
-    VOID f1() {
+    VOID f2(){
         DOUBLE y,
+        y = 4.0,
     },
+    VOID f1(){
+        x = 2_us,
+    },
+    f2(),
 }

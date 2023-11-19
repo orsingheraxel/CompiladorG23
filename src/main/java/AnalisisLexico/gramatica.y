@@ -252,12 +252,11 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbito(ambitoAct);}
+Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbito(); AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
-EncabezadoFuncion : VOID ID {ambitoNuevo = $2.sval;
-                               actualizarAmbito(ambitoAct,ambitoNuevo);}
+EncabezadoFuncion : VOID ID  {ambitoAct = ambitoAct + ":" + $2.sval;}
                   ;
 //chequear
 Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
@@ -282,7 +281,7 @@ ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ','
           ;
 
 //chequear que ID sea una clase realmente
-LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval); AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
@@ -321,7 +320,7 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 						                        else {
 						                            agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() + " no definida");
 						                        }
-					    }
+					                            }
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
@@ -368,7 +367,7 @@ SentenciaListHerencia: Tipo ListVariables ',' {
 HerenciaComposicion: CLASS ID ListHerencia   { 	String ambito = $2.sval;
 						if (!(TablaSimbolos.existeSimbolo($2.sval))) { //PREGUNTAR TMB X USO EN COND
                                                    TablaSimbolos.getToken($2.sval).setAmbito(ambitoAct);
-                                                   actualizarAmbito(ambitoAct, ambito);
+                                                   actualizarAmbito(ambito);
                                                    TablaSimbolos.getToken($2.sval).setUso("Clase");
                                                    AnalizadorLexico.agregarEstructura("Reconoce CLASE");
                                                } else {
@@ -482,10 +481,10 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
            }
       }
 
-   public void actualizarAmbito(String ambitoAct, String a){
+   public void actualizarAmbito(String a){
         ambitoAct += ":"+a;
    }
-   public void deshacerAmbito(String ambitoAct){
+   public void deshacerAmbito(){
            String aux = ambitoAct;
            char [] a = aux.toCharArray();
            int i = a.length;
@@ -498,17 +497,18 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
    }
 
    public String estaAlAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
-           if (!TablaSimbolos.existeSimbolo(lexema)){
-                char [] a = lexema.toCharArray();
-                for (int i = a.length;i>0;i--){
-                   if(a[i-1] == ':'){
-                       lexema = lexema.substring(0,i-1);
-                       lexema = estaAlAlcance(lexema);
+              if (!TablaSimbolos.existeSimbolo(lexema)){
+                   char [] a = lexema.toCharArray();
+                   for (int i = a.length;i>0;i--){
+                      if(a[i-1] == ':'){
+                          lexema = lexema.substring(0,i-1);
+                      }
+                      if (TablaSimbolos.existeSimbolo(lexema))
+                        return lexema;
                    }
-                }
-           }
-           return lexema;
-   }
+              }
+              return lexema;
+      }
 
    public String tipoPredominante(String a, String b){
             if ((a.equals("DOUBLE"))|| (b.equals("DOUBLE"))){

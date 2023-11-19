@@ -2,12 +2,27 @@
 Clave: x:main, Valor: ID: 269
 Lexema: x:main
 Línea: 2
-Clave: y:main, Valor: ID: 269
-Lexema: y:main
+Clave: 2, Valor: ID: 278
+Lexema: 2
+Línea: 8
+Clave: 4.0, Valor: ID: 280
+Lexema: 4.0
+Línea: 5
+Clave: y:main:f2, Valor: ID: 269
+Lexema: y:main:f2
 Línea: 4
+Clave: x, Valor: ID: 269
+Lexema: x
+Línea: 8
+Clave: y, Valor: ID: 269
+Lexema: y
+Línea: 5
 Clave: f1, Valor: ID: 269
 Lexema: f1
-Línea: 3
+Línea: 7
+Clave: f2, Valor: ID: 269
+Lexema: f2
+Línea: 10
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -22,7 +37,10 @@ Línea: 3
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce programa  en la linea: 6
+Estructura: Reconoce asignacion  en la linea: 5
+Estructura: Reconoce asignacion  en la linea: 8
+Estructura: Reconoce llamado funcion  en la linea: 10
+Estructura: Reconoce programa  en la linea: 11
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  
