@@ -1,10 +1,13 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: #hola2#, Valor: ID: 277
-Lexema: #hola2#
-Línea: 3
-Clave: #hola#, Valor: ID: 277
-Lexema: #hola#
+Clave: x:main, Valor: ID: 269
+Lexema: x:main
 Línea: 2
+Clave: y:main, Valor: ID: 269
+Lexema: y:main
+Línea: 4
+Clave: f1, Valor: ID: 269
+Lexema: f1
+Línea: 3
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -19,9 +22,7 @@ Línea: 2
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce salida de mensaje por pantalla  en la linea: 2
-Estructura: Reconoce salida de mensaje por pantalla  en la linea: 3
-Estructura: Reconoce programa  en la linea: 4
+Estructura: Reconoce programa  en la linea: 6
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

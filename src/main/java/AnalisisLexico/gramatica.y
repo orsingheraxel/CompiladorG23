@@ -52,7 +52,7 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
                                                 if (t != null){
                                                     t.setLexema(var + ":" + ambitoAct);
                                                     t.setAmbito(ambitoAct);
-                                                    t.setUso("variable");
+                                                    t.setUso("Variable");
                                                     t.setTipo(tipoActual);
                                                     TablaSimbolos.removeToken(var);
                                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
@@ -235,7 +235,7 @@ SentenciasIF: ListaSentenciasIF
 ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
                | SentenciaEjecutable ','
                | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
-               | ListaSentenciasIF',' SentenciaEjecutable
+               | ListaSentenciasIF SentenciaEjecutable ','
                ;
 
 
@@ -252,24 +252,13 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: VOID ID Parametro '{' ListSentenciasFuncion '}'
-                                            { String ambito = $2.sval;
-                                            actualizarAmbito(ambitoAct, ambito);
-                                            //chequear si las variables pasadas por parametro estan en el ambito anterior
-
-                                            $$ = new NodoComun("Funcion", new NodoControl("ParametroFuncion", (Nodo)$3), new NodoControl("SentenciasFuncion",(Nodo)$3));
-
-                                            if (!TablaSimbolos.existeSimbolo($2.sval+":"+ambitoAct)){
-                                                ((Nodo)$2).setLexema($2.sval+":"+ambitoAct);
-                                                ((Nodo)$2).setUso("Funcion");
-                                                TablaSimbolos.setAmbito($2.sval+":"+ambitoAct, ambitoAct);
-                                            }
-
-                                            AnalizadorLexico.agregarEstructura("Reconoce funcion VOID ");}
-
+Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbito(ambitoAct);}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
+EncabezadoFuncion : VOID ID {ambitoNuevo = $2.sval;
+                               actualizarAmbito(ambitoAct,ambitoNuevo);}
+                  ;
 //chequear
 Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
 
@@ -281,12 +270,12 @@ Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
-ListSentenciasFuncion:ListSentenciasFuncion ',' SentenciaDeclarativa
-		  | ListSentenciasFuncion ',' SentenciaEjecutable
-		  | SentenciaEjecutable ','
-		  | SentenciaDeclarativa ','
+ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ','
+		  | ListSentenciasFuncion SentenciaEjecutable ','
+		  | SentenciaEjecutable ',' {$$ = $1;}
+		  | SentenciaDeclarativa ',' {$$ = $1;}
 		  | RETURN ','
-		  | ListSentenciasFuncion ',' RETURN
+		  | ListSentenciasFuncion RETURN ','
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
@@ -310,27 +299,35 @@ OperadorAsignacion: '=' {$$=$1;}
                   | ASIG {$$=$1;}
                   ;
 
-Asignacion: ID OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 						                        $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
-						                        Token t1 = TablaSimbolos.getToken($1.sval);
-						                        if (t1.getUso() != null){
-						                            if (!estaAlAlcance($1.sval + ":" + ambitoAct).equals($1.sval)){
-                                                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
-						                            }
-						                            else {
-						                                agregarErrorSemantico("Variable " + $1.sval +" fuera de alcance");
-						                            }
-						                        }
+						                        String var = estaAlAlcance(((Nodo)$1).getLexema() + ":" + ambitoAct);
+                                                if (var.contains("main")){
+                                                    Token t1 = TablaSimbolos.getToken(var);
+                                                    if (t1 != null){
+                                                        if (t1.getUso().equals("Constante")){
+                                                            agregarErrorSemantico("Las constantes no pueden estar del lado izquierdo en una asignacion");
+                                                        }
+                                                        else {
+                                                            if (!estaAlAlcance(var).equals(((Nodo)$1).getLexema())){
+                                                                ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
+                                                            }
+                                                            else {
+                                                                agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() +" fuera de alcance");
+                                                            }
+                                                        }
+                                                    }
+                                                }
 						                        else {
-						                            agregarErrorSemantico("Variable " + t1.getLexema() + " no definida");
+						                            agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() + " no definida");
 						                        }
 					    }
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
 	| ReferenciaObjeto OperadorAsignacion Factor
 	| ReferenciaObjeto OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
-	| ID OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
-	| OperadorAsignacion ID {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
+	| Factor OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
+	| OperadorAsignacion Factor {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 	;
 
 SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
@@ -359,9 +356,9 @@ ListHerencia:'{' SentenciaListHerencia '}'
 SentenciaListHerencia: Tipo ListVariables ',' {
 
                                                }
-		| SentenciaListHerencia ',' Tipo ListVariables
+		| SentenciaListHerencia Tipo ListVariables ','
 		| ListFuncion ','
-		| SentenciaListHerencia ',' ListFuncion
+		| SentenciaListHerencia ListFuncion ','
         | Tipo ListVariables error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         | SentenciaListHerencia error Tipo ListVariables {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         | ListFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
@@ -383,7 +380,7 @@ HerenciaComposicion: CLASS ID ListHerencia   { 	String ambito = $2.sval;
 
                          ;
 
-FuncionSinCuerpo: VOID ID  Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
+FuncionSinCuerpo: EncabezadoFuncion Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   //si hay un parentesis mal escrito lo reconoce Funcion.
                   ;
 
@@ -401,6 +398,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 %%
   private NodoControl raiz;
   private String ambitoAct = "main";
+  private String ambitoNuevo= "";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
@@ -486,6 +484,17 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 
    public void actualizarAmbito(String ambitoAct, String a){
         ambitoAct += ":"+a;
+   }
+   public void deshacerAmbito(String ambitoAct){
+           String aux = ambitoAct;
+           char [] a = aux.toCharArray();
+           int i = a.length;
+           while ((i>0) && (!(a[i-1] == ':'))){
+                i --;
+           }
+           if (i>0)
+            aux = aux.substring(0,i-1);
+           ambitoAct = aux;
    }
 
    public String estaAlAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA

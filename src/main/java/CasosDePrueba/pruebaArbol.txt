@@ -1,5 +1,6 @@
 {
-    PRINT #hola#,
     USHORT x,
-    x = 4_us,
+    VOID f1() {
+        DOUBLE y,
+    },
 }

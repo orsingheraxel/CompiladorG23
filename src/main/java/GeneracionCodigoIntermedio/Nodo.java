@@ -47,6 +47,10 @@ public class Nodo extends ParserVal{
         t.setTipo(lex);
     }
 
+    public String getLexema(){
+        return t.getLexema();
+    }
+
     public String getUso(){
         return t.getUso();
     }
