@@ -9,6 +9,7 @@ public class Token{
     private String uso;
     private String tipo;
     private String ambito;
+    private Object valor;
 
     public Token(String lexema) {
         this.id = 0;
@@ -16,8 +17,15 @@ public class Token{
         this.linea = null;
         this.uso = null;
         this.tipo = null;
+        this.valor = null;
     }
 
+    public void setValor(Object v){
+        this.valor = v;
+    }
+    public Object getValor(){
+        return valor;
+    }
     public void setId(Integer id) {
         this.id = id;
     }
@@ -143,6 +151,7 @@ public class Token{
                 ", uso='" + uso + '\'' +
                 ", tipo='" + tipo + '\'' +
                 ", ambito='" + ambito + '\'' +
+                ", valor=" + valor +
                 '}';
     }
 }

@@ -31,7 +31,7 @@ Sentencia: SentenciaControl {$$=$1;}
         ;
 
 ReferenciaObjeto: ID '.' ID {//chequear q exista y bla bla
-                            $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
+                            $$ = new NodoComun("ReferenciaObjeto",(Nodo)$1,(Nodo)$3);
                             AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");}
                 ;
 
@@ -110,6 +110,15 @@ Constante: ENTERO  {
                     $$ = new NodoHoja($1.sval) ;
                     ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
+                    ((Nodo)$$).setAmbito(ambitoAct);
+                    ((Nodo)$$).setValor(Integer.parseInt($1.sval));
+                    Token t = TablaSimbolos.getToken($1.sval);
+                    t.setTipo("INT");
+                    t.setUso("Constante");
+                    t.setAmbito(ambitoAct);
+                    t.setValor(Integer.parseInt($1.sval));
+                    TablaSimbolos.removeToken($1.sval);
+                    TablaSimbolos.addSimbolo($1.sval,t);
                    }
 
 	| ENTEROCORTO {$$ = new NodoHoja($1.sval);
@@ -117,6 +126,15 @@ Constante: ENTERO  {
 	               ((Nodo)$$).setTipo("USHORT");
                    chequearEnteroPositivo($1.sval);
                    ((Nodo)$$).setUso("Constante");
+                   ((Nodo)$$).setAmbito(ambitoAct);
+                   ((Nodo)$$).setValor(Integer.parseInt($1.sval));
+                   Token t = TablaSimbolos.getToken($1.sval);
+                   t.setTipo("USHORT");
+                   t.setUso("Constante");
+                   t.setAmbito(ambitoAct);
+                   t.setValor(Integer.parseInt($1.sval));
+                   TablaSimbolos.removeToken($1.sval);
+                   TablaSimbolos.addSimbolo($1.sval,t);
                    }
 	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{
@@ -124,6 +142,15 @@ Constante: ENTERO  {
 	                $$ = new NodoHoja($1.sval);
                     ((Nodo)$$).setTipo("DOUBLE");
                     ((Nodo)$$).setUso("Constante");
+                    ((Nodo)$$).setAmbito(ambitoAct);
+                    ((Nodo)$$).setValor(Double.parseDouble($1.sval));
+	                Token t = TablaSimbolos.getToken($1.sval);
+                    t.setTipo("DOUBLE");
+                    t.setUso("Constante");
+                    t.setAmbito(ambitoAct);
+                    t.setValor(Double.parseDouble($1.sval));
+                    TablaSimbolos.removeToken($1.sval);
+                    TablaSimbolos.addSimbolo($1.sval,t);
                     }
 
 	| '-' ENTERO    {
@@ -131,45 +158,108 @@ Constante: ENTERO  {
                     chequearEnteroNegativo($2.sval);
                     ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
+                    ((Nodo)$$).setAmbito(ambitoAct);
+                    ((Nodo)$$).setValor(Integer.parseInt($1.sval));
+                    Token t = TablaSimbolos.getToken($1.sval);
+                    t.setTipo("INT");
+                    t.setUso("Constante");
+                    t.setAmbito(ambitoAct);
+                    t.setValor(Integer.parseInt($1.sval));
+                    TablaSimbolos.removeToken($1.sval);
+                    TablaSimbolos.addSimbolo($1.sval,t);
 	                }
-	| '-' PUNTOFLOTANTE {
-                            chequearDouble($1.sval);
-                            $$ = new NodoHoja($1.sval);
-                            ((Nodo)$$).setTipo("DOUBLE");
-                            ((Nodo)$$).setUso("Constante");
+	| '-' PUNTOFLOTANTE {chequearDouble($1.sval);
+                         $$ = new NodoHoja($1.sval);
+                         ((Nodo)$$).setTipo("DOUBLE");
+                         ((Nodo)$$).setUso("Constante");
+                         ((Nodo)$$).setAmbito(ambitoAct);
+                         ((Nodo)$$).setValor(Double.parseDouble($1.sval));
+                         Token t = TablaSimbolos.getToken($1.sval);
+                         t.setTipo("DOUBLE");
+                         t.setUso("Constante");
+                         t.setAmbito(ambitoAct);
+                         t.setValor(Double.parseDouble($1.sval));
+                         TablaSimbolos.removeToken($1.sval);
+                         TablaSimbolos.addSimbolo($1.sval,t);
                         }
 	;
 
 Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
-                                    if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
-                                          agregarErrorSemantico("Variable fuera de alcance ");
+                                if (((Nodo)$1).getUso()!= "Constante"){
+                                    if (!estaAlAlcance(((Nodo)$1).getLexema())){
+                                        agregarErrorSemantico("Primer termino fuera de alcance ");
+                                        break;
                                     }
-                                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
-                                    }
-
+                                 }
+                                if (((Nodo)$3).getUso()!= "Constante"){
+                                   if (!estaAlAlcance(((Nodo)$3).getLexema())){
+                                        agregarErrorSemantico("Segundo termino fuera de alcance ");
+                                        break;
+                                   }
+                                }
+                                if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                                    ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
+                                    ((Nodo)$$).setValor(((Nodo)$1).getValor() + ((Nodo)$3).getValor());
+                                }
+                                }
 | Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
-                        if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
-                            agregarErrorSemantico("Variable fuera de alcance ");
+                        if (((Nodo)$1).getUso()!= "Constante"){
+                            if (!estaAlAlcance(((Nodo)$1).getLexema())){
+                                agregarErrorSemantico("Primer termino fuera de alcance ");
+                                break;
+                            }
                         }
-                            ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
+                        if (((Nodo)$3).getUso()!= "Constante"){
+                            if (!estaAlAlcance(((Nodo)$3).getLexema())){
+                                agregarErrorSemantico("Segundo termino fuera de alcance ");
+                                break;
+                            }
+                        }
+                        if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                            ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
+                            ((Nodo)$$).setValor(((Nodo)$1).getValor() - ((Nodo)$3).getValor());
+                        }
                       }
 | Termino {$$=$1;}
-| ConversionExplicita {$$ = $1;}
+| ConversionExplicita {$$ = $1;} //PASAR A DOUBLE Y ASIGNAR EL VALUE
         ;
 
 
 Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
-                               if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
-                                    agregarErrorSemantico("Variable fuera de alcance ");
-                               }
-                                    ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
+                                if (((Nodo)$1).getUso()!= "Constante"){
+                                    if (!estaAlAlcance(((Nodo)$1).getLexema())){
+                                        agregarErrorSemantico("Primer termino fuera de alcance ");
+                                        break;
+                                    }
+                                }
+                                if (((Nodo)$3).getUso()!= "Constante"){
+                                    if (!estaAlAlcance(((Nodo)$3).getLexema())){
+                                        agregarErrorSemantico("Segundo termino fuera de alcance ");
+                                        break;
+                                    }
+                                }
+                                if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                                    ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
+                                    ((Nodo)$$).setValor(((Nodo)$1).getValor() * ((Nodo)$3).getValor());
+                                }
                               }
 
 | Termino'/'Factor {$$ = new NodoComun("/",(Nodo)$1,(Nodo)$3);
-                    if (!((Nodo)$1).getAmbito().equals(((Nodo)$3).getAmbito())){
-                        agregarErrorSemantico("Variable fuera de alcance ");
-                    }
-                        ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
+                        if (((Nodo)$1).getUso()!= "Constante"){
+                            if (!estaAlAlcance(((Nodo)$1).getLexema())){
+                                agregarErrorSemantico("Primer termino fuera de alcance ");
+                                break;
+                            }
+                        }if (((Nodo)$3).getUso()!= "Constante"){
+                            if (!estaAlAlcance(((Nodo)$3).getLexema())){
+                                agregarErrorSemantico("Segundo termino fuera de alcance ");
+                                break;
+                            }
+                        }
+                        if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
+                            ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
+                            ((Nodo)$$).setValor(((Nodo)$1).getValor() / ((Nodo)$3).getValor());
+                        }
                     }
 | Factor {$$ = $1;}
 | Termino'*' Factor_RefObjeto {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
@@ -190,7 +280,7 @@ Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
 Factor: ID {$$ = new NodoHoja($1.sval);
             TablaSimbolos.removeToken($1.sval);
             String var = $1.sval + ":" + ambitoAct;
-            var = estaAlAlcance(var);
+            var = getLexemaAlcance(var);
             if (var.equals($1.sval)){
                 agregarErrorSemantico("Variable no declarada en este ambito ");
             }
@@ -325,7 +415,7 @@ OperadorAsignacion: '=' {$$=$1;}
 
 Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 						                        $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
-						                        String var = estaAlAlcance(((Nodo)$1).getLexema() + ":" + ambitoAct);
+						                        String var = getLexemaAlcance(((Nodo)$1).getLexema() + ":" + ambitoAct);
                                                 if (var.contains("main")){
                                                     Token t1 = TablaSimbolos.getToken(var);
                                                     if (t1 != null){
@@ -333,7 +423,7 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
                                                             agregarErrorSemantico("Las constantes no pueden estar del lado izquierdo en una asignacion");
                                                         }
                                                         else {
-                                                            if (!estaAlAlcance(var).equals(((Nodo)$1).getLexema())){
+                                                            if (!getLexemaAlcance(var).equals(((Nodo)$1).getLexema())){
                                                                 ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
                                                             }
                                                             else {
@@ -517,7 +607,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
            ambitoAct = aux;
    }
 
-   public String estaAlAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
+   public String getLexemaAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
               if (!TablaSimbolos.existeSimbolo(lexema)){
                    char [] a = lexema.toCharArray();
                    for (int i = a.length;i>0;i--){
@@ -530,6 +620,9 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
               }
               return lexema;
       }
+   public boolean estaAlAlcance(String lexema){
+        return getLexemaAlcance(lexema).contains("main");
+   }
 
    public String tipoPredominante(String a, String b){
             if ((a.equals("DOUBLE"))|| (b.equals("DOUBLE"))){
