@@ -1,5 +1,6 @@
 {
-    USHORT x,
+    USHORT x; y,
+    y = 2.0,
     VOID f2(){
         DOUBLE y,
         y = 4.0,
@@ -8,4 +9,9 @@
         x = 2_us,
     },
     f2(),
+    CLASS aa {
+        INT j,
+    },
+    aa a1,
+
 }

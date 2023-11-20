@@ -47,6 +47,10 @@ SentenciaEjecutable: Asignacion {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
+ListSentenciasDecl : ListSentenciasDecl SentenciaDeclarativa ','
+                   | SentenciaDeclarativa ','{$$=$1;}
+                    ;
+
 SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declaradas) { //CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
                                                 Token t = TablaSimbolos.getToken(var);
                                                 if (t != null){
@@ -63,10 +67,10 @@ SentenciaDeclarativa: Tipo ListVariables {   for (String var : variables_declara
                                             }
                                             variables_declaradas.clear();
                                           }
-			| Funcion
+			| ListFuncion
 			| error ListVariables{AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
 			| Tipo error {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
-			| HerenciaComposicion
+			| Clase
 			| Objeto_clase
 			| FuncionIMPL
             ;
@@ -75,8 +79,26 @@ ListVariables : ID {variables_declaradas.add($1.sval);}
               | ListVariables ';' ID   {$$ = $1 ; variables_declaradas.add($3.sval);}
               ;
 
-Objeto_clase: ID ListVariables
+Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
+                                    for (String var : variables_declaradas) {
+                                    Token t = TablaSimbolos.getToken(var);
+                                    if (t != null){
+                                        t.setLexema(var + ":" + ambitoAct);
+                                        t.setAmbito(ambitoAct);
+                                        t.setUso("Objeto");
+                                        t.setTipo($1.sval);
+                                        TablaSimbolos.removeToken(var);
+                                        TablaSimbolos.addSimbolo(t.getLexema(),t);
+                                    }
+                                    else {
+                                        agregarErrorSemantico("Ya existe un objeto + var + definido en este ambito");
+                                    }
+                                    }
+                                    variables_declaradas.clear();}
     ;
+
+ListVariablesObj: ID {variables_declaradas.add($1.sval);}
+                | ListVariablesObj ';' ID {$$ = $1 ; variables_declaradas.add($3.sval);}
 
 Tipo : USHORT {tipoActual = $1.sval;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
      | INT {tipoActual = $1.sval;}
@@ -166,6 +188,7 @@ Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
 ;
 
 Factor: ID {$$ = new NodoHoja($1.sval);
+            TablaSimbolos.removeToken($1.sval);
             String var = $1.sval + ":" + ambitoAct;
             var = estaAlAlcance(var);
             if (var.equals($1.sval)){
@@ -256,11 +279,12 @@ Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbi
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
-EncabezadoFuncion : VOID ID  {ambitoAct = ambitoAct + ":" + $2.sval;}
+EncabezadoFuncion : VOID ID  {ambitoAct = ambitoAct + ":" + $2.sval;
+                              TablaSimbolos.removeToken($2.sval);}
                   ;
 //chequear
 Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
-
+                                TablaSimbolos.removeToken($3.sval);
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
@@ -281,10 +305,11 @@ ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ','
           ;
 
 //chequear que ID sea una clase realmente
-LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval); AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval); AnalizadorLexico.agregarEstructura("Reconoce llamado funcion "); TablaSimbolos.removeToken($1.sval);}
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-            | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");}
+            | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
+                                       TablaSimbolos.removeToken($1.sval);}
             ;
 
 SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
@@ -348,42 +373,38 @@ ConversionExplicita: TOD LlamadoExpresion {$$ = new NodoControl("TOD",(Nodo)$2);
                   | TOD '(' ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
-ListHerencia:'{' SentenciaListHerencia '}'
+ListClase:'{' ListSentenciasDecl '}'
 		//| SentenciaListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
-SentenciaListHerencia: Tipo ListVariables ',' {
+EncabezadoClase : CLASS ID {Token var = TablaSimbolos.getToken($2.sval + ":" + ambitoAct);
+                            if (var != null) {
+                                if (var.getUso().equals("Clase")) {
+                                    agregarErrorSemantico("Clase " + $2.sval + " ya definida en el ambito actual");
+                                    break;
+                                }
+                                agregarErrorSemantico("Este identificador ya fue utilizado en este ambito");
+                                break;
+                            }
+                            Token t = TablaSimbolos.getToken($2.sval);
+                            if (t != null){
+                            t.setLexema(t.getLexema() + ":" + ambitoAct);
+                            t.setAmbito(ambitoAct);
+                            t.setUso("Clase");
+                            TablaSimbolos.removeToken($2.sval);
+                            TablaSimbolos.addSimbolo(t.getLexema(),t);
+                            }
+                            actualizarAmbito($2.sval);
+                            };
 
-                                               }
-		| SentenciaListHerencia Tipo ListVariables ','
-		| ListFuncion ','
-		| SentenciaListHerencia ListFuncion ','
-        | Tipo ListVariables error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        | SentenciaListHerencia error Tipo ListVariables {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        | ListFuncion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        | SentenciaListHerencia error ListFuncion  {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-        ;
-
-HerenciaComposicion: CLASS ID ListHerencia   { 	String ambito = $2.sval;
-						if (!(TablaSimbolos.existeSimbolo($2.sval))) { //PREGUNTAR TMB X USO EN COND
-                                                   TablaSimbolos.getToken($2.sval).setAmbito(ambitoAct);
-                                                   actualizarAmbito(ambito);
-                                                   TablaSimbolos.getToken($2.sval).setUso("Clase");
-                                                   AnalizadorLexico.agregarEstructura("Reconoce CLASE");
-                                               } else {
-                                                    agregarErrorSemantico("Clase " + $2.sval + " ya definida en el ambito actual");
-                                               }
-                                              int index = ambitoAct.lastIndexOf(":");
-                                              ambitoAct = ambitoAct.substring(0, index);
-                                              }
-
+Clase: EncabezadoClase ListClase {deshacerAmbito();}
                          ;
 
 FuncionSinCuerpo: EncabezadoFuncion Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
                   //si hay un parentesis mal escrito lo reconoce Funcion.
                   ;
 
-FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL");}
+FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken($3.sval);}
             | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
             | IMPL FOR ID ':' '{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;

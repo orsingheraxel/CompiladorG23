@@ -11,9 +11,7 @@ public class TablaSimbolos {
     public static void imprimir(PrintWriter escritor) {
         for (String key : simbolos.keySet()) {
             Token token = simbolos.get(key);
-            escritor.print("Clave: " + key + ", ");
-            escritor.print("Valor: ");
-            token.imprimir(escritor);
+            escritor.println(token.toString());
         }
     }
 

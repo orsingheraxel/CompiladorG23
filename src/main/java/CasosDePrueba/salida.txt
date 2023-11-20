@@ -1,28 +1,13 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Clave: x:main, Valor: ID: 269
-Lexema: x:main
-Línea: 2
-Clave: 2, Valor: ID: 278
-Lexema: 2
-Línea: 8
-Clave: 4.0, Valor: ID: 280
-Lexema: 4.0
-Línea: 5
-Clave: y:main:f2, Valor: ID: 269
-Lexema: y:main:f2
-Línea: 4
-Clave: x, Valor: ID: 269
-Lexema: x
-Línea: 8
-Clave: y, Valor: ID: 269
-Lexema: y
-Línea: 5
-Clave: f1, Valor: ID: 269
-Lexema: f1
-Línea: 7
-Clave: f2, Valor: ID: 269
-Lexema: f2
-Línea: 10
+Token{id=269, lexema='j:main:aa', linea=13, uso='Variable', tipo='INT', ambito='main:aa'}
+Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=278, lexema='2', linea=9, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='y:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=280, lexema='2.0', linea=3, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='aa:main', linea=12, uso='Clase', tipo='null', ambito='main'}
+Token{id=280, lexema='4.0', linea=6, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='y:main:f2', linea=5, uso='Variable', tipo='DOUBLE', ambito='main:f2'}
+Token{id=269, lexema='a1:main', linea=15, uso='Objeto', tipo='aa', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -37,10 +22,13 @@ Línea: 10
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce asignacion  en la linea: 5
-Estructura: Reconoce asignacion  en la linea: 8
-Estructura: Reconoce llamado funcion  en la linea: 10
-Estructura: Reconoce programa  en la linea: 11
+Estructura: Reconoce asignacion  en la linea: 3
+Estructura: Reconoce asignacion  en la linea: 6
+Estructura: Reconoce declaracion de funcion  en la linea: 7
+Estructura: Reconoce asignacion  en la linea: 9
+Estructura: Reconoce declaracion de funcion  en la linea: 10
+Estructura: Reconoce llamado funcion  en la linea: 11
+Estructura: Reconoce programa  en la linea: 17
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  
