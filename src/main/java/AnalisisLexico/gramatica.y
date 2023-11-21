@@ -78,8 +78,8 @@ SentenciaEjecutable: Asignacion {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ','
-                   | SentenciaDeclarativa ','{$$=$1;}
+ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ',' {$$=null;}
+                   | SentenciaDeclarativa ','{$$=null;}
                     ;
 
 SentenciaDeclarativa: Tipo ListVariables {
