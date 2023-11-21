@@ -24,9 +24,9 @@ ListSentencias:  ListSentencias Sentencia ',' {$$ = new NodoComun("Sentencia", (
 	//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
-Sentencia: SentenciaControl {$$=$1;}
-        | SentenciaEjecutable {$$=$1;}
-        | SentenciaDeclarativa {$$= new NodoHoja("SENTENCIA DECLARATIVA");}
+Sentencia: SentenciaControl {$$ = $1;}
+        | SentenciaEjecutable {$$ = $1;}
+        | SentenciaDeclarativa {$$ = null;}
         | RETURN error {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
@@ -400,13 +400,31 @@ Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbi
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
-EncabezadoFuncion : VOID ID  {ambitoAct = ambitoAct + ":" + $2.sval;
-                              TablaSimbolos.removeToken($2.sval);}
+EncabezadoFuncion : VOID ID  {actualizarAmbito($2.sval);
+			      Token t = TablaSimbolos.getToken($2.sval);
+                              if (t != null){
+                                    t.setLexema(var + ":" + ambitoAct);
+                                    t.setAmbito(ambitoAct);
+                                    t.setUso("Funcion");
+                                    t.setTipo("VOID");
+                                    TablaSimbolos.removeToken(var);
+                                    TablaSimbolos.addSimbolo(t.getLexema(),t);
+                              }
+                              }
                   ;
 
 
-Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
-                                TablaSimbolos.removeToken($3.sval);
+
+Parametro: '(' Tipo ID ')' {
+				Token t = TablaSimbolos.getToken($3.sval);
+                                if (t != null){
+                                	t.setLexema(var + ":" + ambitoAct);
+                                	t.setAmbito(ambitoAct);
+                                	t.setUso("Parametro");
+                                	t.setTipo(tipoActual);
+                                	TablaSimbolos.removeToken(var);
+                                	TablaSimbolos.addSimbolo(t.getLexema(),t);
+                                }
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
@@ -415,19 +433,24 @@ Parametro: '(' Tipo ID ')' {	$$ = new NodoHoja($3.sval);
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
-ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ','
-		  | ListSentenciasFuncion SentenciaEjecutable ','
+ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, null);}
+		  | ListSentenciasFuncion SentenciaEjecutable ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
 		  | SentenciaEjecutable ',' {$$ = $1;}
-		  | SentenciaDeclarativa ',' {$$ = $1;}
+		  | SentenciaDeclarativa ',' {$$ = null;}
 		  | RETURN ','
-		  | ListSentenciasFuncion RETURN ','
+		  | ListSentenciasFuncion RETURN ',' {$$ = $1;}
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
-          | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          	  | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+          	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-//chequear que ID sea una clase realmente
-LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval); AnalizadorLexico.agregarEstructura("Reconoce llamado funcion "); TablaSimbolos.removeToken($1.sval);}
+LlamadoFuncion: ID '(' ')' {	$$=new NodoHoja($1.sval);
+				//Idem clase osea ver en profundidad y detalladamente con mucha precision refObjeto
+				AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
+				TablaSimbolos.removeToken($1.sval);
+
+
+			   }
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
