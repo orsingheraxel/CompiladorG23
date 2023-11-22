@@ -1141,12 +1141,14 @@ case 34:
                    ((Nodo)yyval).setUso("Constante");
                    ((Nodo)yyval).setAmbito(ambitoAct);
                    Token t = TablaSimbolos.getToken(val_peek(0).sval);
-                   t.setTipo("USHORT");
-                   t.setUso("Constante");
-                   t.setAmbito(ambitoAct);
-                   TablaSimbolos.removeToken(val_peek(0).sval);
-                   TablaSimbolos.addSimbolo(val_peek(0).sval,t);
+                   if (t!=null) {
+                     t.setTipo("USHORT");
+                     t.setUso("Constante");
+                     t.setAmbito(ambitoAct);
+                     TablaSimbolos.removeToken(val_peek(0).sval);
+                     TablaSimbolos.addSimbolo(val_peek(0).sval,t);
                    }
+}
 break;
 case 35:
 //#line 151 "gramatica.y"

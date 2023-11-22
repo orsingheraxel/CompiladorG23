@@ -1,17 +1,13 @@
 {
-    USHORT x; y,
-    y = 2_us + 4_us,
-    VOID f2(){
-        DOUBLE y,
-        y = 4.0,
-    },
-    VOID f1(){
-        x = 2_us,
-    },
-    f2(),
-    CLASS aa {
-        INT j,
-    },
-    aa a1,
-    a1.j = 3_i,
+
+DOUBLE a;b,
+
+USHORT h;i,
+
+
+
+a.a = r.r,
+
+
+
 }

@@ -1,21 +1,16 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='y:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
-Token{id=269, lexema='y:main:f2', linea=5, uso='Variable', tipo='DOUBLE', ambito='main:f2'}
-Token{id=269, lexema='j:main:aa', linea=13, uso='Variable', tipo='INT', ambito='main:aa'}
-Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
-Token{id=278, lexema='2', linea=9, uso='Constante', tipo='USHORT', ambito='main:f1'}
-Token{id=269, lexema='f2:main:f2', linea=4, uso='Funcion', tipo='VOID', ambito='main:f2'}
-Token{id=278, lexema='3', linea=16, uso='Constante', tipo='INT', ambito='main'}
-Token{id=278, lexema='4', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=269, lexema='f1:main:f1', linea=8, uso='Funcion', tipo='VOID', ambito='main:f1'}
-Token{id=269, lexema='aa:main', linea=12, uso='Clase', tipo='null', ambito='main'}
-Token{id=280, lexema='4.0', linea=6, uso='Constante', tipo='DOUBLE', ambito='main:f2'}
-Token{id=269, lexema='a1:main', linea=15, uso='Objeto', tipo='aa', ambito='main'}
+Token{id=269, lexema='a', linea=9, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='r', linea=9, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='a:main', linea=3, uso='Variable', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='h', linea=5, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='i', linea=5, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='b:main', linea=3, uso='Variable', tipo='DOUBLE', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  
+Error Sintactico: Se espera identificador de la variable  en la linea: 9
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
@@ -25,15 +20,6 @@ Token{id=269, lexema='a1:main', linea=15, uso='Objeto', tipo='aa', ambito='main'
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce asignacion  en la linea: 3
-Estructura: Reconoce asignacion  en la linea: 6
-Estructura: Reconoce declaracion de funcion  en la linea: 7
-Estructura: Reconoce asignacion  en la linea: 9
-Estructura: Reconoce declaracion de funcion  en la linea: 10
-Estructura: Reconoce llamado funcion  en la linea: 11
-Estructura: Reconoce llamado a atributo en la linea: 16
-Estructura: Reconoce asignacion  en la linea: 16
-Estructura: Reconoce programa  en la linea: 17
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

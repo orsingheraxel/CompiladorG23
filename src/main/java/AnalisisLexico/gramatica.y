@@ -142,11 +142,13 @@ Constante: ENTERO  {
                    ((Nodo)$$).setUso("Constante");
                    ((Nodo)$$).setAmbito(ambitoAct);
                    Token t = TablaSimbolos.getToken($1.sval);
-                   t.setTipo("USHORT");
-                   t.setUso("Constante");
-                   t.setAmbito(ambitoAct);
-                   TablaSimbolos.removeToken($1.sval);
-                   TablaSimbolos.addSimbolo($1.sval,t);
+                   if (t!=null) {
+                    t.setTipo("USHORT");
+                    t.setUso("Constante");
+                    t.setAmbito(ambitoAct);
+                    TablaSimbolos.removeToken($1.sval);
+                    TablaSimbolos.addSimbolo($1.sval,t);
+                   }
                    }
 	| '-' ENTEROCORTO {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 	| PUNTOFLOTANTE{
