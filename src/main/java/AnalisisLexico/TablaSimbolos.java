@@ -67,12 +67,12 @@ public class TablaSimbolos {
         }
     }
 
-    public static String recuperarAmbito (String palabra) {
+    public static Token buscarPorAmbito (String palabra) {
         for (Map.Entry<String, Token> entry : simbolos.entrySet()) {
             String lexema = entry.getKey();
             if (lexema.toLowerCase().contains(palabra.toLowerCase())) {
-                Token token = entry.getValue();
-                return token.getAmbito();
+                Token t = entry.getValue();
+                return t;
             }
         }
         return null; // Retornar null si no se encuentra ninguna coincidencia

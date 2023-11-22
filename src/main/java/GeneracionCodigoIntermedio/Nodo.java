@@ -58,8 +58,6 @@ public class Nodo extends ParserVal{
     public void setUso(String uso){
         t.setUso(uso);
     }
-    public void setValor(Object v){t.setValor(v);}
-    public Object getValor() {return t.getValor();}
 
     public Nodo getIzq(){return this.izq;}
     public Nodo getDer(){return this.der;}

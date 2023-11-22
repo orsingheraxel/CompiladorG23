@@ -26,43 +26,26 @@ ListSentencias:  ListSentencias Sentencia ',' {$$ = new NodoComun("Sentencia", (
 
 Sentencia: SentenciaControl {$$ = $1;}
         | SentenciaEjecutable {$$ = $1;}
-        | SentenciaDeclarativa {$$ = null;}
+        | SentenciaDeclarativa {$$ = new NodoHoja("sentencia declarativa");}
         | RETURN error {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
-ReferenciaObjeto: ID '.' ID {
-                            $$ = new NodoComun("ReferenciaObjeto",(Nodo)$1,(Nodo)$3);
-                            Token t1 = TablaSimbolos.getToken($1.sval);
-                            Token t2 = TablaSimbolos.getToken($3.sval);
-
-                            /*
-
-                            EJEMPLO
-
-                            clase1.a
-
-                            clase1 => uso = objeto
-				      tipo = clase1
-
-			    */
-
-			    a:clase1
-
-			    String lexemaConAmbito = t2.getLexema() + ":" + TablaSimbolos.recuperarAmbito(t2.getTipo());
-
-                            if (t.getUso().equals("Objeto")){
-                            	Token atributo = TablaSimbolos.getToken(lexConAmbito);
-                            	if (atributo != null){
-					//asignar cosas
-                            	}
-                            } else {
-                            	agregarErrorSemantico("Referencia a objeto mal definida");
+ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
+                            TablaSimbolos.removeToken($3.sval);
+                            $$ = new NodoComun("ReferenciaObjeto",new NodoHoja($1.sval), new NodoHoja($3.sval));
+                            Token clase = obtenerClase($1.sval + ":" + ambitoAct);
+                            if (clase == null) {
+                                agregarErrorSemantico("El objeto " + $1.sval + " no existe");
                             }
-
-
-
-                            AnalizadorLexico.agregarEstructura("Reconoce referencia objeto ");
-
+                            else {
+                                String nombreClase = clase.getLexema().substring(0, clase.getLexema().indexOf(":"));
+                                String lexemaObjeto = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+                                Token atributo = TablaSimbolos.getToken(lexemaObjeto);
+                                if (atributo == null){
+                                    agregarErrorSemantico("Atributo de clase no existe");
+                                }
+                            }
+                            AnalizadorLexico.agregarEstructura("Reconoce llamado a atributo");
                             }
                 ;
 
@@ -144,12 +127,10 @@ Constante: ENTERO  {
                     ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
                     ((Nodo)$$).setAmbito(ambitoAct);
-                    ((Nodo)$$).setValor(Integer.parseInt($1.sval));
                     Token t = TablaSimbolos.getToken($1.sval);
                     t.setTipo("INT");
                     t.setUso("Constante");
                     t.setAmbito(ambitoAct);
-                    t.setValor(Integer.parseInt($1.sval));
                     TablaSimbolos.removeToken($1.sval);
                     TablaSimbolos.addSimbolo($1.sval,t);
                    }
@@ -160,12 +141,10 @@ Constante: ENTERO  {
                    chequearEnteroPositivo($1.sval);
                    ((Nodo)$$).setUso("Constante");
                    ((Nodo)$$).setAmbito(ambitoAct);
-                   ((Nodo)$$).setValor(Integer.parseInt($1.sval));
                    Token t = TablaSimbolos.getToken($1.sval);
                    t.setTipo("USHORT");
                    t.setUso("Constante");
                    t.setAmbito(ambitoAct);
-                   t.setValor(Integer.parseInt($1.sval));
                    TablaSimbolos.removeToken($1.sval);
                    TablaSimbolos.addSimbolo($1.sval,t);
                    }
@@ -176,12 +155,10 @@ Constante: ENTERO  {
                     ((Nodo)$$).setTipo("DOUBLE");
                     ((Nodo)$$).setUso("Constante");
                     ((Nodo)$$).setAmbito(ambitoAct);
-                    ((Nodo)$$).setValor(Double.parseDouble($1.sval));
 	            Token t = TablaSimbolos.getToken($1.sval);
                     t.setTipo("DOUBLE");
                     t.setUso("Constante");
                     t.setAmbito(ambitoAct);
-                    t.setValor(Double.parseDouble($1.sval));
                     TablaSimbolos.removeToken($1.sval);
                     TablaSimbolos.addSimbolo($1.sval,t);
                     }
@@ -192,12 +169,10 @@ Constante: ENTERO  {
                     ((Nodo)$$).setTipo("INT");
                     ((Nodo)$$).setUso("Constante");
                     ((Nodo)$$).setAmbito(ambitoAct);
-                    ((Nodo)$$).setValor(Integer.parseInt($1.sval));
                     Token t = TablaSimbolos.getToken($1.sval);
                     t.setTipo("INT");
                     t.setUso("Constante");
                     t.setAmbito(ambitoAct);
-                    t.setValor(Integer.parseInt($1.sval));
                     TablaSimbolos.removeToken($1.sval);
                     TablaSimbolos.addSimbolo($1.sval,t);
 	                }
@@ -206,12 +181,10 @@ Constante: ENTERO  {
                          ((Nodo)$$).setTipo("DOUBLE");
                          ((Nodo)$$).setUso("Constante");
                          ((Nodo)$$).setAmbito(ambitoAct);
-                         ((Nodo)$$).setValor(Double.parseDouble($1.sval));
                          Token t = TablaSimbolos.getToken($1.sval);
                          t.setTipo("DOUBLE");
                          t.setUso("Constante");
                          t.setAmbito(ambitoAct);
-                         t.setValor(Double.parseDouble($1.sval));
                          TablaSimbolos.removeToken($1.sval);
                          TablaSimbolos.addSimbolo($1.sval,t);
                         }
@@ -232,7 +205,6 @@ Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                                 }
                                 if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
                                     ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                                    ((Nodo)$$).setValor(((Nodo)$1).getValor() + ((Nodo)$3).getValor());
                                 }
                                 }
 | Expresion'-'Termino {$$ = new NodoComun("-",(Nodo)$1,(Nodo)$3);
@@ -250,7 +222,6 @@ Expresion: Expresion'+'Termino { $$ = new NodoComun("+",(Nodo)$1,(Nodo)$3);
                         }
                         if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
                             ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                            ((Nodo)$$).setValor(((Nodo)$1).getValor() - ((Nodo)$3).getValor());
                         }
                       }
 | Termino {$$=$1;}
@@ -273,7 +244,6 @@ Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
                                 }
                                 if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
                                     ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                                    ((Nodo)$$).setValor(((Nodo)$1).getValor() * ((Nodo)$3).getValor());
                                 }
                               }
 
@@ -291,7 +261,6 @@ Termino: Termino '*' Factor   {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
                         }
                         if (((Nodo)$1).getTipo().equals(((Nodo)$3).getTipo())){
                             ((Nodo)$$).setTipo(((Nodo)$1).getTipo());
-                            ((Nodo)$$).setValor(((Nodo)$1).getValor() / ((Nodo)$3).getValor());
                         }
                     }
 | Factor {$$ = $1;}
@@ -330,6 +299,7 @@ Factor: ID {$$ = new NodoHoja($1.sval);
           }
 	| Constante {$$=$1;}
 	;
+
 
 Factor_RefObjeto: ReferenciaObjeto {$$=$1;}
                 ;
@@ -403,11 +373,11 @@ Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbi
 EncabezadoFuncion : VOID ID  {actualizarAmbito($2.sval);
 			      Token t = TablaSimbolos.getToken($2.sval);
                               if (t != null){
-                                    t.setLexema(var + ":" + ambitoAct);
+                                    t.setLexema($2.sval + ":" + ambitoAct);
                                     t.setAmbito(ambitoAct);
                                     t.setUso("Funcion");
                                     t.setTipo("VOID");
-                                    TablaSimbolos.removeToken(var);
+                                    TablaSimbolos.removeToken($2.sval);
                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
                               }
                               }
@@ -418,11 +388,11 @@ EncabezadoFuncion : VOID ID  {actualizarAmbito($2.sval);
 Parametro: '(' Tipo ID ')' {
 				Token t = TablaSimbolos.getToken($3.sval);
                                 if (t != null){
-                                	t.setLexema(var + ":" + ambitoAct);
+                                	t.setLexema($3.sval + ":" + ambitoAct);
                                 	t.setAmbito(ambitoAct);
                                 	t.setUso("Parametro");
                                 	t.setTipo(tipoActual);
-                                	TablaSimbolos.removeToken(var);
+                                	TablaSimbolos.removeToken($3.sval);
                                 	TablaSimbolos.addSimbolo(t.getLexema(),t);
                                 }
                            }
@@ -433,10 +403,10 @@ Parametro: '(' Tipo ID ')' {
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
-ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, null);}
+ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
 		  | ListSentenciasFuncion SentenciaEjecutable ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
 		  | SentenciaEjecutable ',' {$$ = $1;}
-		  | SentenciaDeclarativa ',' {$$ = null;}
+		  | SentenciaDeclarativa ',' {$$ = new NodoHoja("sentencia declarativa");}
 		  | RETURN ','
 		  | ListSentenciasFuncion RETURN ',' {$$ = $1;}
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
@@ -444,18 +414,25 @@ ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new N
           	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')' {	$$=new NodoHoja($1.sval);
-				//Idem clase osea ver en profundidad y detalladamente con mucha precision refObjeto
-				AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
-				TablaSimbolos.removeToken($1.sval);
-
-
-			   }
+LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);
+                             Token funcion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
+                             if (funcion == null){
+                                agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
+                             }
+				            AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
+				            TablaSimbolos.removeToken($1.sval);
+				            }
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID LlamadoExpresion  {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
-                                       TablaSimbolos.removeToken($1.sval);}
-            ;
+                                    Token funcion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
+                                    if (funcion == null){
+                                        agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
+                                    }
+                                    AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
+                                    TablaSimbolos.removeToken($1.sval);
+                                    }
+                        ;
 
 SalidaMensaje: PRINT CADENA {$$ = new NodoControl("PRINT", new NodoHoja($2.sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
@@ -470,30 +447,47 @@ OperadorAsignacion: '=' {$$=$1;}
 
 Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 						                        $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
-						                        String var = getLexemaAlcance(((Nodo)$1).getLexema() + ":" + ambitoAct);
-                                                if (var.contains("main")){
-                                                    Token t1 = TablaSimbolos.getToken(var);
-                                                    if (t1 != null){
-                                                        if (t1.getUso().equals("Constante")){
-                                                            agregarErrorSemantico("Las constantes no pueden estar del lado izquierdo en una asignacion");
-                                                        }
-                                                        else {
-                                                            if (!getLexemaAlcance(var).equals(((Nodo)$1).getLexema())){
-                                                                ((Nodo)$$).setTipo(tipoPredominante(((Nodo)$1).getTipo(),((Nodo)$3).getTipo()));
-                                                            }
-                                                            else {
-                                                                agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() +" fuera de alcance");
-                                                            }
+                                                String uso = ((Nodo)$1).getLexema();
+                                                if (!(uso.equals("Constante"))){
+                                                String var = getLexemaAlcance(((Nodo)$1).getLexema() + ":" + ambitoAct);
+                                                    if (var.contains("main")){
+                                                        Token t1 = TablaSimbolos.getToken(var);
+                                                        if (t1 != null){
+                                                                if (getLexemaAlcance(var).equals(((Nodo)$1).getLexema())){
+                                                                    agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() +" fuera de alcance");
+                                                                }
                                                         }
                                                     }
+                                                    else {
+                                                        agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() + " no definida");
+                                                    }
                                                 }
-						                        else {
-						                            agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() + " no definida");
-						                        }
+                                                else {
+                                                    agregarErrorSemantico("Las constantes no pueden estar del lado izquierdo en una asignacion");
+					                            }
 					                            }
 
-	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
-	| ReferenciaObjeto OperadorAsignacion Factor
+	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                        $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);}
+
+	| ReferenciaObjeto OperadorAsignacion Factor {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                $$ = new NodoComun($2.sval,(Nodo)$1,(Nodo)$3);
+	                                                String uso = ((Nodo)$3).getUso();
+	                                                if (!(uso.equals("Constante"))){
+                                                        String var = getLexemaAlcance(((Nodo)$3).getLexema() + ":" + ambitoAct);
+                                                        if (var.contains("main")){
+                                                            Token t1 = TablaSimbolos.getToken(var);
+                                                            if (t1 != null){
+                                                                if (getLexemaAlcance(var).equals(((Nodo)$1).getLexema())){
+                                                                        agregarErrorSemantico("Variable " + ((Nodo)$1).getLexema() +" fuera de alcance");
+                                                                    }
+                                                            }
+                                                        }
+                                                        else {
+                                                            agregarErrorSemantico("Variable " + ((Nodo)$3).getLexema() + " no definida");
+                                                        }
+                                                    }
+	                                                }
 	| ReferenciaObjeto OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 	| Factor OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 	| OperadorAsignacion Factor {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
@@ -511,7 +505,12 @@ LlamadoExpresion:'(' Expresion ')' {$$ = $2;}
 		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 		;
 
-ConversionExplicita: TOD LlamadoExpresion {$$ = new NodoControl("TOD",(Nodo)$2);
+ParametroTOD:'(' Expresion ')' {$$ = $2;}
+		| error Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
+		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
+		;
+
+ConversionExplicita: TOD ParametroTOD {$$ = new NodoControl("TOD",(Nodo)$2);
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 
@@ -662,6 +661,19 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
            if (i>0)
             aux = aux.substring(0,i-1);
            ambitoAct = aux;
+   }
+
+   public Token obtenerClase(String lexema) {
+           Token t = TablaSimbolos.buscarPorAmbito(lexema);
+           while (t == null) {
+               int index = lexema.lastIndexOf(":");
+               if (index != -1){
+                    lexema = lexema.substring(0, lexema.lastIndexOf(":"));
+               }
+               t = TablaSimbolos.buscarPorAmbito(lexema);
+           }
+           String nombreClase = t.getTipo();
+           return TablaSimbolos.buscarPorAmbito(nombreClase + ":" + ambitoAct);
    }
 
    public String getLexemaAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
