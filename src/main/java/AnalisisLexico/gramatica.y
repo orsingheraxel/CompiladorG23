@@ -61,8 +61,8 @@ SentenciaEjecutable: Asignacion {$$=$1;}
                   | ReferenciaObjetoFuncion {$$=$1;}
                   ;
 
-ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ',' {$$=null;}
-                   | SentenciaDeclarativa ','{$$=null;}
+ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ','
+                   | SentenciaDeclarativa ','
                     ;
 
 SentenciaDeclarativa: Tipo ListVariables {
@@ -309,36 +309,48 @@ Factor_RefObjeto: ReferenciaObjeto {$$=$1;}
 Condicion : '(' Expresion Comparador Expresion ')' { $$ = new NodoComun($3.sval,(Nodo)$2,(Nodo)$4);
                                                     ((Nodo)$$).setTipo(((Nodo)$2).getTipo());
                                                     ((Nodo)$$).setUso("Condicion");
-                                                     if (!((((Nodo)$2).getTipo()).equals(((Nodo)$4).getTipo()))){
-                                                         agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
-                                                     }
+                                                    //if (!(((Nodo)$2).getTipo().equals(((Nodo)$4).getTipo()))){
+                                                         //agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
+                                                     //}
                                                      }
             | '(' Expresion Comparador Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
             | error Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
 
-BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {Nodo SentenciasIF = new NodoComun("SentenciasIF",new NodoControl("SentenciasIF",(Nodo)$3), new NodoControl("SentenciasELSE",(Nodo)$5));
-                                                                      $$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), SentenciasIF);
-                                                                      AnalizadorLexico.agregarEstructura("Reconoce IF ELSE ");}
-	    | IF Condicion CuerpoIF END_IF {$$= new NodoComun("BloqueIF", new NodoControl("Condicion",(Nodo)$2), new NodoControl("SentenciasIF",(Nodo)$3));
-	                                            AnalizadorLexico.agregarEstructura("Reconoce IF ");}
-	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
+BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {  $$ = new NodoComun("CUERPO",(Nodo)$3,(Nodo)$5);
+                                                        Nodo aux = (Nodo)$$;
+                                                        $$ = new NodoComun("IF",(Nodo)$2,aux);
+                                                        AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+	    | IF Condicion CuerpoIF END_IF {$$ = new NodoComun("CUERPO",(Nodo)$3,null);
+	                                    Nodo aux = (Nodo)$$;
+	                                    $$ = new NodoComun("IF",(Nodo)$2,aux);
+	                                    AnalizadorLexico.agregarEstructura("Reconoce IF");}
+	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
-        | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
-        | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
-        | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF {AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {   $$ = new NodoComun("CUERPO",(Nodo)$3,(Nodo)$6);
+                                                                        Nodo aux = (Nodo)$$;
+                                                                        $$ = new NodoComun("IF",(Nodo)$2,aux);
+                                                                        AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF {$$ = new NodoComun("CUERPO",(Nodo)$3,(Nodo)$6);
+                                                                                    Nodo aux = (Nodo)$$;
+                                                                                    $$ = new NodoComun("IF",(Nodo)$2,aux);
+                                                                                    AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+        | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF {   $$ = new NodoComun("CUERPO",(Nodo)$3,(Nodo)$5);
+                                                                        Nodo aux = (Nodo)$$;
+                                                                        $$ = new NodoComun("IF",(Nodo)$2,aux);
+                                                                        AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable ',' error CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
-        | IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
+        | IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE");}
         | IF Condicion SentenciaEjecutable error ELSE  CuerpoIF END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' " );}
         | IF Condicion SentenciaEjecutable error END_IF {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
-CuerpoIF: '{' SentenciasIF '}'
-        | RETURN ','
+CuerpoIF: '{' SentenciasIF '}' {$$ = $2;}
+        | RETURN ',' {$$ = new NodoHoja("RETURN");}
         | RETURN error {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
         | '{' SentenciasIF RETURN ',' '}'
         | '{' SentenciasIF RETURN error '}' {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
@@ -368,7 +380,8 @@ ListFuncion: Funcion
 	| FuncionSinCuerpo
 	;
 
-Funcion: EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbito(); AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
+Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {agregarErrorSemantico("RETURN fuera de funcion");}
+      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {deshacerAmbito(); AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
@@ -405,12 +418,12 @@ Parametro: '(' Tipo ID ')' {
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
 
-ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
-		  | ListSentenciasFuncion SentenciaEjecutable ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
-		  | SentenciaEjecutable ',' {$$ = $1;}
-		  | SentenciaDeclarativa ',' {$$ = new NodoHoja("sentencia declarativa");}
+ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ','
+		  | ListSentenciasFuncion SentenciaEjecutable ','
+		  | SentenciaEjecutable ','
+		  | SentenciaDeclarativa ','
 		  | RETURN ','
-		  | ListSentenciasFuncion RETURN ',' {$$ = $1;}
+		  | ListSentenciasFuncion RETURN ','
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           	  | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
@@ -495,7 +508,7 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 	| OperadorAsignacion Factor {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 	;
 
-SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("Sentencia DO UNTIL", new NodoControl("ListSentenciasDO",(Nodo)$2), new NodoControl("CondicionDO", (Nodo)$4));
+SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("DO UNTIL", (Nodo)$2 ,(Nodo)$4);
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
                   |DO CuerpoIF UNTIL error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
                   ;

@@ -1,13 +1,10 @@
 {
-
-DOUBLE a;b,
-
-USHORT h;i,
-
-
-
-a.a = r.r,
-
-
-
+CLASS bot {
+    INT t,
+    VOID l() {
+        DOUBLE a,
+        PRINT a,
+    },
+    RETURN,
+},
 }

@@ -1,16 +1,13 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='a', linea=9, uso='', tipo='null', ambito='null'}
-Token{id=269, lexema='r', linea=9, uso='', tipo='null', ambito='null'}
-Token{id=269, lexema='a:main', linea=3, uso='Variable', tipo='DOUBLE', ambito='main'}
-Token{id=269, lexema='h', linea=5, uso='', tipo='null', ambito='null'}
-Token{id=269, lexema='i', linea=5, uso='', tipo='null', ambito='null'}
-Token{id=269, lexema='b:main', linea=3, uso='Variable', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='bot:main', linea=2, uso='Clase', tipo='null', ambito='main'}
+Token{id=269, lexema='l:main:bot:l', linea=4, uso='Funcion', tipo='VOID', ambito='main:bot:l'}
+Token{id=269, lexema='t:main:bot', linea=3, uso='Variable', tipo='INT', ambito='main:bot'}
+Token{id=269, lexema='a:main:bot:l', linea=5, uso='Variable', tipo='DOUBLE', ambito='main:bot:l'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  
-Error Sintactico: Se espera identificador de la variable  en la linea: 9
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
@@ -20,6 +17,8 @@ Error Sintactico: Se espera identificador de la variable  en la linea: 9
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
+Estructura: Reconoce salida de mensaje por pantalla  en la linea: 6
+Estructura: Reconoce declaracion de funcion  en la linea: 7
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

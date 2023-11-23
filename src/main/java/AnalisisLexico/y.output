@@ -115,71 +115,72 @@
   90              | FuncionSinCuerpo
 
   91  Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}'
-  92          | VOID error Parametro '{' ListSentenciasFuncion '}'
+  92          | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ','
+  93          | VOID error Parametro '{' ListSentenciasFuncion '}'
 
-  93  EncabezadoFuncion : VOID ID
+  94  EncabezadoFuncion : VOID ID
 
-  94  Parametro : '(' Tipo ID ')'
-  95            | '(' Tipo ID error
-  96            | error Tipo ID ')'
-  97            | '(' ')'
-  98            | '(' error
-  99            | error ')'
+  95  Parametro : '(' Tipo ID ')'
+  96            | '(' Tipo ID error
+  97            | error Tipo ID ')'
+  98            | '(' ')'
+  99            | '(' error
+ 100            | error ')'
 
- 100  ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ','
- 101                        | ListSentenciasFuncion SentenciaEjecutable ','
- 102                        | SentenciaEjecutable ','
- 103                        | SentenciaDeclarativa ','
- 104                        | RETURN ','
- 105                        | ListSentenciasFuncion RETURN ','
- 106                        | SentenciaEjecutable error
- 107                        | SentenciaDeclarativa error
- 108                        | RETURN error
+ 101  ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ','
+ 102                        | ListSentenciasFuncion SentenciaEjecutable ','
+ 103                        | SentenciaEjecutable ','
+ 104                        | SentenciaDeclarativa ','
+ 105                        | RETURN ','
+ 106                        | ListSentenciasFuncion RETURN ','
+ 107                        | SentenciaEjecutable error
+ 108                        | SentenciaDeclarativa error
+ 109                        | RETURN error
 
- 109  LlamadoFuncion : ID '(' ')'
- 110                 | ID error ')'
- 111                 | ID '(' error
- 112                 | ID LlamadoExpresion
+ 110  LlamadoFuncion : ID '(' ')'
+ 111                 | ID error ')'
+ 112                 | ID '(' error
+ 113                 | ID LlamadoExpresion
 
- 113  SalidaMensaje : PRINT CADENA
- 114                | PRINT Factor
- 115                | PRINT error
+ 114  SalidaMensaje : PRINT CADENA
+ 115                | PRINT Factor
+ 116                | PRINT error
 
- 116  OperadorAsignacion : '='
- 117                     | ASIG
+ 117  OperadorAsignacion : '='
+ 118                     | ASIG
 
- 118  Asignacion : Factor OperadorAsignacion Expresion
- 119             | ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
- 120             | ReferenciaObjeto OperadorAsignacion Factor
- 121             | ReferenciaObjeto OperadorAsignacion error
- 122             | Factor OperadorAsignacion error
- 123             | OperadorAsignacion Factor
+ 119  Asignacion : Factor OperadorAsignacion Expresion
+ 120             | ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
+ 121             | ReferenciaObjeto OperadorAsignacion Factor
+ 122             | ReferenciaObjeto OperadorAsignacion error
+ 123             | Factor OperadorAsignacion error
+ 124             | OperadorAsignacion Factor
 
- 124  SentenciaControl : DO CuerpoIF UNTIL Condicion
- 125                   | DO CuerpoIF UNTIL error
+ 125  SentenciaControl : DO CuerpoIF UNTIL Condicion
+ 126                   | DO CuerpoIF UNTIL error
 
- 126  LlamadoExpresion : '(' Expresion ')'
- 127                   | error Expresion ')'
- 128                   | '(' Expresion error
+ 127  LlamadoExpresion : '(' Expresion ')'
+ 128                   | error Expresion ')'
+ 129                   | '(' Expresion error
 
- 129  ParametroTOD : '(' Expresion ')'
- 130               | error Expresion ')'
- 131               | '(' Expresion error
+ 130  ParametroTOD : '(' Expresion ')'
+ 131               | error Expresion ')'
+ 132               | '(' Expresion error
 
- 132  ConversionExplicita : TOD ParametroTOD
- 133                      | TOD '(' ')'
+ 133  ConversionExplicita : TOD ParametroTOD
+ 134                      | TOD '(' ')'
 
- 134  ListClase : '{' ListSentenciasClase '}'
+ 135  ListClase : '{' ListSentenciasClase '}'
 
- 135  EncabezadoClase : CLASS ID
+ 136  EncabezadoClase : CLASS ID
 
- 136  Clase : EncabezadoClase ListClase
+ 137  Clase : EncabezadoClase ListClase
 
- 137  FuncionSinCuerpo : EncabezadoFuncion Parametro
+ 138  FuncionSinCuerpo : EncabezadoFuncion Parametro
 
- 138  FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'
- 139              | IMPL FOR ID ':' error Funcion '}'
- 140              | IMPL FOR ID ':' '{' Funcion error
+ 139  FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'
+ 140              | IMPL FOR ID ':' error Funcion '}'
+ 141              | IMPL FOR ID ':' '{' Funcion error
 
 state 0
 	$accept : . Programa $end  (0)
@@ -327,9 +328,9 @@ state 5
 
 
 state 6
-	SalidaMensaje : PRINT . CADENA  (113)
-	SalidaMensaje : PRINT . Factor  (114)
-	SalidaMensaje : PRINT . error  (115)
+	SalidaMensaje : PRINT . CADENA  (114)
+	SalidaMensaje : PRINT . Factor  (115)
+	SalidaMensaje : PRINT . error  (116)
 
 	error  shift 51
 	ID  shift 52
@@ -345,15 +346,15 @@ state 6
 
 
 state 7
-	EncabezadoClase : CLASS . ID  (135)
+	EncabezadoClase : CLASS . ID  (136)
 
 	ID  shift 55
 	.  error
 
 
 state 8
-	Funcion : VOID . error Parametro '{' ListSentenciasFuncion '}'  (92)
-	EncabezadoFuncion : VOID . ID  (93)
+	Funcion : VOID . error Parametro '{' ListSentenciasFuncion '}'  (93)
+	EncabezadoFuncion : VOID . ID  (94)
 
 	error  shift 56
 	ID  shift 57
@@ -361,8 +362,8 @@ state 8
 
 
 state 9
-	SentenciaControl : DO . CuerpoIF UNTIL Condicion  (124)
-	SentenciaControl : DO . CuerpoIF UNTIL error  (125)
+	SentenciaControl : DO . CuerpoIF UNTIL Condicion  (125)
+	SentenciaControl : DO . CuerpoIF UNTIL error  (126)
 
 	error  shift 58
 	RETURN  shift 59
@@ -373,9 +374,9 @@ state 9
 
 
 state 10
-	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion '}'  (138)
-	FuncionIMPL : IMPL . FOR ID ':' error Funcion '}'  (139)
-	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion error  (140)
+	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion '}'  (139)
+	FuncionIMPL : IMPL . FOR ID ':' error Funcion '}'  (140)
+	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion error  (141)
 
 	FOR  shift 62
 	.  error
@@ -404,10 +405,10 @@ state 14
 	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (10)
 	Objeto_clase : ID . ListVariablesObj  (27)
 	Factor : ID .  (49)
-	LlamadoFuncion : ID . '(' ')'  (109)
-	LlamadoFuncion : ID . error ')'  (110)
-	LlamadoFuncion : ID . '(' error  (111)
-	LlamadoFuncion : ID . LlamadoExpresion  (112)
+	LlamadoFuncion : ID . '(' ')'  (110)
+	LlamadoFuncion : ID . error ')'  (111)
+	LlamadoFuncion : ID . '(' error  (112)
+	LlamadoFuncion : ID . LlamadoExpresion  (113)
 
 	error  shift 63
 	ID  shift 64
@@ -421,9 +422,9 @@ state 14
 
 
 state 15
-	OperadorAsignacion : ASIG .  (117)
+	OperadorAsignacion : ASIG .  (118)
 
-	.  reduce 117
+	.  reduce 118
 
 
 state 16
@@ -463,9 +464,9 @@ state 20
 
 
 state 21
-	OperadorAsignacion : '=' .  (116)
+	OperadorAsignacion : '=' .  (117)
 
-	.  reduce 116
+	.  reduce 117
 
 
 state 22
@@ -543,9 +544,9 @@ state 26
 
 
 state 27
-	Asignacion : ReferenciaObjeto . OperadorAsignacion ReferenciaObjeto  (119)
-	Asignacion : ReferenciaObjeto . OperadorAsignacion Factor  (120)
-	Asignacion : ReferenciaObjeto . OperadorAsignacion error  (121)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion ReferenciaObjeto  (120)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion Factor  (121)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion error  (122)
 
 	ASIG  shift 15
 	'='  shift 21
@@ -626,8 +627,8 @@ state 38
 
 
 state 39
-	Asignacion : Factor . OperadorAsignacion Expresion  (118)
-	Asignacion : Factor . OperadorAsignacion error  (122)
+	Asignacion : Factor . OperadorAsignacion Expresion  (119)
+	Asignacion : Factor . OperadorAsignacion error  (123)
 
 	ASIG  shift 15
 	'='  shift 21
@@ -650,7 +651,8 @@ state 41
 
 state 42
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}'  (91)
-	FuncionSinCuerpo : EncabezadoFuncion . Parametro  (137)
+	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}' RETURN ','  (92)
+	FuncionSinCuerpo : EncabezadoFuncion . Parametro  (138)
 
 	error  shift 80
 	'('  shift 81
@@ -660,7 +662,7 @@ state 42
 
 
 state 43
-	Asignacion : OperadorAsignacion . Factor  (123)
+	Asignacion : OperadorAsignacion . Factor  (124)
 
 	ID  shift 52
 	ENTERO  shift 17
@@ -674,7 +676,7 @@ state 43
 
 
 state 44
-	Clase : EncabezadoClase . ListClase  (136)
+	Clase : EncabezadoClase . ListClase  (137)
 
 	'{'  shift 84
 	.  error
@@ -832,9 +834,9 @@ state 50
 
 
 state 51
-	SalidaMensaje : PRINT error .  (115)
+	SalidaMensaje : PRINT error .  (116)
 
-	.  reduce 115
+	.  reduce 116
 
 
 state 52
@@ -844,25 +846,25 @@ state 52
 
 
 state 53
-	SalidaMensaje : PRINT CADENA .  (113)
-
-	.  reduce 113
-
-
-state 54
-	SalidaMensaje : PRINT Factor .  (114)
+	SalidaMensaje : PRINT CADENA .  (114)
 
 	.  reduce 114
 
 
-state 55
-	EncabezadoClase : CLASS ID .  (135)
+state 54
+	SalidaMensaje : PRINT Factor .  (115)
 
-	.  reduce 135
+	.  reduce 115
+
+
+state 55
+	EncabezadoClase : CLASS ID .  (136)
+
+	.  reduce 136
 
 
 state 56
-	Funcion : VOID error . Parametro '{' ListSentenciasFuncion '}'  (92)
+	Funcion : VOID error . Parametro '{' ListSentenciasFuncion '}'  (93)
 
 	error  shift 80
 	'('  shift 81
@@ -872,9 +874,9 @@ state 56
 
 
 state 57
-	EncabezadoFuncion : VOID ID .  (93)
+	EncabezadoFuncion : VOID ID .  (94)
 
-	.  reduce 93
+	.  reduce 94
 
 
 state 58
@@ -950,25 +952,25 @@ state 60
 
 
 state 61
-	SentenciaControl : DO CuerpoIF . UNTIL Condicion  (124)
-	SentenciaControl : DO CuerpoIF . UNTIL error  (125)
+	SentenciaControl : DO CuerpoIF . UNTIL Condicion  (125)
+	SentenciaControl : DO CuerpoIF . UNTIL error  (126)
 
 	UNTIL  shift 109
 	.  error
 
 
 state 62
-	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion '}'  (138)
-	FuncionIMPL : IMPL FOR . ID ':' error Funcion '}'  (139)
-	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion error  (140)
+	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion '}'  (139)
+	FuncionIMPL : IMPL FOR . ID ':' error Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion error  (141)
 
 	ID  shift 110
 	.  error
 
 
 state 63
-	LlamadoFuncion : ID error . ')'  (110)
-	LlamadoExpresion : error . Expresion ')'  (127)
+	LlamadoFuncion : ID error . ')'  (111)
+	LlamadoExpresion : error . Expresion ')'  (128)
 
 	ID  shift 88
 	TOD  shift 89
@@ -1005,10 +1007,10 @@ state 65
 
 
 state 66
-	LlamadoFuncion : ID '(' . ')'  (109)
-	LlamadoFuncion : ID '(' . error  (111)
-	LlamadoExpresion : '(' . Expresion ')'  (126)
-	LlamadoExpresion : '(' . Expresion error  (128)
+	LlamadoFuncion : ID '(' . ')'  (110)
+	LlamadoFuncion : ID '(' . error  (112)
+	LlamadoExpresion : '(' . Expresion ')'  (127)
+	LlamadoExpresion : '(' . Expresion error  (129)
 
 	error  shift 115
 	ID  shift 88
@@ -1039,9 +1041,9 @@ state 67
 
 
 state 68
-	LlamadoFuncion : ID LlamadoExpresion .  (112)
+	LlamadoFuncion : ID LlamadoExpresion .  (113)
 
-	.  reduce 112
+	.  reduce 113
 
 
 state 69
@@ -1088,9 +1090,9 @@ state 75
 
 
 state 76
-	Asignacion : ReferenciaObjeto OperadorAsignacion . ReferenciaObjeto  (119)
-	Asignacion : ReferenciaObjeto OperadorAsignacion . Factor  (120)
-	Asignacion : ReferenciaObjeto OperadorAsignacion . error  (121)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . ReferenciaObjeto  (120)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . Factor  (121)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . error  (122)
 
 	error  shift 120
 	ID  shift 88
@@ -1121,8 +1123,8 @@ state 78
 
 
 state 79
-	Asignacion : Factor OperadorAsignacion . Expresion  (118)
-	Asignacion : Factor OperadorAsignacion . error  (122)
+	Asignacion : Factor OperadorAsignacion . Expresion  (119)
+	Asignacion : Factor OperadorAsignacion . error  (123)
 
 	error  shift 123
 	ID  shift 88
@@ -1143,8 +1145,8 @@ state 79
 
 
 state 80
-	Parametro : error . Tipo ID ')'  (96)
-	Parametro : error . ')'  (99)
+	Parametro : error . Tipo ID ')'  (97)
+	Parametro : error . ')'  (100)
 
 	INT  shift 11
 	USHORT  shift 12
@@ -1156,10 +1158,10 @@ state 80
 
 
 state 81
-	Parametro : '(' . Tipo ID ')'  (94)
-	Parametro : '(' . Tipo ID error  (95)
-	Parametro : '(' . ')'  (97)
-	Parametro : '(' . error  (98)
+	Parametro : '(' . Tipo ID ')'  (95)
+	Parametro : '(' . Tipo ID error  (96)
+	Parametro : '(' . ')'  (98)
+	Parametro : '(' . error  (99)
 
 	error  shift 127
 	INT  shift 11
@@ -1173,21 +1175,22 @@ state 81
 
 state 82
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}'  (91)
-	FuncionSinCuerpo : EncabezadoFuncion Parametro .  (137)
+	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}' RETURN ','  (92)
+	FuncionSinCuerpo : EncabezadoFuncion Parametro .  (138)
 
 	'{'  shift 130
-	error  reduce 137
-	','  reduce 137
+	error  reduce 138
+	','  reduce 138
 
 
 state 83
-	Asignacion : OperadorAsignacion Factor .  (123)
+	Asignacion : OperadorAsignacion Factor .  (124)
 
-	.  reduce 123
+	.  reduce 124
 
 
 state 84
-	ListClase : '{' . ListSentenciasClase '}'  (134)
+	ListClase : '{' . ListSentenciasClase '}'  (135)
 
 	error  shift 4
 	CLASS  shift 7
@@ -1213,9 +1216,9 @@ state 84
 
 
 state 85
-	Clase : EncabezadoClase ListClase .  (136)
+	Clase : EncabezadoClase ListClase .  (137)
 
-	.  reduce 136
+	.  reduce 137
 
 
 state 86
@@ -1253,8 +1256,8 @@ state 88
 
 
 state 89
-	ConversionExplicita : TOD . ParametroTOD  (132)
-	ConversionExplicita : TOD . '(' ')'  (133)
+	ConversionExplicita : TOD . ParametroTOD  (133)
+	ConversionExplicita : TOD . '(' ')'  (134)
 
 	error  shift 136
 	'('  shift 137
@@ -1351,10 +1354,10 @@ state 97
 	ReferenciaObjeto : ID . '.' ID  (9)
 	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (10)
 	Factor : ID .  (49)
-	LlamadoFuncion : ID . '(' ')'  (109)
-	LlamadoFuncion : ID . error ')'  (110)
-	LlamadoFuncion : ID . '(' error  (111)
-	LlamadoFuncion : ID . LlamadoExpresion  (112)
+	LlamadoFuncion : ID . '(' ')'  (110)
+	LlamadoFuncion : ID . error ')'  (111)
+	LlamadoFuncion : ID . '(' error  (112)
+	LlamadoFuncion : ID . LlamadoExpresion  (113)
 
 	error  shift 63
 	'.'  shift 65
@@ -1396,7 +1399,7 @@ state 99
 
 
 state 100
-	Funcion : VOID error Parametro . '{' ListSentenciasFuncion '}'  (92)
+	Funcion : VOID error Parametro . '{' ListSentenciasFuncion '}'  (93)
 
 	'{'  shift 156
 	.  error
@@ -1484,8 +1487,8 @@ state 108
 
 
 state 109
-	SentenciaControl : DO CuerpoIF UNTIL . Condicion  (124)
-	SentenciaControl : DO CuerpoIF UNTIL . error  (125)
+	SentenciaControl : DO CuerpoIF UNTIL . Condicion  (125)
+	SentenciaControl : DO CuerpoIF UNTIL . error  (126)
 
 	error  shift 164
 	'('  shift 49
@@ -1495,24 +1498,24 @@ state 109
 
 
 state 110
-	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion '}'  (138)
-	FuncionIMPL : IMPL FOR ID . ':' error Funcion '}'  (139)
-	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion error  (140)
+	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion '}'  (139)
+	FuncionIMPL : IMPL FOR ID . ':' error Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion error  (141)
 
 	':'  shift 166
 	.  error
 
 
 state 111
-	LlamadoFuncion : ID error ')' .  (110)
+	LlamadoFuncion : ID error ')' .  (111)
 
-	.  reduce 110
+	.  reduce 111
 
 
 state 112
 	Expresion : Expresion . '+' Termino  (39)
 	Expresion : Expresion . '-' Termino  (40)
-	LlamadoExpresion : error Expresion . ')'  (127)
+	LlamadoExpresion : error Expresion . ')'  (128)
 
 	'-'  shift 143
 	'+'  shift 144
@@ -1522,10 +1525,10 @@ state 112
 
 state 113
 	ReferenciaObjeto : ID '.' ID .  (9)
-	LlamadoFuncion : ID . '(' ')'  (109)
-	LlamadoFuncion : ID . error ')'  (110)
-	LlamadoFuncion : ID . '(' error  (111)
-	LlamadoFuncion : ID . LlamadoExpresion  (112)
+	LlamadoFuncion : ID . '(' ')'  (110)
+	LlamadoFuncion : ID . error ')'  (111)
+	LlamadoFuncion : ID . '(' error  (112)
+	LlamadoFuncion : ID . LlamadoExpresion  (113)
 
 	error  shift 63
 	'('  shift 66
@@ -1542,22 +1545,22 @@ state 114
 
 
 state 115
-	LlamadoFuncion : ID '(' error .  (111)
+	LlamadoFuncion : ID '(' error .  (112)
 
-	.  reduce 111
+	.  reduce 112
 
 
 state 116
-	LlamadoFuncion : ID '(' ')' .  (109)
+	LlamadoFuncion : ID '(' ')' .  (110)
 
-	.  reduce 109
+	.  reduce 110
 
 
 state 117
 	Expresion : Expresion . '+' Termino  (39)
 	Expresion : Expresion . '-' Termino  (40)
-	LlamadoExpresion : '(' Expresion . ')'  (126)
-	LlamadoExpresion : '(' Expresion . error  (128)
+	LlamadoExpresion : '(' Expresion . ')'  (127)
+	LlamadoExpresion : '(' Expresion . error  (129)
 
 	error  shift 168
 	'-'  shift 143
@@ -1580,69 +1583,69 @@ state 119
 
 
 state 120
-	Asignacion : ReferenciaObjeto OperadorAsignacion error .  (121)
+	Asignacion : ReferenciaObjeto OperadorAsignacion error .  (122)
 
-	.  reduce 121
+	.  reduce 122
 
 
 state 121
-	Asignacion : ReferenciaObjeto OperadorAsignacion ReferenciaObjeto .  (119)
-
-	.  reduce 119
-
-
-state 122
-	Asignacion : ReferenciaObjeto OperadorAsignacion Factor .  (120)
+	Asignacion : ReferenciaObjeto OperadorAsignacion ReferenciaObjeto .  (120)
 
 	.  reduce 120
 
 
-state 123
-	Asignacion : Factor OperadorAsignacion error .  (122)
+state 122
+	Asignacion : ReferenciaObjeto OperadorAsignacion Factor .  (121)
 
-	.  reduce 122
+	.  reduce 121
+
+
+state 123
+	Asignacion : Factor OperadorAsignacion error .  (123)
+
+	.  reduce 123
 
 
 state 124
 	Expresion : Expresion . '+' Termino  (39)
 	Expresion : Expresion . '-' Termino  (40)
-	Asignacion : Factor OperadorAsignacion Expresion .  (118)
+	Asignacion : Factor OperadorAsignacion Expresion .  (119)
 
 	'-'  shift 143
 	'+'  shift 144
-	error  reduce 118
-	END_IF  reduce 118
-	','  reduce 118
+	error  reduce 119
+	END_IF  reduce 119
+	','  reduce 119
 
 
 state 125
-	Parametro : error ')' .  (99)
+	Parametro : error ')' .  (100)
 
-	.  reduce 99
+	.  reduce 100
 
 
 state 126
-	Parametro : error Tipo . ID ')'  (96)
+	Parametro : error Tipo . ID ')'  (97)
 
 	ID  shift 171
 	.  error
 
 
 state 127
-	Parametro : '(' error .  (98)
+	Parametro : '(' error .  (99)
+
+	.  reduce 99
+
+
+state 128
+	Parametro : '(' ')' .  (98)
 
 	.  reduce 98
 
 
-state 128
-	Parametro : '(' ')' .  (97)
-
-	.  reduce 97
-
-
 state 129
-	Parametro : '(' Tipo . ID ')'  (94)
-	Parametro : '(' Tipo . ID error  (95)
+	Parametro : '(' Tipo . ID ')'  (95)
+	Parametro : '(' Tipo . ID error  (96)
 
 	ID  shift 172
 	.  error
@@ -1650,6 +1653,7 @@ state 129
 
 state 130
 	Funcion : EncabezadoFuncion Parametro '{' . ListSentenciasFuncion '}'  (91)
+	Funcion : EncabezadoFuncion Parametro '{' . ListSentenciasFuncion '}' RETURN ','  (92)
 
 	error  shift 4
 	IF  shift 5
@@ -1711,7 +1715,7 @@ state 132
 
 state 133
 	ListSentenciasClase : ListSentenciasClase . SentenciaDeclarativa ','  (16)
-	ListClase : '{' ListSentenciasClase . '}'  (134)
+	ListClase : '{' ListSentenciasClase . '}'  (135)
 
 	error  shift 4
 	CLASS  shift 7
@@ -1750,7 +1754,7 @@ state 135
 
 
 state 136
-	ParametroTOD : error . Expresion ')'  (130)
+	ParametroTOD : error . Expresion ')'  (131)
 
 	ID  shift 88
 	TOD  shift 89
@@ -1770,9 +1774,9 @@ state 136
 
 
 state 137
-	ParametroTOD : '(' . Expresion ')'  (129)
-	ParametroTOD : '(' . Expresion error  (131)
-	ConversionExplicita : TOD '(' . ')'  (133)
+	ParametroTOD : '(' . Expresion ')'  (130)
+	ParametroTOD : '(' . Expresion error  (132)
+	ConversionExplicita : TOD '(' . ')'  (134)
 
 	ID  shift 88
 	TOD  shift 89
@@ -1793,9 +1797,9 @@ state 137
 
 
 state 138
-	ConversionExplicita : TOD ParametroTOD .  (132)
+	ConversionExplicita : TOD ParametroTOD .  (133)
 
-	.  reduce 132
+	.  reduce 133
 
 
 state 139
@@ -2012,7 +2016,7 @@ state 155
 
 
 state 156
-	Funcion : VOID error Parametro '{' . ListSentenciasFuncion '}'  (92)
+	Funcion : VOID error Parametro '{' . ListSentenciasFuncion '}'  (93)
 
 	error  shift 4
 	IF  shift 5
@@ -2104,7 +2108,7 @@ state 163
 
 state 164
 	Condicion : error . Expresion Comparador Expresion ')'  (54)
-	SentenciaControl : DO CuerpoIF UNTIL error .  (125)
+	SentenciaControl : DO CuerpoIF UNTIL error .  (126)
 
 	ID  shift 88
 	TOD  shift 89
@@ -2112,7 +2116,7 @@ state 164
 	ENTEROCORTO  shift 18
 	PUNTOFLOTANTE  shift 19
 	'-'  shift 20
-	','  reduce 125
+	','  reduce 126
 
 	ReferenciaObjeto  goto 90
 	Constante  goto 38
@@ -2124,15 +2128,15 @@ state 164
 
 
 state 165
-	SentenciaControl : DO CuerpoIF UNTIL Condicion .  (124)
+	SentenciaControl : DO CuerpoIF UNTIL Condicion .  (125)
 
-	.  reduce 124
+	.  reduce 125
 
 
 state 166
-	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion '}'  (138)
-	FuncionIMPL : IMPL FOR ID ':' . error Funcion '}'  (139)
-	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion error  (140)
+	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion '}'  (139)
+	FuncionIMPL : IMPL FOR ID ':' . error Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion error  (141)
 
 	error  shift 202
 	'{'  shift 203
@@ -2140,21 +2144,21 @@ state 166
 
 
 state 167
-	LlamadoExpresion : error Expresion ')' .  (127)
-
-	.  reduce 127
-
-
-state 168
-	LlamadoExpresion : '(' Expresion error .  (128)
+	LlamadoExpresion : error Expresion ')' .  (128)
 
 	.  reduce 128
 
 
-state 169
-	LlamadoExpresion : '(' Expresion ')' .  (126)
+state 168
+	LlamadoExpresion : '(' Expresion error .  (129)
 
-	.  reduce 126
+	.  reduce 129
+
+
+state 169
+	LlamadoExpresion : '(' Expresion ')' .  (127)
+
+	.  reduce 127
 
 
 state 170
@@ -2164,15 +2168,15 @@ state 170
 
 
 state 171
-	Parametro : error Tipo ID . ')'  (96)
+	Parametro : error Tipo ID . ')'  (97)
 
 	')'  shift 204
 	.  error
 
 
 state 172
-	Parametro : '(' Tipo ID . ')'  (94)
-	Parametro : '(' Tipo ID . error  (95)
+	Parametro : '(' Tipo ID . ')'  (95)
+	Parametro : '(' Tipo ID . error  (96)
 
 	error  shift 205
 	')'  shift 206
@@ -2180,8 +2184,8 @@ state 172
 
 
 state 173
-	ListSentenciasFuncion : RETURN . ','  (104)
-	ListSentenciasFuncion : RETURN . error  (108)
+	ListSentenciasFuncion : RETURN . ','  (105)
+	ListSentenciasFuncion : RETURN . error  (109)
 
 	error  shift 207
 	','  shift 208
@@ -2189,8 +2193,8 @@ state 173
 
 
 state 174
-	ListSentenciasFuncion : SentenciaEjecutable . ','  (102)
-	ListSentenciasFuncion : SentenciaEjecutable . error  (106)
+	ListSentenciasFuncion : SentenciaEjecutable . ','  (103)
+	ListSentenciasFuncion : SentenciaEjecutable . error  (107)
 
 	error  shift 209
 	','  shift 210
@@ -2198,8 +2202,8 @@ state 174
 
 
 state 175
-	ListSentenciasFuncion : SentenciaDeclarativa . ','  (103)
-	ListSentenciasFuncion : SentenciaDeclarativa . error  (107)
+	ListSentenciasFuncion : SentenciaDeclarativa . ','  (104)
+	ListSentenciasFuncion : SentenciaDeclarativa . error  (108)
 
 	error  shift 211
 	','  shift 212
@@ -2208,9 +2212,10 @@ state 175
 
 state 176
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion . '}'  (91)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (100)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (101)
-	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (105)
+	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion . '}' RETURN ','  (92)
+	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (101)
+	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (102)
+	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (106)
 
 	error  shift 4
 	IF  shift 5
@@ -2261,9 +2266,9 @@ state 177
 
 
 state 178
-	ListClase : '{' ListSentenciasClase '}' .  (134)
+	ListClase : '{' ListSentenciasClase '}' .  (135)
 
-	.  reduce 134
+	.  reduce 135
 
 
 state 179
@@ -2282,7 +2287,7 @@ state 180
 state 181
 	Expresion : Expresion . '+' Termino  (39)
 	Expresion : Expresion . '-' Termino  (40)
-	ParametroTOD : error Expresion . ')'  (130)
+	ParametroTOD : error Expresion . ')'  (131)
 
 	'-'  shift 143
 	'+'  shift 144
@@ -2291,16 +2296,16 @@ state 181
 
 
 state 182
-	ConversionExplicita : TOD '(' ')' .  (133)
+	ConversionExplicita : TOD '(' ')' .  (134)
 
-	.  reduce 133
+	.  reduce 134
 
 
 state 183
 	Expresion : Expresion . '+' Termino  (39)
 	Expresion : Expresion . '-' Termino  (40)
-	ParametroTOD : '(' Expresion . ')'  (129)
-	ParametroTOD : '(' Expresion . error  (131)
+	ParametroTOD : '(' Expresion . ')'  (130)
+	ParametroTOD : '(' Expresion . error  (132)
 
 	error  shift 219
 	'-'  shift 143
@@ -2504,10 +2509,10 @@ state 197
 
 
 state 198
-	Funcion : VOID error Parametro '{' ListSentenciasFuncion . '}'  (92)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (100)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (101)
-	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (105)
+	Funcion : VOID error Parametro '{' ListSentenciasFuncion . '}'  (93)
+	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (101)
+	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (102)
+	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (106)
 
 	error  shift 4
 	IF  shift 5
@@ -2572,7 +2577,7 @@ state 201
 
 
 state 202
-	FuncionIMPL : IMPL FOR ID ':' error . Funcion '}'  (139)
+	FuncionIMPL : IMPL FOR ID ':' error . Funcion '}'  (140)
 
 	VOID  shift 8
 	.  error
@@ -2582,8 +2587,8 @@ state 202
 
 
 state 203
-	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion '}'  (138)
-	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion error  (140)
+	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion '}'  (139)
+	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion error  (141)
 
 	VOID  shift 8
 	.  error
@@ -2593,61 +2598,61 @@ state 203
 
 
 state 204
-	Parametro : error Tipo ID ')' .  (96)
+	Parametro : error Tipo ID ')' .  (97)
+
+	.  reduce 97
+
+
+state 205
+	Parametro : '(' Tipo ID error .  (96)
 
 	.  reduce 96
 
 
-state 205
-	Parametro : '(' Tipo ID error .  (95)
+state 206
+	Parametro : '(' Tipo ID ')' .  (95)
 
 	.  reduce 95
 
 
-state 206
-	Parametro : '(' Tipo ID ')' .  (94)
-
-	.  reduce 94
-
-
 state 207
-	ListSentenciasFuncion : RETURN error .  (108)
+	ListSentenciasFuncion : RETURN error .  (109)
 
-	.  reduce 108
+	.  reduce 109
 
 
 state 208
-	ListSentenciasFuncion : RETURN ',' .  (104)
+	ListSentenciasFuncion : RETURN ',' .  (105)
 
-	.  reduce 104
+	.  reduce 105
 
 
 state 209
-	ListSentenciasFuncion : SentenciaEjecutable error .  (106)
-
-	.  reduce 106
-
-
-state 210
-	ListSentenciasFuncion : SentenciaEjecutable ',' .  (102)
-
-	.  reduce 102
-
-
-state 211
-	ListSentenciasFuncion : SentenciaDeclarativa error .  (107)
+	ListSentenciasFuncion : SentenciaEjecutable error .  (107)
 
 	.  reduce 107
 
 
-state 212
-	ListSentenciasFuncion : SentenciaDeclarativa ',' .  (103)
+state 210
+	ListSentenciasFuncion : SentenciaEjecutable ',' .  (103)
 
 	.  reduce 103
 
 
+state 211
+	ListSentenciasFuncion : SentenciaDeclarativa error .  (108)
+
+	.  reduce 108
+
+
+state 212
+	ListSentenciasFuncion : SentenciaDeclarativa ',' .  (104)
+
+	.  reduce 104
+
+
 state 213
-	ListSentenciasFuncion : ListSentenciasFuncion RETURN . ','  (105)
+	ListSentenciasFuncion : ListSentenciasFuncion RETURN . ','  (106)
 
 	','  shift 239
 	.  error
@@ -2655,21 +2660,25 @@ state 213
 
 state 214
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' .  (91)
+	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' . RETURN ','  (92)
 
-	.  reduce 91
+	RETURN  shift 240
+	error  reduce 91
+	'}'  reduce 91
+	','  reduce 91
 
 
 state 215
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable . ','  (101)
+	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable . ','  (102)
 
-	','  shift 240
+	','  shift 241
 	.  error
 
 
 state 216
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa . ','  (100)
+	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa . ','  (101)
 
-	','  shift 241
+	','  shift 242
 	.  error
 
 
@@ -2680,21 +2689,21 @@ state 217
 
 
 state 218
-	ParametroTOD : error Expresion ')' .  (130)
-
-	.  reduce 130
-
-
-state 219
-	ParametroTOD : '(' Expresion error .  (131)
+	ParametroTOD : error Expresion ')' .  (131)
 
 	.  reduce 131
 
 
-state 220
-	ParametroTOD : '(' Expresion ')' .  (129)
+state 219
+	ParametroTOD : '(' Expresion error .  (132)
 
-	.  reduce 129
+	.  reduce 132
+
+
+state 220
+	ParametroTOD : '(' Expresion ')' .  (130)
+
+	.  reduce 130
 
 
 state 221
@@ -2718,21 +2727,21 @@ state 223
 state 224
 	BloqueIF : IF Condicion SentenciaEjecutable error ELSE CuerpoIF . END_IF  (67)
 
-	END_IF  shift 242
+	END_IF  shift 243
 	.  error
 
 
 state 225
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable . END_IF  (66)
 
-	END_IF  shift 243
+	END_IF  shift 244
 	.  error
 
 
 state 226
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error CuerpoIF . END_IF  (65)
 
-	END_IF  shift 244
+	END_IF  shift 245
 	.  error
 
 
@@ -2740,8 +2749,8 @@ state 227
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . ',' END_IF  (60)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . error  (63)
 
-	error  shift 245
-	','  shift 246
+	error  shift 246
+	','  shift 247
 	.  error
 
 
@@ -2749,15 +2758,15 @@ state 228
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . END_IF  (59)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . error  (62)
 
-	error  shift 247
-	END_IF  shift 248
+	error  shift 248
+	END_IF  shift 249
 	.  error
 
 
 state 229
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable error . END_IF  (68)
 
-	END_IF  shift 249
+	END_IF  shift 250
 	.  error
 
 
@@ -2765,8 +2774,8 @@ state 230
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . END_IF  (61)
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . error  (64)
 
-	error  shift 250
-	END_IF  shift 251
+	error  shift 251
+	END_IF  shift 252
 	.  error
 
 
@@ -2783,9 +2792,9 @@ state 232
 
 
 state 233
-	Funcion : VOID error Parametro '{' ListSentenciasFuncion '}' .  (92)
+	Funcion : VOID error Parametro '{' ListSentenciasFuncion '}' .  (93)
 
-	.  reduce 92
+	.  reduce 93
 
 
 state 234
@@ -2801,140 +2810,155 @@ state 235
 
 
 state 236
-	FuncionIMPL : IMPL FOR ID ':' error Funcion . '}'  (139)
+	FuncionIMPL : IMPL FOR ID ':' error Funcion . '}'  (140)
 
-	'}'  shift 252
+	'}'  shift 253
 	.  error
 
 
 state 237
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}'  (91)
+	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}' RETURN ','  (92)
 
 	error  shift 80
 	'('  shift 81
 	.  error
 
-	Parametro  goto 253
+	Parametro  goto 254
 
 
 state 238
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . '}'  (138)
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . error  (140)
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . '}'  (139)
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . error  (141)
 
-	error  shift 254
-	'}'  shift 255
+	error  shift 255
+	'}'  shift 256
 	.  error
 
 
 state 239
-	ListSentenciasFuncion : ListSentenciasFuncion RETURN ',' .  (105)
+	ListSentenciasFuncion : ListSentenciasFuncion RETURN ',' .  (106)
 
-	.  reduce 105
+	.  reduce 106
 
 
 state 240
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable ',' .  (101)
+	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN . ','  (92)
+
+	','  shift 257
+	.  error
+
+
+state 241
+	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable ',' .  (102)
+
+	.  reduce 102
+
+
+state 242
+	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ',' .  (101)
 
 	.  reduce 101
 
 
-state 241
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ',' .  (100)
-
-	.  reduce 100
-
-
-state 242
+state 243
 	BloqueIF : IF Condicion SentenciaEjecutable error ELSE CuerpoIF END_IF .  (67)
 
 	.  reduce 67
 
 
-state 243
+state 244
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF .  (66)
 
 	.  reduce 66
 
 
-state 244
+state 245
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error CuerpoIF END_IF .  (65)
 
 	.  reduce 65
 
 
-state 245
+state 246
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error .  (63)
 
 	.  reduce 63
 
 
-state 246
+state 247
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' . END_IF  (60)
 
-	END_IF  shift 256
+	END_IF  shift 258
 	.  error
 
 
-state 247
+state 248
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error .  (62)
 
 	.  reduce 62
 
 
-state 248
+state 249
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF .  (59)
 
 	.  reduce 59
 
 
-state 249
+state 250
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable error END_IF .  (68)
 
 	.  reduce 68
 
 
-state 250
+state 251
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error .  (64)
 
 	.  reduce 64
 
 
-state 251
+state 252
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF .  (61)
 
 	.  reduce 61
 
 
-state 252
-	FuncionIMPL : IMPL FOR ID ':' error Funcion '}' .  (139)
-
-	.  reduce 139
-
-
 state 253
+	FuncionIMPL : IMPL FOR ID ':' error Funcion '}' .  (140)
+
+	.  reduce 140
+
+
+state 254
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}'  (91)
+	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}' RETURN ','  (92)
 
 	'{'  shift 130
 	.  error
 
 
-state 254
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion error .  (140)
-
-	.  reduce 140
-
-
 state 255
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}' .  (138)
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion error .  (141)
 
-	.  reduce 138
+	.  reduce 141
 
 
 state 256
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}' .  (139)
+
+	.  reduce 139
+
+
+state 257
+	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' .  (92)
+
+	.  reduce 92
+
+
+state 258
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF .  (60)
 
 	.  reduce 60
 
 
 43 terminals, 42 nonterminals
-141 grammar rules, 257 states
+142 grammar rules, 259 states
