@@ -1,8 +1,8 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='bot:main', linea=2, uso='Clase', tipo='null', ambito='main'}
-Token{id=269, lexema='l:main:bot:l', linea=4, uso='Funcion', tipo='VOID', ambito='main:bot:l'}
-Token{id=269, lexema='t:main:bot', linea=3, uso='Variable', tipo='INT', ambito='main:bot'}
-Token{id=269, lexema='a:main:bot:l', linea=5, uso='Variable', tipo='DOUBLE', ambito='main:bot:l'}
+Token{id=278, lexema='2', linea=4, uso='Constante', tipo='INT', ambito='main:f1'}
+Token{id=269, lexema='f1:main:f1', linea=2, uso='Funcion', tipo='VOID', ambito='main:f1'}
+Token{id=269, lexema='a:main:f1', linea=3, uso='Variable', tipo='INT', ambito='main:f1'}
+Token{id=269, lexema='x:main:f1', linea=2, uso='Parametro', tipo='USHORT', ambito='main:f1'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -17,8 +17,9 @@ Token{id=269, lexema='a:main:bot:l', linea=5, uso='Variable', tipo='DOUBLE', amb
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce salida de mensaje por pantalla  en la linea: 6
-Estructura: Reconoce declaracion de funcion  en la linea: 7
+Estructura: Reconoce asignacion  en la linea: 4
+Estructura: Reconoce declaracion de funcion  en la linea: 5
+Estructura: Reconoce programa  en la linea: 7
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

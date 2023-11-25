@@ -1,10 +1,9 @@
 {
-CLASS bot {
-    INT t,
-    VOID l() {
-        DOUBLE a,
-        PRINT a,
+    USHORT z,
+    VOID f1(USHORT x){
+       INT a,
+       USHORT y,
     },
-    RETURN,
-},
+    f1(z),
+
 }

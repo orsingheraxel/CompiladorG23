@@ -81,4 +81,23 @@ public class TablaSimbolos {
     public static void removeToken(String lexema) {
         simbolos.remove(lexema);
     }
+
+    public static Token getTokenParametroDeFuncion(String nombreFuncion) {
+        for (Map.Entry<String, Token> entry : simbolos.entrySet()) {
+            String lexema = entry.getKey();
+            Token token = entry.getValue();
+
+            // Verifica si el lexema representa una función y si su ámbito coincide con el nombre de la función proporcionado
+            if (token.getTipo().equals("funcion") && lexema.toLowerCase().equals(nombreFuncion.toLowerCase())) {
+                // Busca el parámetro asociado a la función
+                String[] partesLexema = lexema.split(":");
+                if (partesLexema.length == 3) {  // Verifica si hay al menos 3 partes en el lexema
+                    String nombreParametro = partesLexema[2];
+                    return simbolos.get(nombreParametro);
+                }
+            }
+        }
+        return null;  // Retorna null si no se encuentra la función o no tiene un parámetro asociado
+    }
+
 }
