@@ -391,7 +391,7 @@ Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
-EncabezadoFuncion : VOID ID  {actualizarAmbito($2.sval);
+EncabezadoFuncion : VOID ID  {
 			      Token t = TablaSimbolos.getToken($2.sval);
                               if (t != null){
                                     t.setLexema($2.sval + ":" + ambitoAct);
@@ -401,6 +401,9 @@ EncabezadoFuncion : VOID ID  {actualizarAmbito($2.sval);
                                     TablaSimbolos.removeToken($2.sval);
                                     TablaSimbolos.addSimbolo(t.getLexema(),t);
                               }
+			      Funcion f = new Funcion($2.sval + ":" + ambitoAct, null);
+			      funciones_declaradas.add(f);
+			      actualizarAmbito($2.sval);
                               $$ = new NodoComun($2.sval,null,null);
                               }
                   ;
@@ -417,6 +420,7 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
                                 	TablaSimbolos.removeToken($3.sval);
                                 	TablaSimbolos.addSimbolo(t.getLexema(),t);
                                 }
+                                funciones_declaradas.get(funciones_declaradas.size() - 1).setTipoParametro($2.sval);
                                 $$ = new NodoHoja($3.sval);
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
@@ -429,10 +433,8 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
 
 
 
-ListSentenciasFuncion:ListSentenciasFuncion SentenciaDeclarativa ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
-		  | ListSentenciasFuncion SentenciaEjecutable ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
-		  | SentenciaEjecutable ',' {$$=$1;}
-		  | SentenciaDeclarativa ',' {$$= new NodoHoja("sentencia declarativa");}
+ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
+		  | Sentencia ',' {$$=$1;}
 		  | RETURN ',' {$$ = new NodoHoja("RETURN");}
 		  | ListSentenciasFuncion RETURN ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
@@ -451,16 +453,26 @@ LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);
 				            }
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-            | ID '(' Expresion ')' {$$=new NodoComun("Llamado Funcion",(Nodo)$1,new NodoControl("Parametro Llamado Funcion",(Nodo)$2));
-                                    AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
-                                    Token funcion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
-                                    if (funcion == null){
-                                        agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
-                                    } else {
-                                        Token parametro = TablaSimbolos.getTokenParametroDeFuncion($1.sval);
-                                        parametro.toString();
+            | ID '(' Expresion ')' {
+            			    NodoHoja nodo1 = new NodoHoja($1.sval);
+            			    $$=new NodoComun("Llamado Funcion", nodo1, (Nodo)$3);
+                                    Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
 
+                                    Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
+                                    if (tokenFuncion == null){
+                                    	agregarErrorSemantico("La funcion " + val_peek(3).sval + " nunca fue declarada");
+                                    } else {
+                                    	if (funciones_declaradas.contains(funcion)) {
+						int indice = funciones_declaradas.indexOf(funcion);
+						Funcion f = funciones_declaradas.get(indice);
+						System.out.println("parametro real" + f.getTipoParametro());
+                                                System.out.println("parametro formal" + ((Nodo)$3).getTipo());
+                                                if (!f.getTipoParametro().equals(((Nodo)$3).getTipo())){
+                                                	agregarErrorSemantico("No coinciden los tipos del parametro real y el formal ");
+                                                }
                                         }
+                                    }
+
 
                                     AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
                                     TablaSimbolos.removeToken($1.sval);
@@ -533,10 +545,6 @@ SentenciaControl: DO CuerpoIF UNTIL Condicion {$$=new NodoComun("DO UNTIL", (Nod
 
 //TEMA 29 --------------------------------------------------
 
-LlamadoExpresion:'(' Expresion ')' {$$ = $2;}
-		| error Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
-		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
-		;
 
 ParametroTOD:'(' Expresion ')' {$$ = $2;}
 		| error Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
@@ -600,6 +608,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
+  static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
 
   public void agregarErrorSemantico(String error){
       Error e = new Error(error,AnalizadorLexico.getLineaAct());

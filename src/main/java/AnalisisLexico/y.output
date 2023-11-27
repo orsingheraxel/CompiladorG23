@@ -130,60 +130,58 @@
  102            | '(' error
  103            | error ')'
 
- 104  ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ','
- 105                        | ListSentenciasFuncion SentenciaEjecutable ','
- 106                        | SentenciaEjecutable ','
- 107                        | SentenciaDeclarativa ','
- 108                        | RETURN ','
- 109                        | ListSentenciasFuncion RETURN ','
- 110                        | SentenciaEjecutable error
- 111                        | SentenciaDeclarativa error
- 112                        | RETURN error
+ 104  ListSentenciasFuncion : ListSentenciasFuncion Sentencia ','
+ 105                        | Sentencia ','
+ 106                        | RETURN ','
+ 107                        | ListSentenciasFuncion RETURN ','
+ 108                        | SentenciaEjecutable error
+ 109                        | SentenciaDeclarativa error
+ 110                        | RETURN error
 
- 113  LlamadoFuncion : ID '(' ')'
- 114                 | ID error ')'
- 115                 | ID '(' error
- 116                 | ID '(' Expresion ')'
+ 111  LlamadoFuncion : ID '(' ')'
+ 112                 | ID error ')'
+ 113                 | ID '(' error
+ 114                 | ID '(' Expresion ')'
 
- 117  SalidaMensaje : PRINT CADENA
- 118                | PRINT Factor
- 119                | PRINT error
+ 115  SalidaMensaje : PRINT CADENA
+ 116                | PRINT Factor
+ 117                | PRINT error
 
- 120  OperadorAsignacion : '='
- 121                     | ASIG
+ 118  OperadorAsignacion : '='
+ 119                     | ASIG
 
- 122  Asignacion : Factor OperadorAsignacion Expresion
- 123             | ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
- 124             | ReferenciaObjeto OperadorAsignacion Factor
- 125             | ReferenciaObjeto OperadorAsignacion error
- 126             | Factor OperadorAsignacion error
- 127             | OperadorAsignacion Factor
+ 120  Asignacion : Factor OperadorAsignacion Expresion
+ 121             | ReferenciaObjeto OperadorAsignacion ReferenciaObjeto
+ 122             | ReferenciaObjeto OperadorAsignacion Factor
+ 123             | ReferenciaObjeto OperadorAsignacion error
+ 124             | Factor OperadorAsignacion error
+ 125             | OperadorAsignacion Factor
 
- 128  SentenciaControl : DO CuerpoIF UNTIL Condicion
- 129                   | DO CuerpoIF UNTIL error
+ 126  SentenciaControl : DO CuerpoIF UNTIL Condicion
+ 127                   | DO CuerpoIF UNTIL error
 
- 130  LlamadoExpresion : '(' Expresion ')'
- 131                   | error Expresion ')'
- 132                   | '(' Expresion error
+ 128  LlamadoExpresion : '(' Expresion ')'
+ 129                   | error Expresion ')'
+ 130                   | '(' Expresion error
 
- 133  ParametroTOD : '(' Expresion ')'
- 134               | error Expresion ')'
- 135               | '(' Expresion error
+ 131  ParametroTOD : '(' Expresion ')'
+ 132               | error Expresion ')'
+ 133               | '(' Expresion error
 
- 136  ConversionExplicita : TOD ParametroTOD
- 137                      | TOD '(' ')'
+ 134  ConversionExplicita : TOD ParametroTOD
+ 135                      | TOD '(' ')'
 
- 138  ListClase : '{' ListSentenciasClase '}'
+ 136  ListClase : '{' ListSentenciasClase '}'
 
- 139  EncabezadoClase : CLASS ID
+ 137  EncabezadoClase : CLASS ID
 
- 140  Clase : EncabezadoClase ListClase
+ 138  Clase : EncabezadoClase ListClase
 
- 141  FuncionSinCuerpo : EncabezadoFuncion Parametro
+ 139  FuncionSinCuerpo : EncabezadoFuncion Parametro
 
- 142  FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'
- 143              | IMPL FOR ID ':' error Funcion '}'
- 144              | IMPL FOR ID ':' '{' Funcion error
+ 140  FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}'
+ 141              | IMPL FOR ID ':' error Funcion '}'
+ 142              | IMPL FOR ID ':' '{' Funcion error
 
 state 0
 	$accept : . Programa $end  (0)
@@ -331,9 +329,9 @@ state 5
 
 
 state 6
-	SalidaMensaje : PRINT . CADENA  (117)
-	SalidaMensaje : PRINT . Factor  (118)
-	SalidaMensaje : PRINT . error  (119)
+	SalidaMensaje : PRINT . CADENA  (115)
+	SalidaMensaje : PRINT . Factor  (116)
+	SalidaMensaje : PRINT . error  (117)
 
 	error  shift 51
 	ID  shift 52
@@ -349,7 +347,7 @@ state 6
 
 
 state 7
-	EncabezadoClase : CLASS . ID  (139)
+	EncabezadoClase : CLASS . ID  (137)
 
 	ID  shift 55
 	.  error
@@ -365,8 +363,8 @@ state 8
 
 
 state 9
-	SentenciaControl : DO . CuerpoIF UNTIL Condicion  (128)
-	SentenciaControl : DO . CuerpoIF UNTIL error  (129)
+	SentenciaControl : DO . CuerpoIF UNTIL Condicion  (126)
+	SentenciaControl : DO . CuerpoIF UNTIL error  (127)
 
 	error  shift 58
 	'{'  shift 59
@@ -376,9 +374,9 @@ state 9
 
 
 state 10
-	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion '}'  (142)
-	FuncionIMPL : IMPL . FOR ID ':' error Funcion '}'  (143)
-	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion error  (144)
+	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion '}'  (140)
+	FuncionIMPL : IMPL . FOR ID ':' error Funcion '}'  (141)
+	FuncionIMPL : IMPL . FOR ID ':' '{' Funcion error  (142)
 
 	FOR  shift 61
 	.  error
@@ -407,10 +405,10 @@ state 14
 	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (10)
 	Objeto_clase : ID . ListVariablesObj  (29)
 	Factor : ID .  (51)
-	LlamadoFuncion : ID . '(' ')'  (113)
-	LlamadoFuncion : ID . error ')'  (114)
-	LlamadoFuncion : ID . '(' error  (115)
-	LlamadoFuncion : ID . '(' Expresion ')'  (116)
+	LlamadoFuncion : ID . '(' ')'  (111)
+	LlamadoFuncion : ID . error ')'  (112)
+	LlamadoFuncion : ID . '(' error  (113)
+	LlamadoFuncion : ID . '(' Expresion ')'  (114)
 
 	error  shift 62
 	ID  shift 63
@@ -423,9 +421,9 @@ state 14
 
 
 state 15
-	OperadorAsignacion : ASIG .  (121)
+	OperadorAsignacion : ASIG .  (119)
 
-	.  reduce 121
+	.  reduce 119
 
 
 state 16
@@ -465,9 +463,9 @@ state 20
 
 
 state 21
-	OperadorAsignacion : '=' .  (120)
+	OperadorAsignacion : '=' .  (118)
 
-	.  reduce 120
+	.  reduce 118
 
 
 state 22
@@ -545,9 +543,9 @@ state 26
 
 
 state 27
-	Asignacion : ReferenciaObjeto . OperadorAsignacion ReferenciaObjeto  (123)
-	Asignacion : ReferenciaObjeto . OperadorAsignacion Factor  (124)
-	Asignacion : ReferenciaObjeto . OperadorAsignacion error  (125)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion ReferenciaObjeto  (121)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion Factor  (122)
+	Asignacion : ReferenciaObjeto . OperadorAsignacion error  (123)
 
 	ASIG  shift 15
 	'='  shift 21
@@ -628,8 +626,8 @@ state 38
 
 
 state 39
-	Asignacion : Factor . OperadorAsignacion Expresion  (122)
-	Asignacion : Factor . OperadorAsignacion error  (126)
+	Asignacion : Factor . OperadorAsignacion Expresion  (120)
+	Asignacion : Factor . OperadorAsignacion error  (124)
 
 	ASIG  shift 15
 	'='  shift 21
@@ -653,7 +651,7 @@ state 41
 state 42
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}' RETURN ','  (94)
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}'  (95)
-	FuncionSinCuerpo : EncabezadoFuncion . Parametro  (141)
+	FuncionSinCuerpo : EncabezadoFuncion . Parametro  (139)
 
 	error  shift 78
 	'('  shift 79
@@ -663,7 +661,7 @@ state 42
 
 
 state 43
-	Asignacion : OperadorAsignacion . Factor  (127)
+	Asignacion : OperadorAsignacion . Factor  (125)
 
 	ID  shift 52
 	ENTERO  shift 17
@@ -677,7 +675,7 @@ state 43
 
 
 state 44
-	Clase : EncabezadoClase . ListClase  (140)
+	Clase : EncabezadoClase . ListClase  (138)
 
 	'{'  shift 82
 	.  error
@@ -834,9 +832,9 @@ state 50
 
 
 state 51
-	SalidaMensaje : PRINT error .  (119)
+	SalidaMensaje : PRINT error .  (117)
 
-	.  reduce 119
+	.  reduce 117
 
 
 state 52
@@ -846,21 +844,21 @@ state 52
 
 
 state 53
-	SalidaMensaje : PRINT CADENA .  (117)
+	SalidaMensaje : PRINT CADENA .  (115)
 
-	.  reduce 117
+	.  reduce 115
 
 
 state 54
-	SalidaMensaje : PRINT Factor .  (118)
+	SalidaMensaje : PRINT Factor .  (116)
 
-	.  reduce 118
+	.  reduce 116
 
 
 state 55
-	EncabezadoClase : CLASS ID .  (139)
+	EncabezadoClase : CLASS ID .  (137)
 
-	.  reduce 139
+	.  reduce 137
 
 
 state 56
@@ -946,24 +944,24 @@ state 59
 
 
 state 60
-	SentenciaControl : DO CuerpoIF . UNTIL Condicion  (128)
-	SentenciaControl : DO CuerpoIF . UNTIL error  (129)
+	SentenciaControl : DO CuerpoIF . UNTIL Condicion  (126)
+	SentenciaControl : DO CuerpoIF . UNTIL error  (127)
 
 	UNTIL  shift 107
 	.  error
 
 
 state 61
-	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion '}'  (142)
-	FuncionIMPL : IMPL FOR . ID ':' error Funcion '}'  (143)
-	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion error  (144)
+	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR . ID ':' error Funcion '}'  (141)
+	FuncionIMPL : IMPL FOR . ID ':' '{' Funcion error  (142)
 
 	ID  shift 108
 	.  error
 
 
 state 62
-	LlamadoFuncion : ID error . ')'  (114)
+	LlamadoFuncion : ID error . ')'  (112)
 
 	')'  shift 109
 	.  error
@@ -986,9 +984,9 @@ state 64
 
 
 state 65
-	LlamadoFuncion : ID '(' . ')'  (113)
-	LlamadoFuncion : ID '(' . error  (115)
-	LlamadoFuncion : ID '(' . Expresion ')'  (116)
+	LlamadoFuncion : ID '(' . ')'  (111)
+	LlamadoFuncion : ID '(' . error  (113)
+	LlamadoFuncion : ID '(' . Expresion ')'  (114)
 
 	error  shift 112
 	ID  shift 86
@@ -1062,9 +1060,9 @@ state 73
 
 
 state 74
-	Asignacion : ReferenciaObjeto OperadorAsignacion . ReferenciaObjeto  (123)
-	Asignacion : ReferenciaObjeto OperadorAsignacion . Factor  (124)
-	Asignacion : ReferenciaObjeto OperadorAsignacion . error  (125)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . ReferenciaObjeto  (121)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . Factor  (122)
+	Asignacion : ReferenciaObjeto OperadorAsignacion . error  (123)
 
 	error  shift 117
 	ID  shift 86
@@ -1095,8 +1093,8 @@ state 76
 
 
 state 77
-	Asignacion : Factor OperadorAsignacion . Expresion  (122)
-	Asignacion : Factor OperadorAsignacion . error  (126)
+	Asignacion : Factor OperadorAsignacion . Expresion  (120)
+	Asignacion : Factor OperadorAsignacion . error  (124)
 
 	error  shift 120
 	ID  shift 86
@@ -1148,21 +1146,21 @@ state 79
 state 80
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}' RETURN ','  (94)
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}'  (95)
-	FuncionSinCuerpo : EncabezadoFuncion Parametro .  (141)
+	FuncionSinCuerpo : EncabezadoFuncion Parametro .  (139)
 
 	'{'  shift 127
-	error  reduce 141
-	','  reduce 141
+	error  reduce 139
+	','  reduce 139
 
 
 state 81
-	Asignacion : OperadorAsignacion Factor .  (127)
+	Asignacion : OperadorAsignacion Factor .  (125)
 
-	.  reduce 127
+	.  reduce 125
 
 
 state 82
-	ListClase : '{' . ListSentenciasClase '}'  (138)
+	ListClase : '{' . ListSentenciasClase '}'  (136)
 
 	error  shift 4
 	CLASS  shift 7
@@ -1189,9 +1187,9 @@ state 82
 
 
 state 83
-	Clase : EncabezadoClase ListClase .  (140)
+	Clase : EncabezadoClase ListClase .  (138)
 
-	.  reduce 140
+	.  reduce 138
 
 
 state 84
@@ -1229,8 +1227,8 @@ state 86
 
 
 state 87
-	ConversionExplicita : TOD . ParametroTOD  (136)
-	ConversionExplicita : TOD . '(' ')'  (137)
+	ConversionExplicita : TOD . ParametroTOD  (134)
+	ConversionExplicita : TOD . '(' ')'  (135)
 
 	error  shift 134
 	'('  shift 135
@@ -1327,10 +1325,10 @@ state 95
 	ReferenciaObjeto : ID . '.' ID  (9)
 	ReferenciaObjetoFuncion : ID . '.' LlamadoFuncion  (10)
 	Factor : ID .  (51)
-	LlamadoFuncion : ID . '(' ')'  (113)
-	LlamadoFuncion : ID . error ')'  (114)
-	LlamadoFuncion : ID . '(' error  (115)
-	LlamadoFuncion : ID . '(' Expresion ')'  (116)
+	LlamadoFuncion : ID . '(' ')'  (111)
+	LlamadoFuncion : ID . error ')'  (112)
+	LlamadoFuncion : ID . '(' error  (113)
+	LlamadoFuncion : ID . '(' Expresion ')'  (114)
 
 	error  shift 62
 	'.'  shift 64
@@ -1489,8 +1487,8 @@ state 106
 
 
 state 107
-	SentenciaControl : DO CuerpoIF UNTIL . Condicion  (128)
-	SentenciaControl : DO CuerpoIF UNTIL . error  (129)
+	SentenciaControl : DO CuerpoIF UNTIL . Condicion  (126)
+	SentenciaControl : DO CuerpoIF UNTIL . error  (127)
 
 	error  shift 166
 	'('  shift 49
@@ -1500,26 +1498,26 @@ state 107
 
 
 state 108
-	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion '}'  (142)
-	FuncionIMPL : IMPL FOR ID . ':' error Funcion '}'  (143)
-	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion error  (144)
+	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR ID . ':' error Funcion '}'  (141)
+	FuncionIMPL : IMPL FOR ID . ':' '{' Funcion error  (142)
 
 	':'  shift 168
 	.  error
 
 
 state 109
-	LlamadoFuncion : ID error ')' .  (114)
+	LlamadoFuncion : ID error ')' .  (112)
 
-	.  reduce 114
+	.  reduce 112
 
 
 state 110
 	ReferenciaObjeto : ID '.' ID .  (9)
-	LlamadoFuncion : ID . '(' ')'  (113)
-	LlamadoFuncion : ID . error ')'  (114)
-	LlamadoFuncion : ID . '(' error  (115)
-	LlamadoFuncion : ID . '(' Expresion ')'  (116)
+	LlamadoFuncion : ID . '(' ')'  (111)
+	LlamadoFuncion : ID . error ')'  (112)
+	LlamadoFuncion : ID . '(' error  (113)
+	LlamadoFuncion : ID . '(' Expresion ')'  (114)
 
 	error  shift 62
 	'('  shift 65
@@ -1534,21 +1532,21 @@ state 111
 
 
 state 112
-	LlamadoFuncion : ID '(' error .  (115)
+	LlamadoFuncion : ID '(' error .  (113)
 
-	.  reduce 115
+	.  reduce 113
 
 
 state 113
-	LlamadoFuncion : ID '(' ')' .  (113)
+	LlamadoFuncion : ID '(' ')' .  (111)
 
-	.  reduce 113
+	.  reduce 111
 
 
 state 114
 	Expresion : Expresion . '+' Termino  (41)
 	Expresion : Expresion . '-' Termino  (42)
-	LlamadoFuncion : ID '(' Expresion . ')'  (116)
+	LlamadoFuncion : ID '(' Expresion . ')'  (114)
 
 	'-'  shift 141
 	'+'  shift 142
@@ -1570,39 +1568,39 @@ state 116
 
 
 state 117
-	Asignacion : ReferenciaObjeto OperadorAsignacion error .  (125)
-
-	.  reduce 125
-
-
-state 118
-	Asignacion : ReferenciaObjeto OperadorAsignacion ReferenciaObjeto .  (123)
+	Asignacion : ReferenciaObjeto OperadorAsignacion error .  (123)
 
 	.  reduce 123
 
 
-state 119
-	Asignacion : ReferenciaObjeto OperadorAsignacion Factor .  (124)
+state 118
+	Asignacion : ReferenciaObjeto OperadorAsignacion ReferenciaObjeto .  (121)
 
-	.  reduce 124
+	.  reduce 121
+
+
+state 119
+	Asignacion : ReferenciaObjeto OperadorAsignacion Factor .  (122)
+
+	.  reduce 122
 
 
 state 120
-	Asignacion : Factor OperadorAsignacion error .  (126)
+	Asignacion : Factor OperadorAsignacion error .  (124)
 
-	.  reduce 126
+	.  reduce 124
 
 
 state 121
 	Expresion : Expresion . '+' Termino  (41)
 	Expresion : Expresion . '-' Termino  (42)
-	Asignacion : Factor OperadorAsignacion Expresion .  (122)
+	Asignacion : Factor OperadorAsignacion Expresion .  (120)
 
 	'-'  shift 141
 	'+'  shift 142
-	error  reduce 122
-	END_IF  reduce 122
-	','  reduce 122
+	error  reduce 120
+	END_IF  reduce 120
+	','  reduce 120
 
 
 state 122
@@ -1647,6 +1645,7 @@ state 127
 	PRINT  shift 6
 	CLASS  shift 7
 	VOID  shift 8
+	DO  shift 9
 	IMPL  shift 10
 	INT  shift 11
 	USHORT  shift 12
@@ -1661,8 +1660,10 @@ state 127
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 174
-	SentenciaDeclarativa  goto 175
+	Sentencia  goto 174
+	SentenciaControl  goto 24
+	SentenciaEjecutable  goto 175
+	SentenciaDeclarativa  goto 176
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -1679,7 +1680,7 @@ state 127
 	Funcion  goto 40
 	FuncionSinCuerpo  goto 41
 	EncabezadoFuncion  goto 42
-	ListSentenciasFuncion  goto 176
+	ListSentenciasFuncion  goto 177
 	OperadorAsignacion  goto 43
 	EncabezadoClase  goto 44
 
@@ -1696,21 +1697,21 @@ state 128
 state 129
 	ListSentenciasClase : RETURN . ','  (18)
 
-	','  shift 177
+	','  shift 178
 	.  error
 
 
 state 130
 	ListSentenciasClase : SentenciaDeclarativa . ','  (17)
 
-	','  shift 178
+	','  shift 179
 	.  error
 
 
 state 131
 	ListSentenciasClase : ListSentenciasClase . SentenciaDeclarativa ','  (16)
 	ListSentenciasClase : ListSentenciasClase . RETURN ','  (19)
-	ListClase : '{' ListSentenciasClase . '}'  (138)
+	ListClase : '{' ListSentenciasClase . '}'  (136)
 
 	error  shift 4
 	CLASS  shift 7
@@ -1720,11 +1721,11 @@ state 131
 	USHORT  shift 12
 	DOUBLE  shift 13
 	ID  shift 128
-	RETURN  shift 179
-	'}'  shift 180
+	RETURN  shift 180
+	'}'  shift 181
 	.  error
 
-	SentenciaDeclarativa  goto 181
+	SentenciaDeclarativa  goto 182
 	Tipo  goto 33
 	ListFuncion  goto 34
 	Clase  goto 35
@@ -1745,12 +1746,12 @@ state 132
 state 133
 	ReferenciaObjeto : ID '.' . ID  (9)
 
-	ID  shift 182
+	ID  shift 183
 	.  error
 
 
 state 134
-	ParametroTOD : error . Expresion ')'  (134)
+	ParametroTOD : error . Expresion ')'  (132)
 
 	ID  shift 86
 	TOD  shift 87
@@ -1762,7 +1763,7 @@ state 134
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Expresion  goto 183
+	Expresion  goto 184
 	Termino  goto 90
 	ConversionExplicita  goto 91
 	Factor  goto 92
@@ -1770,9 +1771,9 @@ state 134
 
 
 state 135
-	ParametroTOD : '(' . Expresion ')'  (133)
-	ParametroTOD : '(' . Expresion error  (135)
-	ConversionExplicita : TOD '(' . ')'  (137)
+	ParametroTOD : '(' . Expresion ')'  (131)
+	ParametroTOD : '(' . Expresion error  (133)
+	ConversionExplicita : TOD '(' . ')'  (135)
 
 	ID  shift 86
 	TOD  shift 87
@@ -1780,12 +1781,12 @@ state 135
 	ENTEROCORTO  shift 18
 	PUNTOFLOTANTE  shift 19
 	'-'  shift 20
-	')'  shift 184
+	')'  shift 185
 	.  error
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Expresion  goto 185
+	Expresion  goto 186
 	Termino  goto 90
 	ConversionExplicita  goto 91
 	Factor  goto 92
@@ -1793,9 +1794,9 @@ state 135
 
 
 state 136
-	ConversionExplicita : TOD ParametroTOD .  (136)
+	ConversionExplicita : TOD ParametroTOD .  (134)
 
-	.  reduce 136
+	.  reduce 134
 
 
 state 137
@@ -1834,7 +1835,7 @@ state 141
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Termino  goto 186
+	Termino  goto 187
 	Factor  goto 92
 	Factor_RefObjeto  goto 93
 
@@ -1851,7 +1852,7 @@ state 142
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Termino  goto 187
+	Termino  goto 188
 	Factor  goto 92
 	Factor_RefObjeto  goto 93
 
@@ -1881,7 +1882,7 @@ state 145
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Expresion  goto 188
+	Expresion  goto 189
 	Termino  goto 90
 	ConversionExplicita  goto 91
 	Factor  goto 92
@@ -1901,8 +1902,8 @@ state 146
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Factor  goto 189
-	Factor_RefObjeto  goto 190
+	Factor  goto 190
+	Factor_RefObjeto  goto 191
 
 
 state 147
@@ -1918,8 +1919,8 @@ state 147
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Factor  goto 191
-	Factor_RefObjeto  goto 192
+	Factor  goto 192
+	Factor_RefObjeto  goto 193
 
 
 state 148
@@ -1936,7 +1937,7 @@ state 148
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
-	Expresion  goto 193
+	Expresion  goto 194
 	Termino  goto 90
 	ConversionExplicita  goto 91
 	Factor  goto 92
@@ -1947,8 +1948,8 @@ state 149
 	BloqueIF : IF Condicion SentenciaEjecutable error . ELSE CuerpoIF END_IF  (69)
 	BloqueIF : IF Condicion SentenciaEjecutable error . END_IF  (71)
 
-	ELSE  shift 194
-	END_IF  shift 195
+	ELSE  shift 195
+	END_IF  shift 196
 	.  error
 
 
@@ -1960,8 +1961,8 @@ state 150
 	BloqueIF : IF Condicion SentenciaEjecutable ',' . error CuerpoIF END_IF  (67)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' . error SentenciaEjecutable END_IF  (68)
 
-	error  shift 196
-	ELSE  shift 197
+	error  shift 197
+	ELSE  shift 198
 	.  error
 
 
@@ -1991,7 +1992,7 @@ state 152
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 198
+	SentenciaEjecutable  goto 199
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2000,7 +2001,7 @@ state 152
 	SalidaMensaje  goto 32
 	Constante  goto 38
 	Factor  goto 39
-	CuerpoIF  goto 199
+	CuerpoIF  goto 200
 	OperadorAsignacion  goto 43
 
 
@@ -2018,6 +2019,7 @@ state 154
 	PRINT  shift 6
 	CLASS  shift 7
 	VOID  shift 8
+	DO  shift 9
 	IMPL  shift 10
 	INT  shift 11
 	USHORT  shift 12
@@ -2032,8 +2034,10 @@ state 154
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 174
-	SentenciaDeclarativa  goto 175
+	Sentencia  goto 174
+	SentenciaControl  goto 24
+	SentenciaEjecutable  goto 175
+	SentenciaDeclarativa  goto 176
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2050,7 +2054,7 @@ state 154
 	Funcion  goto 40
 	FuncionSinCuerpo  goto 41
 	EncabezadoFuncion  goto 42
-	ListSentenciasFuncion  goto 200
+	ListSentenciasFuncion  goto 201
 	OperadorAsignacion  goto 43
 	EncabezadoClase  goto 44
 
@@ -2088,7 +2092,7 @@ state 159
 state 160
 	ListaSentenciasIF : ListaSentenciasIF SentenciaEjecutable . ','  (85)
 
-	','  shift 201
+	','  shift 202
 	.  error
 
 
@@ -2114,7 +2118,7 @@ state 161
 state 162
 	CuerpoIF : '{' RETURN SentenciasIF . ',' '}'  (74)
 
-	','  shift 202
+	','  shift 203
 	.  error
 
 
@@ -2128,8 +2132,8 @@ state 164
 	CuerpoIF : '{' SentenciasIF RETURN . ',' '}'  (73)
 	CuerpoIF : '{' SentenciasIF RETURN . error '}'  (75)
 
-	error  shift 203
-	','  shift 204
+	error  shift 204
+	','  shift 205
 	.  error
 
 
@@ -2141,7 +2145,7 @@ state 165
 
 state 166
 	Condicion : error . Expresion Comparador Expresion ')'  (56)
-	SentenciaControl : DO CuerpoIF UNTIL error .  (129)
+	SentenciaControl : DO CuerpoIF UNTIL error .  (127)
 
 	ID  shift 86
 	TOD  shift 87
@@ -2149,7 +2153,7 @@ state 166
 	ENTEROCORTO  shift 18
 	PUNTOFLOTANTE  shift 19
 	'-'  shift 20
-	','  reduce 129
+	','  reduce 127
 
 	ReferenciaObjeto  goto 88
 	Constante  goto 38
@@ -2161,25 +2165,25 @@ state 166
 
 
 state 167
-	SentenciaControl : DO CuerpoIF UNTIL Condicion .  (128)
+	SentenciaControl : DO CuerpoIF UNTIL Condicion .  (126)
 
-	.  reduce 128
+	.  reduce 126
 
 
 state 168
-	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion '}'  (142)
-	FuncionIMPL : IMPL FOR ID ':' . error Funcion '}'  (143)
-	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion error  (144)
+	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR ID ':' . error Funcion '}'  (141)
+	FuncionIMPL : IMPL FOR ID ':' . '{' Funcion error  (142)
 
-	error  shift 205
-	'{'  shift 206
+	error  shift 206
+	'{'  shift 207
 	.  error
 
 
 state 169
-	LlamadoFuncion : ID '(' Expresion ')' .  (116)
+	LlamadoFuncion : ID '(' Expresion ')' .  (114)
 
-	.  reduce 116
+	.  reduce 114
 
 
 state 170
@@ -2191,7 +2195,7 @@ state 170
 state 171
 	Parametro : error Tipo ID . ')'  (100)
 
-	')'  shift 207
+	')'  shift 208
 	.  error
 
 
@@ -2199,50 +2203,56 @@ state 172
 	Parametro : '(' Tipo ID . ')'  (98)
 	Parametro : '(' Tipo ID . error  (99)
 
-	error  shift 208
-	')'  shift 209
+	error  shift 209
+	')'  shift 210
 	.  error
 
 
 state 173
-	ListSentenciasFuncion : RETURN . ','  (108)
-	ListSentenciasFuncion : RETURN . error  (112)
+	Sentencia : RETURN . ','  (8)
+	ListSentenciasFuncion : RETURN . ','  (106)
+	ListSentenciasFuncion : RETURN . error  (110)
 
-	error  shift 210
-	','  shift 211
+	error  shift 211
+	','  shift 212
 	.  error
 
 
 state 174
-	ListSentenciasFuncion : SentenciaEjecutable . ','  (106)
-	ListSentenciasFuncion : SentenciaEjecutable . error  (110)
+	ListSentenciasFuncion : Sentencia . ','  (105)
 
-	error  shift 212
 	','  shift 213
 	.  error
 
 
 state 175
-	ListSentenciasFuncion : SentenciaDeclarativa . ','  (107)
-	ListSentenciasFuncion : SentenciaDeclarativa . error  (111)
+	Sentencia : SentenciaEjecutable .  (6)
+	ListSentenciasFuncion : SentenciaEjecutable . error  (108)
 
 	error  shift 214
-	','  shift 215
-	.  error
+	','  reduce 6
 
 
 state 176
+	Sentencia : SentenciaDeclarativa .  (7)
+	ListSentenciasFuncion : SentenciaDeclarativa . error  (109)
+
+	error  shift 215
+	','  reduce 7
+
+
+state 177
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion . '}' RETURN ','  (94)
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion . '}'  (95)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (104)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (105)
-	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (109)
+	ListSentenciasFuncion : ListSentenciasFuncion . Sentencia ','  (104)
+	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (107)
 
 	error  shift 4
 	IF  shift 5
 	PRINT  shift 6
 	CLASS  shift 7
 	VOID  shift 8
+	DO  shift 9
 	IMPL  shift 10
 	INT  shift 11
 	USHORT  shift 12
@@ -2258,8 +2268,10 @@ state 176
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 218
-	SentenciaDeclarativa  goto 219
+	Sentencia  goto 218
+	SentenciaControl  goto 24
+	SentenciaEjecutable  goto 25
+	SentenciaDeclarativa  goto 26
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2280,75 +2292,75 @@ state 176
 	EncabezadoClase  goto 44
 
 
-state 177
+state 178
 	ListSentenciasClase : RETURN ',' .  (18)
 
 	.  reduce 18
 
 
-state 178
+state 179
 	ListSentenciasClase : SentenciaDeclarativa ',' .  (17)
 
 	.  reduce 17
 
 
-state 179
+state 180
 	ListSentenciasClase : ListSentenciasClase RETURN . ','  (19)
+
+	','  shift 219
+	.  error
+
+
+state 181
+	ListClase : '{' ListSentenciasClase '}' .  (136)
+
+	.  reduce 136
+
+
+state 182
+	ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa . ','  (16)
 
 	','  shift 220
 	.  error
 
 
-state 180
-	ListClase : '{' ListSentenciasClase '}' .  (138)
-
-	.  reduce 138
-
-
-state 181
-	ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa . ','  (16)
-
-	','  shift 221
-	.  error
-
-
-state 182
+state 183
 	ReferenciaObjeto : ID '.' ID .  (9)
 
 	.  reduce 9
 
 
-state 183
+state 184
 	Expresion : Expresion . '+' Termino  (41)
 	Expresion : Expresion . '-' Termino  (42)
-	ParametroTOD : error Expresion . ')'  (134)
+	ParametroTOD : error Expresion . ')'  (132)
 
 	'-'  shift 141
 	'+'  shift 142
-	')'  shift 222
+	')'  shift 221
 	.  error
-
-
-state 184
-	ConversionExplicita : TOD '(' ')' .  (137)
-
-	.  reduce 137
 
 
 state 185
-	Expresion : Expresion . '+' Termino  (41)
-	Expresion : Expresion . '-' Termino  (42)
-	ParametroTOD : '(' Expresion . ')'  (133)
-	ParametroTOD : '(' Expresion . error  (135)
+	ConversionExplicita : TOD '(' ')' .  (135)
 
-	error  shift 223
-	'-'  shift 141
-	'+'  shift 142
-	')'  shift 224
-	.  error
+	.  reduce 135
 
 
 state 186
+	Expresion : Expresion . '+' Termino  (41)
+	Expresion : Expresion . '-' Termino  (42)
+	ParametroTOD : '(' Expresion . ')'  (131)
+	ParametroTOD : '(' Expresion . error  (133)
+
+	error  shift 222
+	'-'  shift 141
+	'+'  shift 142
+	')'  shift 223
+	.  error
+
+
+state 187
 	Expresion : Expresion '-' Termino .  (42)
 	Termino : Termino . '*' Factor  (45)
 	Termino : Termino . '/' Factor  (46)
@@ -2371,7 +2383,7 @@ state 186
 	'>'  reduce 42
 
 
-state 187
+state 188
 	Expresion : Expresion '+' Termino .  (41)
 	Termino : Termino . '*' Factor  (45)
 	Termino : Termino . '/' Factor  (46)
@@ -2394,71 +2406,71 @@ state 187
 	'>'  reduce 41
 
 
-state 188
+state 189
 	Expresion : Expresion . '+' Termino  (41)
 	Expresion : Expresion . '-' Termino  (42)
 	Condicion : error Expresion Comparador Expresion . ')'  (56)
 
 	'-'  shift 141
 	'+'  shift 142
-	')'  shift 225
+	')'  shift 224
 	.  error
 
 
-state 189
+state 190
 	Termino : Termino '*' Factor .  (45)
 
 	.  reduce 45
 
 
-state 190
+state 191
 	Termino : Termino '*' Factor_RefObjeto .  (48)
 
 	.  reduce 48
 
 
-state 191
+state 192
 	Termino : Termino '/' Factor .  (46)
 
 	.  reduce 46
 
 
-state 192
+state 193
 	Termino : Termino '/' Factor_RefObjeto .  (49)
 
 	.  reduce 49
 
 
-state 193
+state 194
 	Expresion : Expresion . '+' Termino  (41)
 	Expresion : Expresion . '-' Termino  (42)
 	Condicion : '(' Expresion Comparador Expresion . ')'  (54)
 	Condicion : '(' Expresion Comparador Expresion . error  (55)
 
-	error  shift 226
+	error  shift 225
 	'-'  shift 141
 	'+'  shift 142
-	')'  shift 227
+	')'  shift 226
 	.  error
 
 
-state 194
+state 195
 	BloqueIF : IF Condicion SentenciaEjecutable error ELSE . CuerpoIF END_IF  (69)
 
 	error  shift 58
 	'{'  shift 59
 	.  error
 
-	CuerpoIF  goto 228
+	CuerpoIF  goto 227
 
 
-state 195
+state 196
 	BloqueIF : IF Condicion SentenciaEjecutable error END_IF .  (71)
 
 	.  reduce 71
 
 
-state 196
+state 197
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error . CuerpoIF END_IF  (67)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error . SentenciaEjecutable END_IF  (68)
 
@@ -2475,7 +2487,7 @@ state 196
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 229
+	SentenciaEjecutable  goto 228
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2484,11 +2496,11 @@ state 196
 	SalidaMensaje  goto 32
 	Constante  goto 38
 	Factor  goto 39
-	CuerpoIF  goto 230
+	CuerpoIF  goto 229
 	OperadorAsignacion  goto 43
 
 
-state 197
+state 198
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE . CuerpoIF END_IF  (61)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE . SentenciaEjecutable ',' END_IF  (62)
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE . CuerpoIF error  (64)
@@ -2507,7 +2519,7 @@ state 197
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 231
+	SentenciaEjecutable  goto 230
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2516,40 +2528,40 @@ state 197
 	SalidaMensaje  goto 32
 	Constante  goto 38
 	Factor  goto 39
-	CuerpoIF  goto 232
+	CuerpoIF  goto 231
 	OperadorAsignacion  goto 43
 
 
-state 198
+state 199
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable . ',' END_IF  (63)
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable . ',' error  (66)
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable . error END_IF  (70)
 
-	error  shift 233
-	','  shift 234
-	.  error
-
-
-state 199
-	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF . END_IF  (57)
-	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF . error  (59)
-
-	error  shift 235
-	END_IF  shift 236
+	error  shift 232
+	','  shift 233
 	.  error
 
 
 state 200
+	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF . END_IF  (57)
+	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF . error  (59)
+
+	error  shift 234
+	END_IF  shift 235
+	.  error
+
+
+state 201
 	Funcion : VOID error Parametro '{' ListSentenciasFuncion . '}'  (96)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaDeclarativa ','  (104)
-	ListSentenciasFuncion : ListSentenciasFuncion . SentenciaEjecutable ','  (105)
-	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (109)
+	ListSentenciasFuncion : ListSentenciasFuncion . Sentencia ','  (104)
+	ListSentenciasFuncion : ListSentenciasFuncion . RETURN ','  (107)
 
 	error  shift 4
 	IF  shift 5
 	PRINT  shift 6
 	CLASS  shift 7
 	VOID  shift 8
+	DO  shift 9
 	IMPL  shift 10
 	INT  shift 11
 	USHORT  shift 12
@@ -2560,13 +2572,15 @@ state 200
 	ENTERO  shift 17
 	ENTEROCORTO  shift 18
 	PUNTOFLOTANTE  shift 19
-	'}'  shift 237
+	'}'  shift 236
 	'-'  shift 20
 	'='  shift 21
 	.  error
 
-	SentenciaEjecutable  goto 218
-	SentenciaDeclarativa  goto 219
+	Sentencia  goto 218
+	SentenciaControl  goto 24
+	SentenciaEjecutable  goto 25
+	SentenciaDeclarativa  goto 26
 	ReferenciaObjeto  goto 27
 	ReferenciaObjetoFuncion  goto 28
 	LlamadoFuncion  goto 29
@@ -2587,112 +2601,127 @@ state 200
 	EncabezadoClase  goto 44
 
 
-state 201
+state 202
 	ListaSentenciasIF : ListaSentenciasIF SentenciaEjecutable ',' .  (85)
 
 	.  reduce 85
 
 
-state 202
+state 203
 	CuerpoIF : '{' RETURN SentenciasIF ',' . '}'  (74)
+
+	'}'  shift 237
+	.  error
+
+
+state 204
+	CuerpoIF : '{' SentenciasIF RETURN error . '}'  (75)
 
 	'}'  shift 238
 	.  error
 
 
-state 203
-	CuerpoIF : '{' SentenciasIF RETURN error . '}'  (75)
+state 205
+	CuerpoIF : '{' SentenciasIF RETURN ',' . '}'  (73)
 
 	'}'  shift 239
 	.  error
 
 
-state 204
-	CuerpoIF : '{' SentenciasIF RETURN ',' . '}'  (73)
-
-	'}'  shift 240
-	.  error
-
-
-state 205
-	FuncionIMPL : IMPL FOR ID ':' error . Funcion '}'  (143)
-
-	VOID  shift 8
-	.  error
-
-	Funcion  goto 241
-	EncabezadoFuncion  goto 242
-
-
 state 206
-	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion '}'  (142)
-	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion error  (144)
+	FuncionIMPL : IMPL FOR ID ':' error . Funcion '}'  (141)
 
 	VOID  shift 8
 	.  error
 
-	Funcion  goto 243
-	EncabezadoFuncion  goto 242
+	Funcion  goto 240
+	EncabezadoFuncion  goto 241
 
 
 state 207
+	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion '}'  (140)
+	FuncionIMPL : IMPL FOR ID ':' '{' . Funcion error  (142)
+
+	VOID  shift 8
+	.  error
+
+	Funcion  goto 242
+	EncabezadoFuncion  goto 241
+
+
+state 208
 	Parametro : error Tipo ID ')' .  (100)
 
 	.  reduce 100
 
 
-state 208
+state 209
 	Parametro : '(' Tipo ID error .  (99)
 
 	.  reduce 99
 
 
-state 209
+state 210
 	Parametro : '(' Tipo ID ')' .  (98)
 
 	.  reduce 98
 
 
-state 210
-	ListSentenciasFuncion : RETURN error .  (112)
-
-	.  reduce 112
-
-
 state 211
-	ListSentenciasFuncion : RETURN ',' .  (108)
-
-	.  reduce 108
-
-
-state 212
-	ListSentenciasFuncion : SentenciaEjecutable error .  (110)
+	ListSentenciasFuncion : RETURN error .  (110)
 
 	.  reduce 110
 
 
-state 213
-	ListSentenciasFuncion : SentenciaEjecutable ',' .  (106)
+state 212
+	Sentencia : RETURN ',' .  (8)
+	ListSentenciasFuncion : RETURN ',' .  (106)
 
-	.  reduce 106
+	error  reduce 106
+	IF  reduce 106
+	PRINT  reduce 106
+	CLASS  reduce 106
+	VOID  reduce 106
+	DO  reduce 106
+	IMPL  reduce 106
+	INT  reduce 106
+	USHORT  reduce 106
+	DOUBLE  reduce 106
+	ID  reduce 106
+	ASIG  reduce 106
+	RETURN  reduce 106
+	ENTERO  reduce 106
+	ENTEROCORTO  reduce 106
+	PUNTOFLOTANTE  reduce 106
+	'}'  reduce 106
+	','  reduce 8
+	'-'  reduce 106
+	'='  reduce 106
+
+
+state 213
+	ListSentenciasFuncion : Sentencia ',' .  (105)
+
+	.  reduce 105
 
 
 state 214
-	ListSentenciasFuncion : SentenciaDeclarativa error .  (111)
+	ListSentenciasFuncion : SentenciaEjecutable error .  (108)
 
-	.  reduce 111
+	.  reduce 108
 
 
 state 215
-	ListSentenciasFuncion : SentenciaDeclarativa ',' .  (107)
+	ListSentenciasFuncion : SentenciaDeclarativa error .  (109)
 
-	.  reduce 107
+	.  reduce 109
 
 
 state 216
-	ListSentenciasFuncion : ListSentenciasFuncion RETURN . ','  (109)
+	Sentencia : RETURN . ','  (8)
+	ListSentenciasFuncion : ListSentenciasFuncion RETURN . ','  (107)
 
-	','  shift 244
+	','  shift 243
 	.  error
 
 
@@ -2700,173 +2729,166 @@ state 217
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' . RETURN ','  (94)
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' .  (95)
 
-	RETURN  shift 245
+	RETURN  shift 244
 	error  reduce 95
 	'}'  reduce 95
 	','  reduce 95
 
 
 state 218
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable . ','  (105)
+	ListSentenciasFuncion : ListSentenciasFuncion Sentencia . ','  (104)
 
-	','  shift 246
+	','  shift 245
 	.  error
 
 
 state 219
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa . ','  (104)
-
-	','  shift 247
-	.  error
-
-
-state 220
 	ListSentenciasClase : ListSentenciasClase RETURN ',' .  (19)
 
 	.  reduce 19
 
 
-state 221
+state 220
 	ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ',' .  (16)
 
 	.  reduce 16
 
 
+state 221
+	ParametroTOD : error Expresion ')' .  (132)
+
+	.  reduce 132
+
+
 state 222
-	ParametroTOD : error Expresion ')' .  (134)
-
-	.  reduce 134
-
-
-state 223
-	ParametroTOD : '(' Expresion error .  (135)
-
-	.  reduce 135
-
-
-state 224
-	ParametroTOD : '(' Expresion ')' .  (133)
+	ParametroTOD : '(' Expresion error .  (133)
 
 	.  reduce 133
 
 
-state 225
+state 223
+	ParametroTOD : '(' Expresion ')' .  (131)
+
+	.  reduce 131
+
+
+state 224
 	Condicion : error Expresion Comparador Expresion ')' .  (56)
 
 	.  reduce 56
 
 
-state 226
+state 225
 	Condicion : '(' Expresion Comparador Expresion error .  (55)
 
 	.  reduce 55
 
 
-state 227
+state 226
 	Condicion : '(' Expresion Comparador Expresion ')' .  (54)
 
 	.  reduce 54
 
 
-state 228
+state 227
 	BloqueIF : IF Condicion SentenciaEjecutable error ELSE CuerpoIF . END_IF  (69)
+
+	END_IF  shift 246
+	.  error
+
+
+state 228
+	BloqueIF : IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable . END_IF  (68)
+
+	END_IF  shift 247
+	.  error
+
+
+state 229
+	BloqueIF : IF Condicion SentenciaEjecutable ',' error CuerpoIF . END_IF  (67)
 
 	END_IF  shift 248
 	.  error
 
 
-state 229
-	BloqueIF : IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable . END_IF  (68)
-
-	END_IF  shift 249
-	.  error
-
-
 state 230
-	BloqueIF : IF Condicion SentenciaEjecutable ',' error CuerpoIF . END_IF  (67)
+	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . ',' END_IF  (62)
+	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . error  (65)
 
-	END_IF  shift 250
+	error  shift 249
+	','  shift 250
 	.  error
 
 
 state 231
-	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . ',' END_IF  (62)
-	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable . error  (65)
+	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . END_IF  (61)
+	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . error  (64)
 
 	error  shift 251
-	','  shift 252
+	END_IF  shift 252
 	.  error
 
 
 state 232
-	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . END_IF  (61)
-	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF . error  (64)
+	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable error . END_IF  (70)
 
-	error  shift 253
-	END_IF  shift 254
+	END_IF  shift 253
 	.  error
 
 
 state 233
-	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable error . END_IF  (70)
+	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . END_IF  (63)
+	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . error  (66)
 
+	error  shift 254
 	END_IF  shift 255
 	.  error
 
 
 state 234
-	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . END_IF  (63)
-	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' . error  (66)
-
-	error  shift 256
-	END_IF  shift 257
-	.  error
-
-
-state 235
 	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF error .  (59)
 
 	.  reduce 59
 
 
-state 236
+state 235
 	BloqueIF : IF Condicion CuerpoIF ELSE CuerpoIF END_IF .  (57)
 
 	.  reduce 57
 
 
-state 237
+state 236
 	Funcion : VOID error Parametro '{' ListSentenciasFuncion '}' .  (96)
 
 	.  reduce 96
 
 
-state 238
+state 237
 	CuerpoIF : '{' RETURN SentenciasIF ',' '}' .  (74)
 
 	.  reduce 74
 
 
-state 239
+state 238
 	CuerpoIF : '{' SentenciasIF RETURN error '}' .  (75)
 
 	.  reduce 75
 
 
-state 240
+state 239
 	CuerpoIF : '{' SentenciasIF RETURN ',' '}' .  (73)
 
 	.  reduce 73
 
 
-state 241
-	FuncionIMPL : IMPL FOR ID ':' error Funcion . '}'  (143)
+state 240
+	FuncionIMPL : IMPL FOR ID ':' error Funcion . '}'  (141)
 
-	'}'  shift 258
+	'}'  shift 256
 	.  error
 
 
-state 242
+state 241
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}' RETURN ','  (94)
 	Funcion : EncabezadoFuncion . Parametro '{' ListSentenciasFuncion '}'  (95)
 
@@ -2874,111 +2896,125 @@ state 242
 	'('  shift 79
 	.  error
 
-	Parametro  goto 259
+	Parametro  goto 257
+
+
+state 242
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . '}'  (140)
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . error  (142)
+
+	error  shift 258
+	'}'  shift 259
+	.  error
 
 
 state 243
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . '}'  (142)
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion . error  (144)
+	Sentencia : RETURN ',' .  (8)
+	ListSentenciasFuncion : ListSentenciasFuncion RETURN ',' .  (107)
 
-	error  shift 260
-	'}'  shift 261
-	.  error
+	error  reduce 107
+	IF  reduce 107
+	PRINT  reduce 107
+	CLASS  reduce 107
+	VOID  reduce 107
+	DO  reduce 107
+	IMPL  reduce 107
+	INT  reduce 107
+	USHORT  reduce 107
+	DOUBLE  reduce 107
+	ID  reduce 107
+	ASIG  reduce 107
+	RETURN  reduce 107
+	ENTERO  reduce 107
+	ENTEROCORTO  reduce 107
+	PUNTOFLOTANTE  reduce 107
+	'}'  reduce 107
+	','  reduce 8
+	'-'  reduce 107
+	'='  reduce 107
 
 
 state 244
-	ListSentenciasFuncion : ListSentenciasFuncion RETURN ',' .  (109)
-
-	.  reduce 109
-
-
-state 245
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN . ','  (94)
 
-	','  shift 262
+	','  shift 260
 	.  error
 
 
-state 246
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaEjecutable ',' .  (105)
-
-	.  reduce 105
-
-
-state 247
-	ListSentenciasFuncion : ListSentenciasFuncion SentenciaDeclarativa ',' .  (104)
+state 245
+	ListSentenciasFuncion : ListSentenciasFuncion Sentencia ',' .  (104)
 
 	.  reduce 104
 
 
-state 248
+state 246
 	BloqueIF : IF Condicion SentenciaEjecutable error ELSE CuerpoIF END_IF .  (69)
 
 	.  reduce 69
 
 
-state 249
+state 247
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error SentenciaEjecutable END_IF .  (68)
 
 	.  reduce 68
 
 
-state 250
+state 248
 	BloqueIF : IF Condicion SentenciaEjecutable ',' error CuerpoIF END_IF .  (67)
 
 	.  reduce 67
 
 
-state 251
+state 249
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error .  (65)
 
 	.  reduce 65
 
 
-state 252
+state 250
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' . END_IF  (62)
 
-	END_IF  shift 263
+	END_IF  shift 261
 	.  error
 
 
-state 253
+state 251
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error .  (64)
 
 	.  reduce 64
 
 
-state 254
+state 252
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF .  (61)
 
 	.  reduce 61
 
 
-state 255
+state 253
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable error END_IF .  (70)
 
 	.  reduce 70
 
 
-state 256
+state 254
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error .  (66)
 
 	.  reduce 66
 
 
-state 257
+state 255
 	BloqueIF : IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF .  (63)
 
 	.  reduce 63
 
 
-state 258
-	FuncionIMPL : IMPL FOR ID ':' error Funcion '}' .  (143)
+state 256
+	FuncionIMPL : IMPL FOR ID ':' error Funcion '}' .  (141)
 
-	.  reduce 143
+	.  reduce 141
 
 
-state 259
+state 257
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}' RETURN ','  (94)
 	Funcion : EncabezadoFuncion Parametro . '{' ListSentenciasFuncion '}'  (95)
 
@@ -2986,35 +3022,35 @@ state 259
 	.  error
 
 
-state 260
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion error .  (144)
-
-	.  reduce 144
-
-
-state 261
-	FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}' .  (142)
+state 258
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion error .  (142)
 
 	.  reduce 142
 
 
-state 262
+state 259
+	FuncionIMPL : IMPL FOR ID ':' '{' Funcion '}' .  (140)
+
+	.  reduce 140
+
+
+state 260
 	Funcion : EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' .  (94)
 
 	.  reduce 94
 
 
-state 263
+state 261
 	BloqueIF : IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF .  (62)
 
 	.  reduce 62
 
 
 Rules never reduced:
-	LlamadoExpresion : '(' Expresion ')'  (130)
-	LlamadoExpresion : error Expresion ')'  (131)
-	LlamadoExpresion : '(' Expresion error  (132)
+	LlamadoExpresion : '(' Expresion ')'  (128)
+	LlamadoExpresion : error Expresion ')'  (129)
+	LlamadoExpresion : '(' Expresion error  (130)
 
 
 43 terminals, 42 nonterminals
-145 grammar rules, 264 states
+143 grammar rules, 262 states

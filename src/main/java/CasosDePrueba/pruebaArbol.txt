@@ -1,5 +1,5 @@
 {
-    USHORT z,
+    DOUBLE z,
     VOID f1(USHORT x){
        INT a,
        USHORT y,
