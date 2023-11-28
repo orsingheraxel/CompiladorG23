@@ -101,8 +101,7 @@ public class AnalizadorLexico {
         }
         val =0;
         Token ret = new Token(token);
-        System.out.println("LEXEMA: "+ret.getLexema());
-        System.out.println("ID: "+ret.getId());
+        //System.out.println("LEXEMA: "+ret.getLexema());
         token.resetLexema();
         return ret;
     }

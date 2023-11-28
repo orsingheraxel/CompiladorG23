@@ -5,7 +5,7 @@ import AnalisisLexico.*;
 public class Nodo extends ParserVal{
     protected Nodo izq;
     protected Nodo der;
-    private Token t;
+    protected Token t;
 
     //Incorporar un atributo Uso en la Tabla de Símbolos,
     // indicando el uso del identificador en el programa
@@ -22,7 +22,6 @@ public class Nodo extends ParserVal{
         this.izq = izq;
         this.der = der;
     }
-
 
     public Token getToken(){return this.t;}
     public void setToken(Token t){this.t = t;}

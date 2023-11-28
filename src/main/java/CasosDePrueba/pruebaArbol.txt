@@ -1,8 +1,10 @@
 {
-VOID f3 (DOUBLE a)
-{
-    x = 1.2,
-    RETURN,
-},
-f3(x),
+CLASS bot {
+    VOID l() {
+        DO {
+            RETURN,
+        }
+        UNTIL (a < v),
+    },
+    },
 }

@@ -1,7 +1,6 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='f3:main', linea=2, uso='Funcion', tipo='VOID', ambito='main'}
-Token{id=280, lexema='1.2', linea=4, uso='Constante', tipo='DOUBLE', ambito='main:f3'}
-Token{id=269, lexema='a:main:f3', linea=2, uso='Parametro', tipo='DOUBLE', ambito='main:f3'}
+Token{id=269, lexema='bot:main', linea=2, uso='Clase', tipo='null', ambito='main'}
+Token{id=269, lexema='l:main:bot', linea=3, uso='Funcion', tipo='VOID', ambito='main:bot'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -10,8 +9,7 @@ Token{id=269, lexema='a:main:f3', linea=2, uso='Parametro', tipo='DOUBLE', ambit
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: Variable no declarada en este ambito  en la linea: 4
-Error Semantico: Variable x no definida en la linea: 4
+Error Semantico: Variable no declarada en este ambito  en la linea: 7
 Error Semantico: Variable no declarada en este ambito  en la linea: 7
 
 -------------------------------------------WARNINGS-------------------------------------------
@@ -19,10 +17,9 @@ Error Semantico: Variable no declarada en este ambito  en la linea: 7
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce asignacion  en la linea: 4
-Estructura: Reconoce declaracion de funcion  en la linea: 6
-Estructura: Reconoce llamado funcion  en la linea: 7
-Estructura: Reconoce programa  en la linea: 8
+Estructura: Reconoce funcion DO UNTIL en la linea: 7
+Estructura: Reconoce declaracion de funcion  en la linea: 8
+Estructura: Reconoce programa  en la linea: 10
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

@@ -14,19 +14,21 @@ import java.util.*;
 %start Programa
 
 %%
-Programa:'{' ListSentencias '}' {raiz = new NodoControl("PROGRAMA",(Nodo)$2); AnalizadorLexico.agregarEstructura("Reconoce programa ");}
+Programa: '{' ListSentencias '}' {   raiz = new NodoControl("PROGRAMA");
+                                    raiz.setDer((Nodo)$2);
+                                    AnalizadorLexico.agregarEstructura("Reconoce programa ");}
         //| '{'ListSentencias error {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
 	    | error ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
         ;
 
 ListSentencias:  ListSentencias Sentencia ',' {$$ = new NodoComun("Sentencia", (Nodo) $1, (Nodo) $2);}
-        | Sentencia ','{$$=$1;}
-	//| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+        | Sentencia ',' {$$=$1;}
+	    | Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
         ;
 
 Sentencia: SentenciaControl {$$ = $1;}
         | SentenciaEjecutable {$$ = $1;}
-        | SentenciaDeclarativa {$$ = new NodoHoja("sentencia declarativa");}
+        | SentenciaDeclarativa {}
         | RETURN ',' {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
 
@@ -94,7 +96,7 @@ SentenciaDeclarativa: Tipo ListVariables {
             ;
 
 ListVariables : ID {variables_declaradas.add($1.sval);}
-              | ListVariables ';' ID   {$$ = $1 ; variables_declaradas.add($3.sval);}
+              | ListVariables ';' ID   {variables_declaradas.add($3.sval);}
               ;
 
 Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
@@ -116,7 +118,7 @@ Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
     ;
 
 ListVariablesObj: ID {variables_declaradas.add($1.sval);}
-                | ListVariablesObj ';' ID {$$ = $1 ; variables_declaradas.add($3.sval);}
+                | ListVariablesObj ';' ID {variables_declaradas.add($3.sval);}
 
 Tipo : USHORT {tipoActual = $1.sval;} //{(Nodo)$$.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
      | INT {tipoActual = $1.sval;}
@@ -393,6 +395,9 @@ Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {
                                                                                 deshacerAmbito();
                                                                                 AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
+      | EncabezadoFuncion Parametro '{' '}' {AnalizadorLexico.addWarning("Función sin cuerpo ");
+                                            deshacerAmbito();
+                                            AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       ;
 
 EncabezadoFuncion : VOID ID  {
@@ -429,7 +434,7 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
-        | '(' ')'
+        | '(' ')' {$$ = null;}
         | '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         | error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
         ;
@@ -608,7 +613,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 */
 
 %%
-  private NodoControl raiz;
+  public NodoControl raiz;
   private String ambitoAct = "main";
   private String ambitoNuevo= "";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
