@@ -1,9 +1,7 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='f1:main', linea=3, uso='Funcion', tipo='VOID', ambito='main'}
-Token{id=269, lexema='a:main:f1', linea=4, uso='Variable', tipo='INT', ambito='main:f1'}
-Token{id=269, lexema='z:main', linea=2, uso='Variable', tipo='DOUBLE', ambito='main'}
-Token{id=269, lexema='x:main:f1', linea=3, uso='Parametro', tipo='USHORT', ambito='main:f1'}
-Token{id=269, lexema='y:main:f1', linea=5, uso='Variable', tipo='USHORT', ambito='main:f1'}
+Token{id=269, lexema='f3:main', linea=2, uso='Funcion', tipo='VOID', ambito='main'}
+Token{id=280, lexema='1.2', linea=4, uso='Constante', tipo='DOUBLE', ambito='main:f3'}
+Token{id=269, lexema='a:main:f3', linea=2, uso='Parametro', tipo='DOUBLE', ambito='main:f3'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -12,16 +10,19 @@ Token{id=269, lexema='y:main:f1', linea=5, uso='Variable', tipo='USHORT', ambito
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: No coinciden los tipos del parametro real y el formal  en la linea: 7
+Error Semantico: Variable no declarada en este ambito  en la linea: 4
+Error Semantico: Variable x no definida en la linea: 4
+Error Semantico: Variable no declarada en este ambito  en la linea: 7
 
 -------------------------------------------WARNINGS-------------------------------------------
  
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
+Estructura: Reconoce asignacion  en la linea: 4
 Estructura: Reconoce declaracion de funcion  en la linea: 6
 Estructura: Reconoce llamado funcion  en la linea: 7
-Estructura: Reconoce programa  en la linea: 9
+Estructura: Reconoce programa  en la linea: 8
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

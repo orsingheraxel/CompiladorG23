@@ -384,10 +384,14 @@ ListFuncion: Funcion
 	;
 
 Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {agregarErrorSemantico("RETURN fuera de funcion");}
-      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {((Nodo)$1).setIzq((Nodo)$2);
-                                                                    ((Nodo)$1).setDer((Nodo)$4);
-                                                                    deshacerAmbito();
-                                                                    AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
+      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion RETURN ',' '}' {  ((Nodo)$1).setIzq((Nodo)$2);
+                                                                                ((Nodo)$1).setDer((Nodo)$4);
+                                                                                deshacerAmbito();
+                                                                                AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
+      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {  ((Nodo)$1).setIzq((Nodo)$2);
+                                                                                ((Nodo)$1).setDer((Nodo)$4);
+                                                                                deshacerAmbito();
+                                                                                AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
       ;
 
@@ -435,19 +439,25 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
 
 ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
 		  | Sentencia ',' {$$=$1;}
-		  | RETURN ',' {$$ = new NodoHoja("RETURN");}
-		  | ListSentenciasFuncion RETURN ',' {$$ = new NodoComun("Sentencia",(Nodo)$1,(Nodo)$2);}
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           	  | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
 LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);
-                             Token funcion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
-                             if (funcion == null){
-                                agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
-                             }
-
+                            Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
+                            Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
+                            if (tokenFuncion == null){
+                                agregarErrorSemantico("La funcion " + val_peek(3).sval + " nunca fue declarada");
+                            } else {
+                                if (funciones_declaradas.contains(funcion)) {
+                                    int indice = funciones_declaradas.indexOf(funcion);
+                                    Funcion f = funciones_declaradas.get(indice);
+                                    if (f.getTipoParametro() != null){
+                                        agregarErrorSemantico("Se esperaba un parametro en la función ");
+                                    }
+                                }
+                            }
 				            AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
 				            TablaSimbolos.removeToken($1.sval);
 				            }
@@ -463,17 +473,13 @@ LlamadoFuncion: ID '(' ')' {$$=new NodoHoja($1.sval);
                                     	agregarErrorSemantico("La funcion " + val_peek(3).sval + " nunca fue declarada");
                                     } else {
                                     	if (funciones_declaradas.contains(funcion)) {
-						int indice = funciones_declaradas.indexOf(funcion);
-						Funcion f = funciones_declaradas.get(indice);
-						System.out.println("parametro real" + f.getTipoParametro());
-                                                System.out.println("parametro formal" + ((Nodo)$3).getTipo());
-                                                if (!f.getTipoParametro().equals(((Nodo)$3).getTipo())){
-                                                	agregarErrorSemantico("No coinciden los tipos del parametro real y el formal ");
-                                                }
+                                            int indice = funciones_declaradas.indexOf(funcion);
+                                            Funcion f = funciones_declaradas.get(indice);
+                                            if (!f.getTipoParametro().equals(((Nodo)$3).getTipo()) && (((Nodo)$3).getTipo() != null)){
+                                                agregarErrorSemantico("No coinciden los tipos del parametro real y el formal. Se esperaba un " + f.getTipoParametro() + ", se obtuvo un " + ((Nodo)$3).getTipo());
+                                            }
                                         }
                                     }
-
-
                                     AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
                                     TablaSimbolos.removeToken($1.sval);
                                     }

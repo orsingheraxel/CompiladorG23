@@ -1,9 +1,8 @@
 {
-    DOUBLE z,
-    VOID f1(USHORT x){
-       INT a,
-       USHORT y,
-    },
-    f1(z),
-
+VOID f3 (DOUBLE a)
+{
+    x = 1.2,
+    RETURN,
+},
+f3(x),
 }
