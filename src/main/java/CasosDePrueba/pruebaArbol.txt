@@ -1,10 +1,12 @@
 {
 CLASS bot {
     VOID l() {
-        DO {
-            RETURN,
-        }
-        UNTIL (a < v),
+        USHORT x,
+
     },
     },
+    DO {
+        x = 2.0D+4,
+    }
+    UNTIL (a < v),
 }

@@ -11,6 +11,16 @@ public class Nodo extends ParserVal{
     // indicando el uso del identificador en el programa
     // (variable, nombre de clase, nombre de método, nombre de parámetro, etc.).
 
+    public Nodo (Nodo e){
+        if (e.getIzq()!=null) {
+            this.izq = e.getIzq();
+        } else {this.izq=null;}
+        if (e.getDer()!=null) {
+            this.der = e.getDer();
+        }else{this.der=null;}
+        this.t = e.getToken();
+    }
+
     public Nodo(String lex){
         izq = null;
         der = null;
