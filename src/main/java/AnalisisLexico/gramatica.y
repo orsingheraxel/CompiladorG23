@@ -23,7 +23,7 @@ Programa: '{' ListSentencias  '}' {   raiz = new NodoControl("PROGRAMA");
 
 ListSentencias:  ListSentencias Sentencia ',' {$$.obj = new NodoComun("Sentencia", (Nodo) $1.obj, (Nodo) $2.obj);}
         | Sentencia ',' {$$.obj=$1.obj;}
-	    | Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
+	    | Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
 Sentencia: SentenciaControl {$$.obj=$1.obj;}
@@ -301,7 +301,7 @@ Termino: Termino '*' Factor   {$$.obj = new NodoComun("*",(Nodo)$1.obj,(Nodo)$3.
 | Factor_RefObjeto {$$.obj=$1.obj;}
 ;
 
-Factor: ID {Nodo aux = new Nodo ((String)$1.sval);
+Factor: ID {Nodo aux = new NodoHoja ((String)$1.sval);
             TablaSimbolos.removeToken($1.sval);
             String var = $1.sval + ":" + ambitoAct;
             var = getLexemaAlcance(var);
@@ -570,9 +570,14 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 	| OperadorAsignacion Factor {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 	;
 
-SentenciaControl: DO CuerpoIF UNTIL Condicion {$$.obj=new NodoComun("DO UNTIL", (Nodo)$2.obj ,(Nodo)$4.obj);
+SentenciaControl:   DO CuerpoIF UNTIL Condicion {$$.obj=new NodoComun("DO UNTIL", (Nodo)$2.obj ,(Nodo)$4.obj);
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
-                  |DO CuerpoIF UNTIL error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  | DO CuerpoIF UNTIL error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  | DO SentenciaEjecutable ',' UNTIL Condicion {$$.obj = new NodoComun("DO UNTIL", (Nodo)$2.obj ,(Nodo)$4.obj);
+                                                               AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
+                  | DO SentenciaEjecutable ',' UNTIL error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
+                  | DO error UNTIL Condicion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una sentencia ejecutable ");}
+                  | DO SentenciaEjecutable UNTIL Condicion {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
                   ;
 
 //TEMA 29 --------------------------------------------------
@@ -623,6 +628,7 @@ FuncionSinCuerpo: EncabezadoFuncion Parametro {AnalizadorLexico.agregarEstructur
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken($3.sval);}
+            | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
             | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
             | IMPL FOR ID ':' '{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;

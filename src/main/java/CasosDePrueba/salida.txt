@@ -1,8 +1,8 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=269, lexema='bot:main', linea=2, uso='Clase', tipo='null', ambito='main'}
-Token{id=269, lexema='l:main:bot', linea=3, uso='Funcion', tipo='VOID', ambito='main:bot'}
-Token{id=280, lexema='2.0D+4', linea=9, uso='Constante', tipo='DOUBLE', ambito='main'}
-Token{id=269, lexema='x:main:bot:l', linea=4, uso='Variable', tipo='USHORT', ambito='main:bot:l'}
+Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='2', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='3', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='4', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -11,20 +11,15 @@ Token{id=269, lexema='x:main:bot:l', linea=4, uso='Variable', tipo='USHORT', amb
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: Variable no declarada en este ambito  en la linea: 9
-Error Semantico: Variable x no definida en la linea: 9
-Error Semantico: Variable no declarada en este ambito  en la linea: 11
-Error Semantico: Variable no declarada en este ambito  en la linea: 11
+Error Semantico: Segundo termino fuera de alcance  en la linea: 3
 
 -------------------------------------------WARNINGS-------------------------------------------
  
  
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
-Estructura: Reconoce declaracion de funcion  en la linea: 6
-Estructura: Reconoce asignacion  en la linea: 9
-Estructura: Reconoce funcion DO UNTIL en la linea: 11
-Estructura: Reconoce programa  en la linea: 12
+Estructura: Reconoce asignacion  en la linea: 3
+Estructura: Reconoce programa  en la linea: 4
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

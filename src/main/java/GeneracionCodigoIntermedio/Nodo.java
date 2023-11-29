@@ -72,4 +72,9 @@ public class Nodo extends ParserVal{
     public Nodo getDer(){return this.der;}
     public void setIzq(Nodo izq) { this.izq = izq; }
     public void setDer(Nodo der) { this.der = der; }
+
+    @Override
+    public String toString() {
+        return t.getLexema();
+    }
 }

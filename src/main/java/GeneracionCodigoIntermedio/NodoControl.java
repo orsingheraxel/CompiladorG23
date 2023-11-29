@@ -10,6 +10,7 @@ public class NodoControl extends Nodo{ //tiene un solo hijo, el otro es null sie
 
     public NodoControl(String lex){
         super(lex);
+        System.out.println("NodoControl " + lex);
     }
 
 }

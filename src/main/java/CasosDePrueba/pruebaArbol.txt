@@ -1,12 +1,4 @@
 {
-CLASS bot {
-    VOID l() {
-        USHORT x,
-
-    },
-    },
-    DO {
-        x = 2.0D+4,
-    }
-    UNTIL (a < v),
+USHORT x,
+x = 2_us + 4_us * 3_us,
 }
