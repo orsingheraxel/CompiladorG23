@@ -20,7 +20,7 @@ public class NodoComun extends Nodo{
     public String getAssembler() {
         String salida = "";
         switch (super.getLexema()) {
-            case "SENTENCIA":
+            case "Sentencia":
                 if (this.getIzq() != null) {
                     salida = salida + this.getIzq().getAssembler();
                 }
@@ -29,7 +29,7 @@ public class NodoComun extends Nodo{
                     salida = salida + this.getDer().getAssembler();
                 }
                 break;
-            case "Cuerpo_IF":
+            case "CUERPO":
                 this.labelFin = getLabel();
                 String labelElse = getLabel();
                 pilaLabels.push(labelElse);
@@ -44,7 +44,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FMUL " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FST " + this.variable + "\n";
@@ -61,7 +61,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FADD " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JO errorSumaDouble\n";
@@ -78,7 +78,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FSUB " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FST " + this.variable + "\n";
@@ -94,7 +94,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FSUB " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FTST ";
@@ -117,7 +117,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JGE " + this.label + "\n";
@@ -129,7 +129,7 @@ public class NodoComun extends Nodo{
                 break;
             case "=":
                 salida = salida + this.getDer().getAssembler() + this.getIzq().getAssembler();
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FST " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                 } else {
@@ -144,7 +144,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JLE " + this.label + "\n";
@@ -161,7 +161,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JE " + this.label + "\n";
@@ -173,7 +173,7 @@ public class NodoComun extends Nodo{
                 break;
             case "+=":
                 salida = salida + this.getDer().getAssembler() + this.getIzq().getAssembler();
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FADD " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FST " + this.getIzq().getUltimoNodo().getLexema() + "\n";
@@ -190,7 +190,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JG " + this.label + "\n";
@@ -207,7 +207,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JNE " + this.label + "\n";
@@ -224,7 +224,7 @@ public class NodoComun extends Nodo{
                 this.ultimoNodo = new NodoHoja(this.variable);
                 this.ultimoNodo.setTipo(this.getIzq().getTipo());
                 this.ultimoNodo.setUso("variableAuxiliar");
-                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("LONG")) {
+                if (!this.getIzq().getTipo().equals("USHORT") && !this.getIzq().getTipo().equals("DOUBLE")) {
                     salida = salida + "FLD " + this.getIzq().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "FCOM " + this.getDer().getUltimoNodo().getLexema() + "\n";
                     salida = salida + "JL " + this.label + "\n";
@@ -244,6 +244,22 @@ public class NodoComun extends Nodo{
                     salida = salida + this.getIzq().getAssembler() + this.salidaDer;
                 }
                 break;
+
+
+
+
+
+
+                /////Chequear por favor. Ustedes no tenian DO UNTIL? Despues me comentan, espero su mail. -Antonela
+
+
+
+
+
+
+
+
+
             case "FOR":
                 this.label = getLabel();
                 this.labelFin = getLabel();

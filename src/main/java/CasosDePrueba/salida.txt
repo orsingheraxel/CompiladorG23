@@ -1,8 +1,10 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=279, lexema='1', linea=5, uso='Constante', tipo='USHORT', ambito='main'}
 Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
 Token{id=279, lexema='2', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='3', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='4', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='y:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='4', linea=7, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='5', linea=9, uso='Constante', tipo='USHORT', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -11,7 +13,7 @@ Token{id=279, lexema='4', linea=3, uso='Constante', tipo='USHORT', ambito='main'
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: Segundo termino fuera de alcance  en la linea: 3
+Error Semantico: Segundo termino fuera de alcance  en la linea: 5
 
 -------------------------------------------WARNINGS-------------------------------------------
  
@@ -19,7 +21,12 @@ Error Semantico: Segundo termino fuera de alcance  en la linea: 3
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
 Estructura: Reconoce asignacion  en la linea: 3
-Estructura: Reconoce programa  en la linea: 4
+Estructura: Reconoce asignacion  en la linea: 4
+Estructura: Reconoce asignacion  en la linea: 5
+Estructura: Reconoce asignacion  en la linea: 7
+Estructura: Reconoce asignacion  en la linea: 9
+Estructura: Reconoce IF ELSE en la linea: 10
+Estructura: Reconoce programa  en la linea: 11
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

@@ -1,6 +1,5 @@
 package a.AnalisisLexico.AccionesSemanticas;
 
-import AnalisisLexico.*;
 import a.AnalisisLexico.Token;
 
 import java.io.Reader;

@@ -1,8 +1,8 @@
 %{
-package AnalisisLexico;
-import AnalisisLexico.ParserVal;
-import GeneracionCodigoIntermedio.*;
-import AnalisisLexico.AccionesSemanticas.AccionSemantica;
+package a.AnalisisLexico;
+import a.AnalisisLexico.ParserVal;
+import b.GeneracionCodigoIntermedio.*;
+import a.AnalisisLexico.AccionesSemanticas.AccionSemantica;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,8 +14,7 @@ import java.util.*;
 %start Programa
 
 %%
-Programa: '{' ListSentencias  '}' {   raiz = new NodoControl("PROGRAMA");
-                                     raiz.setDer((Nodo)$2.obj);
+Programa: '{' ListSentencias  '}' {   raiz = new NodoControl("PROGRAMA", (Nodo)$2.obj);
                                     AnalizadorLexico.agregarEstructura("Reconoce programa ");}
         //| '{'ListSentencias error {AnalizadorLexico.agregarErrorSintactico("Se espera '}' ");}
 	    | error ListSentencias '}' {AnalizadorLexico.agregarErrorSintactico("Se espera '{' ");}
@@ -201,8 +200,8 @@ Constante: ENTERO  {
 	;
 
 Expresion: Expresion'+'Termino { $$.obj = new NodoComun("+",(Nodo)$1.obj,(Nodo)$3.obj);
-                                Nodo n1 = new Nodo ((Nodo)$1.obj);
-                                Nodo n2 = new Nodo ((Nodo)$3.obj);
+                                Nodo n1 = (Nodo)$1.obj;
+                                Nodo n2 = (Nodo)$3.obj;
                                 if (n1.getUso()!= "Constante"){
                                     if (!estaAlAlcance(n1.getLexema())){
                                         agregarErrorSemantico("Primer termino fuera de alcance ");
@@ -220,8 +219,8 @@ Expresion: Expresion'+'Termino { $$.obj = new NodoComun("+",(Nodo)$1.obj,(Nodo)$
                                 }
                                 }
 | Expresion'-'Termino {$$.obj = new NodoComun("-",(Nodo)$1.obj,(Nodo)$3.obj);
-                       Nodo n1 = new Nodo ((Nodo)$1.obj);
-                       Nodo n2 = new Nodo ((Nodo)$3.obj);
+                       Nodo n1 = (Nodo)$1.obj;
+                       Nodo n2 = (Nodo)$3.obj;
                         if (n1.getUso()!= "Constante"){
                             if (!estaAlAlcance(n1.getLexema())){
                                 agregarErrorSemantico("Primer termino fuera de alcance ");
@@ -244,8 +243,8 @@ Expresion: Expresion'+'Termino { $$.obj = new NodoComun("+",(Nodo)$1.obj,(Nodo)$
 
 
 Termino: Termino '*' Factor   {$$.obj = new NodoComun("*",(Nodo)$1.obj,(Nodo)$3.obj);
-                                Nodo n1 = new Nodo ((Nodo)$1.obj);
-                                Nodo n2 = new Nodo ((Nodo)$3.obj);
+                                Nodo n1 = (Nodo)$1.obj;
+                                Nodo n2 = (Nodo)$3.obj;
                                 if (n1.getUso()!= "Constante"){
                                     if (!estaAlAlcance(n1.getLexema())){
                                         agregarErrorSemantico("Primer termino fuera de alcance ");
@@ -264,8 +263,8 @@ Termino: Termino '*' Factor   {$$.obj = new NodoComun("*",(Nodo)$1.obj,(Nodo)$3.
                               }
 
 | Termino'/'Factor {$$.obj = new NodoComun("/",(Nodo)$1.obj,(Nodo)$3.obj);
-                    Nodo n1 = new Nodo ((Nodo)$1.obj);
-                    Nodo n2 = new Nodo ((Nodo)$3.obj);
+                    Nodo n1 = (Nodo)$1.obj;
+                    Nodo n2 = (Nodo)$3.obj;
                         if (n1.getUso()!= "Constante"){
                             if (!estaAlAlcance(n1.getLexema())){
                                 agregarErrorSemantico("Primer termino fuera de alcance ");
@@ -283,16 +282,16 @@ Termino: Termino '*' Factor   {$$.obj = new NodoComun("*",(Nodo)$1.obj,(Nodo)$3.
                     }
 | Factor {$$.obj = $1.obj;}
 | Termino'*' Factor_RefObjeto {$$ = new NodoComun("*",(Nodo)$1,(Nodo)$3);
-                               Nodo n1 = new Nodo ((Nodo)$1.obj);
-                               Nodo n2 = new Nodo ((Nodo)$3.obj);
+                               Nodo n1 = (Nodo)$1.obj;
+                               Nodo n2 = (Nodo)$3.obj;
                                if (!n1.getAmbito().equals(n2.getAmbito())){
                                     agregarErrorSemantico("Variable fuera de alcance ");
                                }
                                      ((Nodo)$$.obj).setTipo(tipoPredominante(n1.getTipo(),n2.getTipo()));
                                }
 | Termino'/' Factor_RefObjeto {$$.obj = new NodoComun("/",(Nodo)$1.obj,(Nodo)$3.obj);
-                               Nodo n1 = new Nodo ((Nodo)$1.obj);
-                               Nodo n2 = new Nodo ((Nodo)$3.obj);
+                               Nodo n1 = (Nodo)$1.obj;
+                               Nodo n2 = (Nodo)$3.obj;
                                if (!n1.getAmbito().equals(n2.getAmbito())){
                                     agregarErrorSemantico("Variable fuera de alcance ");
                                }
@@ -328,10 +327,10 @@ Factor_RefObjeto: ReferenciaObjeto {$$.obj=$1.obj;}
                 ;
 
 Condicion : '(' Expresion Comparador Expresion ')' { NodoComun aux = new NodoComun($3.sval,(Nodo)$2.obj,(Nodo)$4.obj);
-                                                    Nodo a = new Nodo((Nodo)$2.obj);
+                                                    Nodo a = (Nodo)$2.obj;
                                                     aux.setTipo(a.getTipo());
                                                     aux.setUso("Condicion");
-                                                    $$.obj = aux.obj;
+                                                    $$.obj = new NodoControl("Condicion",aux);
                                                     //if (!(((Nodo)$2).getTipo().equals(((Nodo)$4).getTipo()))){
                                                          //agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
                                                      //}
@@ -341,25 +340,25 @@ Condicion : '(' Expresion Comparador Expresion ')' { NodoComun aux = new NodoCom
 	  ;
 
 BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {  $$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,(Nodo)$5.obj);
-                                                        Nodo aux = new Nodo ((Nodo)$$.obj);
+                                                        Nodo aux = (Nodo)$$.obj;
                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
-	    | IF Condicion CuerpoIF END_IF {$$.obj = new Nodo("CUERPO",(Nodo)$3.obj,null);
-	                                    Nodo aux = new Nodo ((Nodo)$$.obj);
+	    | IF Condicion CuerpoIF END_IF {$$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,null);
+	                                    Nodo aux = (Nodo)$$.obj;
 	                                    $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
 	                                    AnalizadorLexico.agregarEstructura("Reconoce IF");}
 	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {   $$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,(Nodo)$6.obj);
-                                                                        Nodo aux = new Nodo ((Nodo)$$.obj);
+                                                                        Nodo aux = (Nodo)$$.obj;
                                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable ',' END_IF {$$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,(Nodo)$6.obj);
-                                                                                    Nodo aux = new Nodo ((Nodo)$$.obj);
+                                                                                    Nodo aux = (Nodo)$$.obj;
                                                                                     $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                                                     AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' END_IF {   $$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,(Nodo)$5.obj);
-                                                                        Nodo aux = new Nodo ((Nodo)$$.obj);
+                                                                        Nodo aux = (Nodo)$$.obj;
                                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
@@ -406,6 +405,7 @@ Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {
       | EncabezadoFuncion Parametro '{' ListSentenciasFuncion RETURN ',' '}' {  ((Nodo)$1.obj).setIzq((Nodo)$2.obj);
                                                                                 ((Nodo)$1.obj).setDer((Nodo)$4.obj);
                                                                                 deshacerAmbito();
+                                                                                funciones.add((Nodo)$1);
                                                                                 AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' { ((Nodo)$1.obj).setIzq((Nodo)$2.obj);
                                                                     ((Nodo)$1.obj).setDer((Nodo)$4.obj);
@@ -431,7 +431,7 @@ EncabezadoFuncion : VOID ID  {
 			      funciones_declaradas.add(f);
 			      actualizarAmbito($2.sval);
                   $$.obj = new NodoComun($2.sval,null,null);
-                              }
+                  }
                   ;
 
 
@@ -488,7 +488,7 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoHoja($1.sval);
             | ID '(' Expresion ')' {
             			    NodoHoja nodo1 = new NodoHoja($1.sval);
             			    $$.obj=new NodoComun("Llamado Funcion", nodo1, (Nodo)$3.obj);
-            			    Nodo n3 = new Nodo((Nodo)$3.obj);
+            			    Nodo n3 = (Nodo)$3.obj;
                                     Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
 
                                     Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
@@ -521,7 +521,7 @@ OperadorAsignacion: '=' {$$.obj=$1.obj;}
 
 Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 						                        $$.obj = new NodoComun($2.sval,(Nodo)$1.obj,(Nodo)$3.obj);
-						                        Nodo n1 = new Nodo ((Nodo)$1.obj);
+						                        Nodo n1 = (Nodo)$1.obj;
                                                 String uso = n1.getLexema();
                                                 if (!(uso.equals("Constante"))){
                                                 String var = getLexemaAlcance(n1.getLexema() + ":" + ambitoAct);
@@ -547,8 +547,8 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 
 	| ReferenciaObjeto OperadorAsignacion Factor {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 	                                                $$.obj = new NodoComun($2.sval,(Nodo)$1.obj,(Nodo)$3.obj);
-	                                                Nodo n1 = new Nodo((Nodo)$1.obj);
-	                                                Nodo n2 = new Nodo((Nodo)$3.obj);
+	                                                Nodo n1 = (Nodo)$1.obj;
+	                                                Nodo n2 = (Nodo)$3.obj;
 	                                                String uso = n2.getUso();
 	                                                if (!(uso.equals("Constante"))){
                                                         String var = getLexemaAlcance(n2.getLexema() + ":" + ambitoAct);
@@ -647,11 +647,15 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
   static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
+  static ArrayList<Nodo> funciones = new ArrayList<Nodo>();
 
   public NodoControl getRaiz(){
   	return this.raiz;
   }
 
+  public List<Nodo> getFuncion(){
+        return funciones;
+  }
 
   public void agregarErrorSemantico(String error){
       Error e = new Error(error,AnalizadorLexico.getLineaAct());

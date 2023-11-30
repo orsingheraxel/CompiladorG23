@@ -7,83 +7,111 @@ import b.GeneracionCodigoIntermedio.NodoControl;
 import java.util.Iterator;
 
 public class GeneradorAssembler {
-    private String data = "\n.data\nDivisionPorCero db \"No se puede dividir por cero.\", 0 \nOverflowProductoEnteros db \"Se produjo un overflow en el producto de enteros.\", 0 \nOverflowSumaDouble db \"Se produjo un un overflow en la suma de double.\", 0 \nerror db \"Error\", 0 \nprintMensaje db \"Print\", 0 \n";
-    private String code = "";
-    private String codigoArbol = "";
-    private String bibliotecas = ".386 \n.model flat, stdcall \noption casemap :none  \ninclude \\masm32\\include\\windows.inc \ninclude \\masm32\\include\\kernel32.inc \ninclude \\masm32\\include\\masm32.inc  \nincludelib \\masm32\\lib\\kernel32.lib \nincludelib \\masm32\\lib\\masm32.lib\ninclude \\masm32\\include\\user32.inc \nincludelib \\masm32\\lib\\user32.lib \n";
-    private String codigoFunciones = "invoke MessageBox, NULL, addr DivisionPorCero, addr error, MB_OK \ninvoke ExitProcess, 0 \ninvoke MessageBox, NULL, addr OverflowProductoEnteros, addr error, MB_OK \ninvoke ExitProcess, 0 \ninvoke MessageBox, NULL, addr OverflowSumaDouble, addr error, MB_OK \ninvoke ExitProcess, 0 \n";
+    private String data, code, codigoArbol, bibliotecas, codigoFunciones;
     private Nodo arbol;
 
-    public GeneradorAssembler(Parser parser) {
-        this.arbol = parser.getRaiz();
 
-        Nodo a;
-        for(Iterator var3 = parser.getFuncion().iterator(); var3.hasNext(); this.codigoFunciones = this.codigoFunciones + a.getAssembler() + "\n") {
-            a = (Nodo)var3.next();
+    public GeneradorAssembler(Parser parser){
+        this.bibliotecas = ".386 \n.model flat, stdcall \noption casemap :none  \n"
+                +"include \\masm32\\include\\windows.inc \n"
+                +"include \\masm32\\include\\kernel32.inc \n"
+                +"include \\masm32\\include\\masm32.inc  \n"
+                +"includelib \\masm32\\lib\\kernel32.lib \n"
+                +"includelib \\masm32\\lib\\masm32.lib\n"
+                +"include \\masm32\\include\\user32.inc \n"
+                +"includelib \\masm32\\lib\\user32.lib \n";
+        this.data= "\n.data\n"
+                + "AutoinvocacionFunciones db \"Una funcion no puede llamarse a si misma.\", 0 \n"
+                + "OverflowSumaEnteros db \"Se produjo un overflow en la suma de enteros.\", 0 \n"
+                + "OverflowProductoDouble db \"Se produjo un un overflow en el producto de doubles.\", 0 \n"
+                + "error db \"Error\", 0 \n"
+                + "printMensaje db \"Print\", 0 \n";
+
+        this.code="";
+        this.codigoFunciones= "invoke MessageBox, NULL, addr AutoinvocacionFunciones, addr error, MB_OK \n"
+                + "invoke ExitProcess, 0 \n"
+                + "invoke MessageBox, NULL, addr OverflowSumaEnteros, addr error, MB_OK \n"
+                + "invoke ExitProcess, 0 \n"
+                + "invoke MessageBox, NULL, addr OverflowProductoDouble, addr error, MB_OK \n"
+                + "invoke ExitProcess, 0 \n";
+        this.codigoArbol="";
+        this.arbol=parser.getRaiz();
+        System.out.println("AAAAAAAAAAAARRRBOOOLLL: " + arbol);
+
+
+
+        for (Nodo a : parser.getFuncion()) {
+            codigoFunciones += a.getAssembler()+"\n";
         }
+        codigoArbol +=this.arbol.getAssembler();
+        System.out.println("ASSEMBLEEERR: " + arbol.getAssembler());
+        generarCode();
+        generarData();
 
-        this.codigoArbol = this.codigoArbol + this.arbol.getAssembler();
-        this.generarCode();
-        this.generarData();
     }
 
-    private void generarData() {
-        Iterator var2 = TablaSimbolos.getSimbolos().keySet().iterator();
 
-        while(true) {
-            String k;
-            String uso;
-            String tipo;
-            String prefijo;
-            do {
-                do {
-                    if (!var2.hasNext()) {
-                        this.data = this.data + NodoControl.data;
-                        return;
+    private void generarData(){
+
+        for (String k :  TablaSimbolos.getSimbolos().keySet()){
+            String uso = TablaSimbolos.getToken(k).getUso();
+            String tipo = TablaSimbolos.getToken(k).getTipo();
+            if(uso != null){
+                if(uso.equals("Constante")){
+                    String prefijo = "_";
+                    if(tipo.equals("USHORT"))
+                    {
+                        data += prefijo + k + " dd " + k + "\n";
+                    }
+                    else if(tipo.equals("DOUBLE"))
+                    {
+                        data += prefijo + k + " dd " + k + "\n";
+                    }
+                    else
+                    {
+                        data += prefijo +  k + " dd " + k + "\n";
                     }
 
-                    k = (String)var2.next();
-                    uso = (String)TablaSimbolos.getAtributo(k, "Uso");
-                    tipo = (String)TablaSimbolos.getAtributo(k, "Tipo");
-                } while(uso == null);
+                }
+                if( uso.equals("Variable")  ||  uso.equals("variableAuxiliar"))
+                {
+                    String prefijo = "";
+                    if(uso.equals("Variable"))
+                    {
+                        prefijo = "_";
+                    }
+                    if(tipo.equals("USHORT"))
+                    {
+                        data += prefijo +  k + " dd " + "?" + "\n";
+                    }
+                    else if(tipo.equals("DOUBLE"))
+                    {
+                        data += prefijo + k + " dd " + "?" + "\n";
+                    }
+                    else
+                    {
 
-                if (uso.equals("Constante")) {
-                    prefijo = "_";
-                    if (tipo.equals("USHORT")) {
-                        this.data = this.data + prefijo + k + " dd " + k + "\n";
-                    } else if (tipo.equals("INT")) {
-                        this.data = this.data + prefijo + k + " dd " + k + "\n";
-                    } else {
-                        this.data = this.data + prefijo + k + " dd " + k + "\n";
+                        data += prefijo +  k + " dd " + "?" + "\n";
                     }
                 }
-            } while(!uso.equals("Variable") && !uso.equals("variableAuxiliar"));
-
-            prefijo = "";
-            if (uso.equals("Variable")) {
-                prefijo = "_";
-            }
-
-            if (tipo.equals("USHORT")) {
-                this.data = this.data + prefijo + k + " dd " + "?" + "\n";
-            } else if (tipo.equals("INT")) {
-                this.data = this.data + prefijo + k + " dd " + "?" + "\n";
-            } else {
-                this.data = this.data + prefijo + k + " dd " + "?" + "\n";
             }
         }
+        data+= NodoControl.data;
     }
 
     private void generarCode() {
-        this.code = "\n.code\n";
-        this.code = this.code + this.codigoFunciones;
-        this.code = this.code + "main:\n";
-        this.code = this.code + this.codigoArbol;
-        this.code = this.code + "invoke ExitProcess, 0 \n";
-        this.code = this.code + "end main";
+        code = "\n.code\n";
+
+        code+= codigoFunciones;
+        code+= "main:\n";
+
+        code+= this.codigoArbol;
+        code+= "invoke ExitProcess, 0 \n";
+        code+= "end main";
     }
 
-    public String getAssembler() {
-        return this.bibliotecas + this.data + this.code;
+    public String getAssembler(){
+        return (this.bibliotecas + this.data + this.code);
+
     }
 }

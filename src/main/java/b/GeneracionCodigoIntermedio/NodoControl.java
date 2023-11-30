@@ -9,7 +9,8 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
     public NodoControl(String lex, Nodo a) {
         super(lex);
         this.setDer(a);
-        System.out.println("NodoControl " + t);
+        System.out.print("NodoControl " + this);
+        System.out.println(" izq: " + izq + " der: " + der);
     }
 
     public NodoControl(String lex){
@@ -21,27 +22,31 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
         this.salida = "";
         switch (this.getLexema()) {
             case "INVOCACION":
-                if (this.getIzq().getIzq() != null) {
-                    this.salida = this.salida + this.getIzq().getIzq().getAssembler();
+                if (this.getDer().getDer() != null) {
+                    this.salida = this.salida + this.getDer().getDer().getAssembler();
                 }
 
-                this.variable = "@aux@" + this.getIzq().getLexema();
+                this.variable = "@aux@" + this.getDer().getLexema();
                 String varAux = getVariableAuxiliar();
                 this.ultimoNodo = new NodoHoja(varAux);
                 this.ultimoNodo.setUso("variableAuxiliar");
-                this.salida = this.salida + "call " + this.getIzq().getLexema() + "\n";
+                this.salida = this.salida + "call " + this.getDer().getLexema() + "\n";
                 return this.salida;
-            break;
             case "PRINT":
                 String variablePrint = getVariablePrint();
-                data = variablePrint + " db \"" + this.getIzq().getUltimoNodo().getLexema() + "\", 0 \n";
+                data = variablePrint + " db \"" + this.getDer().getUltimoNodo().getLexema() + "\", 0 \n";
                 this.salida = this.salida + "invoke MessageBox, NULL, addr " + variablePrint + ", addr printMensaje, MB_OK\n";
                 return this.salida;
             case "intod":
-                this.ultimoNodo = (NodoHoja)this.getIzq();
+                this.ultimoNodo = (NodoHoja)this.getDer();
         }
 
-        return this.getIzq().getAssembler();
+        return this.getDer().getAssembler();
+    }
+
+    @Override
+    public NodoHoja getUltimoNodo() {
+        return this.ultimoNodo;
     }
 
 }

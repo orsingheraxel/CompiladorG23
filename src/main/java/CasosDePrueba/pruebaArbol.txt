@@ -1,4 +1,11 @@
 {
-USHORT x,
-x = 2_us + 4_us * 3_us,
+USHORT x;y,
+x = 2_us,
+y = 4_us,
+x = 1_us + y,
+IF (x>y)
+    x = 4_us,
+ELSE
+    x = 5_us,
+END_IF,
 }

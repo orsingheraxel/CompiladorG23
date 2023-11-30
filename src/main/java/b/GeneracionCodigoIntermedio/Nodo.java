@@ -6,7 +6,7 @@ import a.AnalisisLexico.Token;
 import java.util.Stack;
 
 
-public class Nodo extends ParserVal {
+public abstract class Nodo extends ParserVal {
     protected Nodo izq;
     protected Nodo der;
 
@@ -101,7 +101,7 @@ public class Nodo extends ParserVal {
         return "label" + numeroLabel;
     }
 
-    //public abstract String getAssembler();
-    //public abstract NodoHoja getUltimoNodo();
+    public abstract String getAssembler();
+    public abstract NodoHoja getUltimoNodo();
 
 }

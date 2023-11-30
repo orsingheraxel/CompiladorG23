@@ -1,6 +1,7 @@
 package a.AnalisisLexico;
 
 import java.io.*;
+import c.CodigoAssembler.*;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -78,9 +79,22 @@ public class Main {
             escritor.println(" ");
 
 
+            GeneradorAssembler generador = new GeneradorAssembler(parser);
+            File f = new File(archivo.substring(0,archivo.length()-4)+".asm");
+            f.createNewFile();
+            PrintWriter pw;
+            try {
+                pw = new PrintWriter(archivo.substring(0,archivo.length()-4)+".asm");
+                pw.print(generador.getAssembler());
+                pw.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
             br.close();
             escritor.close();
             fw.close();
+
         } catch (IOException e){System.err.println("Error al leer el archivo: " + e.getMessage());}
     }
 }

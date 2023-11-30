@@ -1,6 +1,5 @@
 package a.AnalisisLexico;
 
-import AnalisisLexico.AccionesSemanticas.*;
 import a.AnalisisLexico.AccionesSemanticas.*;
 
 public class GeneradorMatrices {
