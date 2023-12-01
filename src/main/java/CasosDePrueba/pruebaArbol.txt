@@ -1,8 +1,9 @@
 {
-USHORT x;y,
-x = 2_us,
+USHORT x,
+INT y,
+x = y + 3_us,
 y = 4_us,
-x = 1_us + y,
+x = 1_us + 2_us * 3_us,
 IF (x>y)
     x = 4_us,
 ELSE

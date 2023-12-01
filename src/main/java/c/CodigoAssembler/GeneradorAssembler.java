@@ -40,7 +40,7 @@ public class GeneradorAssembler {
 
 
 
-        for (Nodo a : parser.getFuncion()) {
+        for (Nodo a : parser.getFunciones()) {
             codigoFunciones += a.getAssembler()+"\n";
         }
         codigoArbol +=this.arbol.getAssembler();

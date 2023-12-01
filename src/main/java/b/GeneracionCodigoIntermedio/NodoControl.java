@@ -6,6 +6,8 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
     private String variable;
     private NodoHoja ultimoNodo;
 
+    private String labelFin;
+
     public NodoControl(String lex, Nodo a) {
         super(lex);
         this.setDer(a);
