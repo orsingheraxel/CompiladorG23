@@ -1,21 +1,19 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=279, lexema='1', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
 Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='2', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='3', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='2', linea=8, uso='Constante', tipo='USHORT', ambito='main'}
 Token{id=269, lexema='y:main', linea=3, uso='Variable', tipo='INT', ambito='main'}
-Token{id=279, lexema='4', linea=8, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='5', linea=10, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='4', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='5', linea=12, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='10', linea=4, uso='Constante', tipo='USHORT', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Entero corto fuera de rango en la linea: 4
  
 -------------------------------------------ERRORES SINTACTICOS-------------------------------------------
  
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: Incompatibilidad de tipos  en la linea: 4
-Error Semantico: Incompatibilidad de tipos  en la linea: 5
 
 -------------------------------------------WARNINGS-------------------------------------------
  
@@ -23,12 +21,12 @@ Error Semantico: Incompatibilidad de tipos  en la linea: 5
 -------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
  
 Estructura: Reconoce asignacion  en la linea: 4
-Estructura: Reconoce asignacion  en la linea: 5
 Estructura: Reconoce asignacion  en la linea: 6
 Estructura: Reconoce asignacion  en la linea: 8
-Estructura: Reconoce asignacion  en la linea: 10
-Estructura: Reconoce IF ELSE en la linea: 11
-Estructura: Reconoce programa  en la linea: 12
+Estructura: Reconoce IF en la linea: 9
+Estructura: Reconoce asignacion  en la linea: 12
+Estructura: Reconoce IF ELSE en la linea: 13
+Estructura: Reconoce programa  en la linea: 14
  
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  

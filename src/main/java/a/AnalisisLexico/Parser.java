@@ -815,7 +815,10 @@ final static String yyrule[] = {
 }
 
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
-{ 
+{
+        if ((n1 == null) || (n3 == null)){
+          return null;
+        }
         NodoComun aux;
         if(n1.getTipo().equals(n3.getTipo()))
         {

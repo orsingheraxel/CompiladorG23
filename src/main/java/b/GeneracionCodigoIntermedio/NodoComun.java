@@ -66,14 +66,14 @@ public class NodoComun extends Nodo{
                 if(getIzq().getTipo().equals("USHORT")||getIzq().getTipo().equals("INT")) {
                     salida += "MOV EAX, " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "ADD EAX, " + getDer().getUltimoNodo().getLexema() + "\n";
-
+                    salida += "JO errorSumaEnteros\n";
                     salida += "MOV " + variable + ", EAX" + "\n";
                 }
                 else
                 {
                     salida += "FLD " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "FADD " + getDer().getUltimoNodo().getLexema() + "\n";
-                    salida += "JO errorSumaDouble\n";
+
                     salida += "FST "+ variable + "\n";
                 }
                 break;
@@ -113,13 +113,13 @@ public class NodoComun extends Nodo{
                 if (getIzq().getTipo().equals("USHORT")||getIzq().getTipo().equals("INT")) {
                     salida += "MOV EAX, " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "IMUL EAX, " + getDer().getUltimoNodo().getLexema() + "\n";
-                    salida += "JO errorProductoEnteros\n";
+
                     salida += "MOV " + variable + ", EAX" + "\n";
 
                 } else {
                     salida += "FLD " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "FMUL " + getDer().getUltimoNodo().getLexema() + "\n";
-
+                    salida += "JO errorProductoDouble\n";
                     salida += "FST " + variable + "\n";
                 }
                 break;
@@ -309,19 +309,6 @@ public class NodoComun extends Nodo{
                 salida += "JMP "+ label + "\n";
                 salida += labelFin + ":\n";
                 break;
-
-            case "AUXFOR1":
-                label= pilaLabels.pop();
-
-                salida += getIzq().getAssembler();
-                salida += label + ":\n";
-                salida += getDer().getAssembler();
-                break;
-            case "AUXFOR2":
-
-                salida += getIzq().getAssembler() + getDer().getAssembler();
-                break;
-
         }
         return salida;
     }
