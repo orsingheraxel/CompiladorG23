@@ -16,13 +16,13 @@ OverflowProductoDouble db "Se produjo un un overflow en el producto de doubles."
 error db "Error", 0 
 printMensaje db "Print", 0 
 _x:main dd ?
+_2 dd 2
 _y:main dd ?
 _4 dd 4
-_2.0 dd 2.0
 _5 dd 5
-_5.0 dd 5.0
+_30 dd 30
 _10 dd 10
-_54 dd 54
+@print2 db "y", 0 
 
 .code
 invoke MessageBox, NULL, addr AutoinvocacionFunciones, addr error, MB_OK 
@@ -32,7 +32,11 @@ invoke ExitProcess, 0
 invoke MessageBox, NULL, addr OverflowProductoDouble, addr error, MB_OK 
 invoke ExitProcess, 0 
 main:
-MOV EAX, 300
+MOV EAX , 10
+MOV y, EAX
+MOV EAX , y
+MOV x, EAX
+MOV EAX, 30
 ADD EAX, 10
 JO errorSumaEnteros
 MOV @aux1, EAX
@@ -45,14 +49,13 @@ MOV EAX , 4
 MOV x, EAX
 MOV EAX, x
 CMP EAX, y
-JGE label4
-FLD 2.0
-FADD 2.0
-FST y
+JLE label4
+MOV EAX, y
+ADD EAX, 2
+MOV y, EAX
 JMP label3
 label4:
-FLD 5.0
-FST y
+invoke MessageBox, NULL, addr @print1, addr printMensaje, MB_OK
 label3:
 JMP label1
 label2:

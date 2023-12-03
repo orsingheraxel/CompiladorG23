@@ -1,16 +1,17 @@
 {
 USHORT x,
 DOUBLE y,
+y = 10_us,
 x = y,
-x = 300_us + 10_us,
-IF (x>y){
+x = 30_us + 10_us,
+y = TOD(x),
+IF (TOD(x)>y){
     x = 4_us,
-    IF (x<y){
-        y = TOD(54_i),
-        y += 2.0,
-    }
+    IF (x>y)
+        y += 2_us,
+
     ELSE
-        y = 5.0,
+        PRINT y,
     END_IF,
 }
 ELSE

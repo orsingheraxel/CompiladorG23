@@ -241,12 +241,7 @@ Factor: ID {Nodo aux = new NodoHoja ((String)$1.sval);
 Factor_RefObjeto: ReferenciaObjeto {$$.obj=$1.obj;}
                 ;
 
-Condicion : '(' Expresion Comparador Expresion ')' { NodoComun aux = new NodoComun($3.sval,(Nodo)$2.obj,(Nodo)$4.obj);
-                                                    Nodo a = (Nodo)$2.obj;
-                                                    aux.setTipo(a.getTipo());
-                                                    aux.setUso("Condicion");
-                                                    $$.obj = new NodoControl("CONDICION",aux);
-                                                     }
+Condicion : '(' Expresion Comparador Expresion ')' {$$.obj = controlarTipos((Nodo)$2.obj,$3.sval,(Nodo)$4.obj);}
             | '(' Expresion Comparador Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
             | error Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 	  ;
@@ -306,7 +301,7 @@ ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se acept
 
 Comparador: '<' {$$.obj=$1.obj;}
           | '>' {$$.obj=$1.obj;}
-          | MAYORIGUAL{$$.obj=$1.obj;}
+          | MAYORIGUAL {$$.obj=$1.obj;}
           | MENORIGUAL {$$.obj=$1.obj;}
           | IGUAL {$$.obj=$1.obj;}
           | DIST {$$.obj=$1.obj;}
@@ -474,8 +469,8 @@ ParametroTOD:'(' Expresion ')' {$$.obj = $2.obj;}
 		| '(' Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 		;
 
-ConversionExplicita: TOD ParametroTOD {$$.obj = new NodoControl("TOD",(Nodo)$2.obj);
-                                            ((Nodo)$2.obj).setTipo("DOUBLE");
+ConversionExplicita: TOD ParametroTOD {((Nodo)$2.obj).setTipo("DOUBLE");
+                                            $$.obj = (Nodo)$2.obj;
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 
@@ -515,7 +510,6 @@ FuncionSinCuerpo: EncabezadoFuncion Parametro {AnalizadorLexico.agregarEstructur
                   ;
 
 FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken($3.sval);}
-            | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
             | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
             | IMPL FOR ID ':' '{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
@@ -624,7 +618,9 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
       }
 
     NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){ 
-        NodoComun aux;
+        NodoComun aux = null;
+        while ((n1 == null) || (n3==null))
+            break;
         if(n1.getTipo().equals(n3.getTipo()))
         {
                 aux = new NodoComun(op,n1,n3);
@@ -635,15 +631,8 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
         {
                 if ((n1.getTipo().equals("USHORT") || n1.getTipo().equals("INT")) && (n3.getTipo().equals("USHORT")|| n3.getTipo().equals("INT")))
                 {
-                        {agregarErrorSemantico("Incompatibilidad de tipos ");}
+                        agregarErrorSemantico("Incompatibilidad de tipos ");
                         return null;
-                }        
-                else if (n1.getTipo().equals("USHORT") || n1.getTipo().equals("INT"))
-                {
-                        NodoControl aux2 = new NodoControl("intod",n1);
-                        aux2.setTipo(n3.getTipo());
-                        aux = new NodoComun(op,aux2,n3);     
-                        aux.setTipo(n3.getTipo());
                 }
         }
         return aux;        
@@ -651,7 +640,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
 { 
-        NodoComun aux;
+        NodoComun aux = null;
         if(n1.getTipo().equals(n3.getTipo()))
         {
                 aux= new NodoComun(asig,n1,n3);
