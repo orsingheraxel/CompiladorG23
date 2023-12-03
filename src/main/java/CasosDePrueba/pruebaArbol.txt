@@ -1,20 +1,7 @@
 {
-USHORT x,
-DOUBLE y,
-y = 10_us,
-x = y,
-x = 30_us + 10_us,
-y = TOD(x),
-IF (TOD(x)>y){
-    x = 4_us,
-    IF (x>y)
-        y += 2_us,
-
-    ELSE
-        PRINT y,
-    END_IF,
-}
-ELSE
-    x = 5_us,
-END_IF,
+    VOID f1(){
+        USHORT x,
+        x = 4_us,
+    },
+    f1(),
 }

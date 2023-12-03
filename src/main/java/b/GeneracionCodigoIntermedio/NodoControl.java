@@ -27,7 +27,6 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
                 if (this.getDer().getDer() != null) {
                     this.salida = this.salida + this.getDer().getDer().getAssembler();
                 }
-
                 this.variable = "@aux@" + this.getDer().getLexema();
                 String varAux = getVariableAuxiliar();
                 this.ultimoNodo = new NodoHoja(varAux);

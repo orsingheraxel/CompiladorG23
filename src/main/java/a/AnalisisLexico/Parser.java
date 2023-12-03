@@ -684,7 +684,7 @@ final static String yyrule[] = {
 "FuncionIMPL : IMPL FOR ID ':' '{' Funcion error",
 };
 
-//#line 524 "gramatica.y"
+//#line 528 "gramatica.y"
   public NodoControl raiz;
   private String ambitoAct = "main";
   private String ambitoNuevo= "";
@@ -783,9 +783,11 @@ final static String yyrule[] = {
 
     NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){ 
         NodoComun aux = null;
-        while ((n1 == null) || (n3==null))
-            break;
-        if(n1.getTipo().equals(n3.getTipo()))
+        if ((n1 == null) || (n3==null)) {
+            agregarErrorSemantico("Incompatibilidad de tipos ");
+            return null;
+        }
+        if (n1.getTipo().equals(n3.getTipo()))
         {
                 aux = new NodoComun(op,n1,n3);
                 aux.setTipo(n1.getTipo());
@@ -889,7 +891,7 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
   public static void yyerror(String error){
     System.out.println(error);
   }
-//#line 821 "Parser.java"
+//#line 823 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -1585,52 +1587,56 @@ case 99:
                                 	TablaSimbolos.addSimbolo(t.getLexema(),t);
                                 }
                                 funciones_declaradas.get(funciones_declaradas.size() - 1).setTipoParametro(val_peek(2).sval);
-                                yyval.obj = new NodoHoja(val_peek(1).sval);
+                                NodoHoja aux = new NodoHoja(val_peek(1).sval);
+                                aux.setAmbito(ambitoAct);
+                                aux.setTipo(tipoActual);
+                                aux.setUso("Parametro");
+                                yyval.obj = aux;
                            }
 break;
 case 100:
-//#line 362 "gramatica.y"
+//#line 366 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 101:
-//#line 363 "gramatica.y"
+//#line 367 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 102:
-//#line 364 "gramatica.y"
+//#line 368 "gramatica.y"
 {yyval.obj = null;}
 break;
 case 103:
-//#line 365 "gramatica.y"
+//#line 369 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 104:
-//#line 366 "gramatica.y"
+//#line 370 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 105:
-//#line 372 "gramatica.y"
+//#line 376 "gramatica.y"
 {yyval.obj = new NodoComun("Sentencia",(Nodo)val_peek(2).obj,(Nodo)val_peek(1).obj);}
 break;
 case 106:
-//#line 373 "gramatica.y"
+//#line 377 "gramatica.y"
 {yyval.obj=val_peek(1).obj;}
 break;
 case 107:
-//#line 374 "gramatica.y"
+//#line 378 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 108:
-//#line 375 "gramatica.y"
+//#line 379 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 109:
-//#line 376 "gramatica.y"
+//#line 380 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 110:
-//#line 379 "gramatica.y"
-{yyval.obj=new NodoHoja(val_peek(2).sval);
+//#line 383 "gramatica.y"
+{yyval.obj=new NodoControl("INVOCACION", new NodoHoja(val_peek(2).sval));
                             Token tokenFuncion = TablaSimbolos.buscarPorAmbito(val_peek(2).sval + ":" + ambitoAct);
                             Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
                             if (tokenFuncion == null){
@@ -1649,15 +1655,15 @@ case 110:
 				            }
 break;
 case 111:
-//#line 396 "gramatica.y"
+//#line 400 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 112:
-//#line 397 "gramatica.y"
+//#line 401 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 113:
-//#line 398 "gramatica.y"
+//#line 402 "gramatica.y"
 {
             			    NodoHoja nodo1 = new NodoHoja(val_peek(3).sval);
             			    yyval.obj=new NodoComun("Llamado Funcion", nodo1, (Nodo)val_peek(1).obj);
@@ -1681,29 +1687,29 @@ case 113:
                                     }
 break;
 case 114:
-//#line 421 "gramatica.y"
+//#line 425 "gramatica.y"
 {yyval.obj = new NodoControl("PRINT", new NodoHoja(val_peek(0).sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
 break;
 case 115:
-//#line 423 "gramatica.y"
+//#line 427 "gramatica.y"
 {yyval.obj = new NodoControl("PRINT", new NodoHoja(val_peek(0).sval));
                             AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
 break;
 case 116:
-//#line 425 "gramatica.y"
+//#line 429 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("La funcion PRINT no acepta esa declaracion ");}
 break;
 case 117:
-//#line 428 "gramatica.y"
+//#line 432 "gramatica.y"
 {yyval.obj=val_peek(0).obj;}
 break;
 case 118:
-//#line 429 "gramatica.y"
+//#line 433 "gramatica.y"
 {yyval.obj=val_peek(0).obj;}
 break;
 case 119:
-//#line 432 "gramatica.y"
+//#line 436 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
                                                 if (val_peek(1).sval.equals("="))
 						                            yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "=", (Nodo)val_peek(0).obj);
@@ -1711,7 +1717,7 @@ case 119:
 						                            yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "+=", (Nodo)val_peek(0).obj);}
 break;
 case 120:
-//#line 438 "gramatica.y"
+//#line 442 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 	                                                        if (val_peek(1).sval.equals("="))
 	                                                            yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "=", (Nodo)val_peek(0).obj);
@@ -1719,7 +1725,7 @@ case 120:
 	                                                            yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "+=", (Nodo)val_peek(0).obj);}
 break;
 case 121:
-//#line 444 "gramatica.y"
+//#line 448 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 	                                                if (val_peek(1).sval.equals("="))
 	                                                    yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "=", (Nodo)val_peek(0).obj);
@@ -1727,68 +1733,68 @@ case 121:
                                                  	    yyval.obj = controlarTiposAsignacion((Nodo)val_peek(2).obj, "+=", (Nodo)val_peek(0).obj);}
 break;
 case 122:
-//#line 449 "gramatica.y"
+//#line 453 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 break;
 case 123:
-//#line 450 "gramatica.y"
+//#line 454 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 break;
 case 124:
-//#line 451 "gramatica.y"
+//#line 455 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 break;
 case 125:
-//#line 454 "gramatica.y"
+//#line 458 "gramatica.y"
 {yyval.obj=new NodoComun("DO UNTIL", (Nodo)val_peek(2).obj ,(Nodo)val_peek(0).obj);
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
 break;
 case 126:
-//#line 456 "gramatica.y"
+//#line 460 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
 break;
 case 127:
-//#line 457 "gramatica.y"
+//#line 461 "gramatica.y"
 {yyval.obj = new NodoComun("DO UNTIL", (Nodo)val_peek(3).obj ,(Nodo)val_peek(1).obj);
                                                                AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
 break;
 case 128:
-//#line 459 "gramatica.y"
+//#line 463 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
 break;
 case 129:
-//#line 460 "gramatica.y"
+//#line 464 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una sentencia ejecutable ");}
 break;
 case 130:
-//#line 461 "gramatica.y"
+//#line 465 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
 break;
 case 131:
-//#line 467 "gramatica.y"
+//#line 471 "gramatica.y"
 {yyval.obj = val_peek(1).obj;}
 break;
 case 132:
-//#line 468 "gramatica.y"
+//#line 472 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 133:
-//#line 469 "gramatica.y"
+//#line 473 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 134:
-//#line 472 "gramatica.y"
+//#line 476 "gramatica.y"
 {((Nodo)val_peek(0).obj).setTipo("DOUBLE");
                                             yyval.obj = (Nodo)val_peek(0).obj;
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 break;
 case 135:
-//#line 477 "gramatica.y"
+//#line 481 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
 break;
 case 137:
-//#line 484 "gramatica.y"
+//#line 488 "gramatica.y"
 {Token var = TablaSimbolos.getToken(val_peek(0).sval + ":" + ambitoAct);
                             if (var != null) {
                                 if (var.getUso().equals("Clase")) {
@@ -1811,26 +1817,26 @@ case 137:
                             }
 break;
 case 138:
-//#line 505 "gramatica.y"
+//#line 509 "gramatica.y"
 {deshacerAmbito();}
 break;
 case 139:
-//#line 508 "gramatica.y"
+//#line 512 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
 break;
 case 140:
-//#line 512 "gramatica.y"
+//#line 516 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken(val_peek(4).sval);}
 break;
 case 141:
-//#line 513 "gramatica.y"
+//#line 517 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 break;
 case 142:
-//#line 514 "gramatica.y"
+//#line 518 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 break;
-//#line 1758 "Parser.java"
+//#line 1764 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

@@ -119,7 +119,7 @@ Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
 ListVariablesObj: ID {variables_declaradas.add($1.sval);}
                 | ListVariablesObj ';' ID {variables_declaradas.add($3.sval);}
 
-Tipo : USHORT {tipoActual = $1.sval;} //{(Nodo)$$.obj.setTipo("USHORT");} {((Nodo)yyval).setTipo("USHORT"); System.out.println("TIPO NODO: "+((Nodo)yyval).getTipo());}
+Tipo : USHORT {tipoActual = $1.sval;}
      | INT {tipoActual = $1.sval;}
      | DOUBLE {tipoActual = $1.sval;}
      ;
@@ -357,7 +357,11 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
                                 	TablaSimbolos.addSimbolo(t.getLexema(),t);
                                 }
                                 funciones_declaradas.get(funciones_declaradas.size() - 1).setTipoParametro($2.sval);
-                                $$.obj = new NodoHoja($3.sval);
+                                NodoHoja aux = new NodoHoja($3.sval);
+                                aux.setAmbito(ambitoAct);
+                                aux.setTipo(tipoActual);
+                                aux.setUso("Parametro");
+                                $$.obj = aux;
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
         |  error Tipo ID ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
@@ -376,7 +380,7 @@ ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$.obj = new NodoComu
           	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')' {$$.obj=new NodoHoja($1.sval);
+LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1.sval));
                             Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
                             Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
                             if (tokenFuncion == null){
@@ -619,9 +623,11 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 
     NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){ 
         NodoComun aux = null;
-        while ((n1 == null) || (n3==null))
-            break;
-        if(n1.getTipo().equals(n3.getTipo()))
+        if ((n1 == null) || (n3==null)) {
+            agregarErrorSemantico("Incompatibilidad de tipos ");
+            return null;
+        }
+        if (n1.getTipo().equals(n3.getTipo()))
         {
                 aux = new NodoComun(op,n1,n3);
                 aux.setTipo(n1.getTipo());
