@@ -1,12 +1,17 @@
 {
 USHORT x,
-INT y,
+DOUBLE y,
+x = y,
 x = 300_us + 10_us,
 IF (x>y){
     x = 4_us,
     IF (x<y){
-        x = 2_us,
-    }END_IF,
+        y = TOD(54_i),
+        y += 2.0,
+    }
+    ELSE
+        y = 5.0,
+    END_IF,
 }
 ELSE
     x = 5_us,

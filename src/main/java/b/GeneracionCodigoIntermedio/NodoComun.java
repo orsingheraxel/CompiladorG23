@@ -21,7 +21,7 @@ public class NodoComun extends Nodo{
         String salida = "";
         switch(super.getLexema()){
 
-            case "Sentencia":
+            case "SENTENCIA":
                 if (getIzq()!= null)
                     salida+= getIzq().getAssembler();
                 if (getDer()!= null)

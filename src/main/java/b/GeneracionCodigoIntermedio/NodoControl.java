@@ -39,8 +39,8 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
                 data = variablePrint + " db \"" + this.getDer().getUltimoNodo().getLexema() + "\", 0 \n";
                 this.salida = this.salida + "invoke MessageBox, NULL, addr " + variablePrint + ", addr printMensaje, MB_OK\n";
                 return this.salida;
-            case "intod":
-                this.ultimoNodo = (NodoHoja)this.getDer();
+            case "TOD":
+                this.salida = this.salida + this.getDer().getDer().getAssembler();
         }
 
         return this.getDer().getAssembler();

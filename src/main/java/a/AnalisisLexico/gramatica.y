@@ -246,9 +246,6 @@ Condicion : '(' Expresion Comparador Expresion ')' { NodoComun aux = new NodoCom
                                                     aux.setTipo(a.getTipo());
                                                     aux.setUso("Condicion");
                                                     $$.obj = new NodoControl("CONDICION",aux);
-                                                    //if (!(((Nodo)$2).getTipo().equals(((Nodo)$4).getTipo()))){
-                                                         //agregarErrorSemantico("Error en la comparacion entre expresiones de distintos tipos"); //CHEQUEAR CONVERSIONES
-                                                     //}
                                                      }
             | '(' Expresion Comparador Expresion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
             | error Expresion Comparador Expresion ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
@@ -258,12 +255,10 @@ BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {  $$.obj = new NodoComun("
                                                         Nodo aux = (Nodo)$$.obj;
                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
-	    | IF Condicion CuerpoIF END_IF {$$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,null);
-	                                    Nodo aux = (Nodo)$$.obj;
-	                                    $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
+	    | IF Condicion CuerpoIF END_IF {$$.obj = new NodoComun("IF",(Nodo)$2.obj,(Nodo)$3.obj);
 	                                    AnalizadorLexico.agregarEstructura("Reconoce IF");}
-	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
-	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
+	    |IF Condicion SentenciaEjecutable ',' END_IF {  $$.obj = new NodoComun("IF",(Nodo)$2.obj,(Nodo)$3.obj);
+         	                                            AnalizadorLexico.agregarEstructura("Reconoce IF");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF END_IF {   $$.obj = new NodoComun("CUERPO",(Nodo)$3.obj,(Nodo)$6.obj);
                                                                         Nodo aux = (Nodo)$$.obj;
                                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
@@ -276,6 +271,11 @@ BloqueIF: IF Condicion CuerpoIF ELSE CuerpoIF END_IF {  $$.obj = new NodoComun("
                                                                         Nodo aux = (Nodo)$$.obj;
                                                                         $$.obj = new NodoComun("IF",(Nodo)$2.obj,aux);
                                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
+
+
+
+	    | IF Condicion CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
+	    | IF Condicion CuerpoIF ELSE CuerpoIF error   {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable ',' ELSE CuerpoIF error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion SentenciaEjecutable ',' ELSE SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
         | IF Condicion CuerpoIF ELSE SentenciaEjecutable ',' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
@@ -299,9 +299,9 @@ SentenciasIF: ListaSentenciasIF {$$.obj=$1.obj;}
                 ;
 
 ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
-               | SentenciaEjecutable ',' {$$=$1;}
+               | SentenciaEjecutable ',' {$$.obj=$1.obj;}
                | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
-               | ListaSentenciasIF SentenciaEjecutable ',' {$$.obj = new NodoComun("SentenciaIF", (Nodo) $1.obj, (Nodo) $2.obj);}
+               | ListaSentenciasIF SentenciaEjecutable ',' {$$.obj = new NodoComun("SENTENCIA", (Nodo) $1.obj, (Nodo) $2.obj);}
                ;
 
 Comparador: '<' {$$.obj=$1.obj;}
@@ -475,6 +475,7 @@ ParametroTOD:'(' Expresion ')' {$$.obj = $2.obj;}
 		;
 
 ConversionExplicita: TOD ParametroTOD {$$.obj = new NodoControl("TOD",(Nodo)$2.obj);
+                                            ((Nodo)$2.obj).setTipo("DOUBLE");
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 
@@ -644,13 +645,6 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
                         aux = new NodoComun(op,aux2,n3);     
                         aux.setTipo(n3.getTipo());
                 }
-                else 
-                {
-                        NodoControl aux2 = new NodoControl("intod",n3);
-                        aux2.setTipo(n1.getTipo());
-                        aux = new NodoComun(op,n1,aux2);     
-                        aux.setTipo(n1.getTipo());
-                }
         }
         return aux;        
 }
@@ -670,13 +664,6 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
                 {
                         {agregarErrorSemantico("Incompatibilidad de tipos ");}
                         return null;
-                }
-                else 
-                {
-                        NodoControl aux2 = new NodoControl("intod",n3);
-                        aux2.setTipo(n1.getTipo());
-                        aux = new NodoComun(asig,n1,aux2);     
-                        aux.setTipo(n1.getTipo());
                 }
         }
         return aux;       
