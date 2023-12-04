@@ -15,8 +15,7 @@ OverflowSumaEnteros db "Se produjo un overflow en la suma de enteros.", 0
 OverflowProductoDouble db "Se produjo un un overflow en el producto de doubles.", 0 
 error db "Error", 0 
 printMensaje db "Print", 0 
-_4 dd 4
-_x:main:f1 dd ?
+_x:main:a dd ?
 
 .code
 invoke MessageBox, NULL, addr AutoinvocacionFunciones, addr error, MB_OK 
@@ -26,6 +25,5 @@ invoke ExitProcess, 0
 invoke MessageBox, NULL, addr OverflowProductoDouble, addr error, MB_OK 
 invoke ExitProcess, 0 
 main:
-call f1
-invoke ExitProcess, 0 
+nullinvoke ExitProcess, 0 
 end main

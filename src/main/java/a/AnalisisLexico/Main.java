@@ -6,7 +6,7 @@ import c.CodigoAssembler.*;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        args = new String[]{"C:\\Users\\sanlu\\Documents\\Facultad\\CompiladorG23\\src\\main\\java\\CasosDePrueba\\pruebaArbol.txt"};
+        args = new String[]{"C:\\Users\\axel\\Desktop\\Compiladores\\src\\main\\java\\CasosDePrueba\\pruebaArbol.txt"};
 
         if (args.length < 1) {
             System.out.println("Debe proporcionar el nombre del archivo como argumento.");

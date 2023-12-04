@@ -1,9 +1,10 @@
 package b.GeneracionCodigoIntermedio;
+import a.AnalisisLexico.*;
 
 public class Funcion {
 
     private String id;
-    private String tipoParametro;
+    private Token parametro;
 
     public Funcion() {
     }
@@ -13,9 +14,9 @@ public class Funcion {
         return this.getId().equals(otra.getId());
     }
 
-    public Funcion(String id, String tipoParametro) {
+    public Funcion(String id, Token parametro) {
         this.id = id;
-        this.tipoParametro = tipoParametro;
+        this.parametro = parametro;
     }
 
     public String getId() {
@@ -25,12 +26,13 @@ public class Funcion {
     public void setId(String id) {
         this.id = id;
     }
-
-    public String getTipoParametro() {
-        return tipoParametro;
+    public Token getParametro() {
+        return parametro;
     }
 
-    public void setTipoParametro(String tipoParametro) {
-        this.tipoParametro = tipoParametro;
+    public void setParametro(Token parametro) {
+        this.parametro = parametro;
     }
+
+
 }

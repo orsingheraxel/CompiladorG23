@@ -1,7 +1,10 @@
 {
-    VOID f1(){
-        USHORT x,
-        x = 4_us,
+    CLASS a{
+    USHORT x,
+    VOID c(){
+        x = y,
     },
-    f1(),
+    },
+    a b,
+    b.c(),
 }

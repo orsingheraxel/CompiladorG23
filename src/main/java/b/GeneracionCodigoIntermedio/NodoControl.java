@@ -41,7 +41,8 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
             case "TOD":
                 this.salida = this.salida + this.getDer().getDer().getAssembler();
         }
-
+        if (this.getDer() == null)
+            return null;
         return this.getDer().getAssembler();
     }
 

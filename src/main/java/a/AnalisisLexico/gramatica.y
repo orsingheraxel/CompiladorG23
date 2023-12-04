@@ -58,7 +58,7 @@ ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
 SentenciaEjecutable: Asignacion {$$.obj=$1.obj;}
                   | LlamadoFuncion {$$.obj=$1.obj;}
                   | BloqueIF   {$$.obj=$1.obj;}
-		  | SalidaMensaje {$$.obj=$1.obj;}
+		          | SalidaMensaje {$$.obj=$1.obj;}
                   | ReferenciaObjetoFuncion {$$.obj=$1.obj;}
                   ;
 
@@ -356,11 +356,12 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
                                 	TablaSimbolos.removeToken($3.sval);
                                 	TablaSimbolos.addSimbolo(t.getLexema(),t);
                                 }
-                                funciones_declaradas.get(funciones_declaradas.size() - 1).setTipoParametro($2.sval);
+                                funciones_declaradas.get(funciones_declaradas.size() - 1).setParametro(t);
                                 NodoHoja aux = new NodoHoja($3.sval);
                                 aux.setAmbito(ambitoAct);
                                 aux.setTipo(tipoActual);
                                 aux.setUso("Parametro");
+                                parametros.add(aux);
                                 $$.obj = aux;
                            }
         | '(' Tipo ID error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
@@ -389,7 +390,7 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
                                 if (funciones_declaradas.contains(funcion)) {
                                     int indice = funciones_declaradas.indexOf(funcion);
                                     Funcion f = funciones_declaradas.get(indice);
-                                    if (f.getTipoParametro() != null){
+                                    if (f.getParametro().getTipo() != null){
                                         agregarErrorSemantico("Se esperaba un parametro en la función ");
                                     }
                                 }
@@ -401,7 +402,6 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID '(' Expresion ')' {
             			    NodoHoja nodo1 = new NodoHoja($1.sval);
-            			    $$.obj=new NodoComun("Llamado Funcion", nodo1, (Nodo)$3.obj);
             			    Nodo n3 = (Nodo)$3.obj;
                                     Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
 
@@ -412,11 +412,16 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
                                     	if (funciones_declaradas.contains(funcion)) {
                                             int indice = funciones_declaradas.indexOf(funcion);
                                             Funcion f = funciones_declaradas.get(indice);
-                                            if (!f.getTipoParametro().equals(n3.getTipo()) && (n3.getTipo() != null)){
-                                                agregarErrorSemantico("No coinciden los tipos del parametro real y el formal. Se esperaba un " + f.getTipoParametro() + ", se obtuvo un " + ((Nodo)$3).getTipo());
+                                            if (!(f.getParametro().getTipo().equals(n3.getTipo())) && (n3.getTipo() != null)){
+                                                agregarErrorSemantico("No coinciden los tipos del parametro real y el formal. Se esperaba un " + f.getParametro().getTipo() + ", se obtuvo un " + ((Nodo)$3).getTipo());
                                             }
                                         }
                                     }
+
+                                    n3.setAmbito(f.getParametro().getAmbito());
+                                    n3.setUso(f.getParametro().getUso());
+
+                                    $$.obj=new NodoComun("Llamado Funcion", nodo1, n3);
                                     AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
                                     TablaSimbolos.removeToken($1.sval);
                                     }
@@ -531,6 +536,7 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
+  static ArrayList<Nodo> parametros = new ArrayList<Nodo>();
   static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
   static ArrayList<Nodo> funciones = new ArrayList<Nodo>();
 
