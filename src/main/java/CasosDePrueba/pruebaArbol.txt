@@ -1,10 +1,8 @@
 {
-    CLASS a{
-    USHORT x,
-    VOID c(){
-        x = y,
+    USHORT y,
+    y = 4_us,
+    VOID c(USHORT r){
+       r = 4_us,
     },
-    },
-    a b,
-    b.c(),
+    c(y),
 }

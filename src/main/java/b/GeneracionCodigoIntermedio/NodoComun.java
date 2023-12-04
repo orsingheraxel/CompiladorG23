@@ -53,7 +53,7 @@ public class NodoComun extends Nodo{
             case "Funcion":
                 salida+= getIzq().getLexema() + ":\n";
                 salida+= getDer().getAssembler() + "ret";
-
+                //salida += "JE errorAutoinvocacionFuncion\n";
                 return salida;
             case "+":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
@@ -145,7 +145,6 @@ public class NodoComun extends Nodo{
                     salida += "FLD " + getDer().getUltimoNodo().getLexema() + "\n";
                     salida += "FSUB " + getDer().getUltimoNodo().getLexema() + "\n";
                     salida += "FTST ";
-                    salida += "JE errorDivisionPorCero\n";
 
                     salida += "FLD " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "FDIV " + getDer().getUltimoNodo().getLexema() + "\n";
@@ -315,6 +314,21 @@ public class NodoComun extends Nodo{
 
     public NodoHoja getUltimoNodo() {
         return this.ultimoNodo;
+    }
+
+    public void recorrerArbol(String s) {
+        System.out.print(s+"Lexama Nodo: " + super.getLexema() + "\n");
+
+        if (!(super.getIzq() == null)){
+            System.out.print(s+"Hijo Izquierdo: " + "\n");
+            super.getIzq().recorrerArbol(s+"    ");
+        }
+
+        if (!(super.getDer() == null)){
+            System.out.print(s+"Hijo Derecho: "+ "\n");
+            super.getDer().recorrerArbol(s+"    ");
+        }
+
     }
 
 }

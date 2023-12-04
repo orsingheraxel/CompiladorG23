@@ -23,7 +23,7 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
     public String getAssembler() {
         this.salida = "";
         switch (this.getLexema()) {
-            case "INVOCACION":
+            case "LLAMADO FUNCION":
                 if (this.getDer().getDer() != null) {
                     this.salida = this.salida + this.getDer().getDer().getAssembler();
                 }
@@ -49,6 +49,12 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
     @Override
     public NodoHoja getUltimoNodo() {
         return this.ultimoNodo;
+    }
+    public void recorrerArbol(String s) {
+
+        System.out.print(s+"Nodo de control: " +super.getLexema()+ "\n");
+        s += "    ";
+        super.getDer().recorrerArbol(s);
     }
 
 }

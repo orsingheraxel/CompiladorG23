@@ -100,7 +100,7 @@ public abstract class Nodo extends ParserVal {
         ++numeroLabel;
         return "label" + numeroLabel;
     }
-
+    public abstract void recorrerArbol(String s);
     public abstract String getAssembler();
     public abstract NodoHoja getUltimoNodo();
 

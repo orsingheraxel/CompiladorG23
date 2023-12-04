@@ -18,4 +18,11 @@ public class NodoHoja extends Nodo{
     }
     //Para los Identificadores, se deberá registrar el tipo, a partir de las sentencias declarativas.
     // Para las constantes, se deberá registrar el tipo durante el Análisis Léxico.
+
+    public void recorrerArbol(String s) {
+        System.out.print(s);
+        System.out.print("Lexema Nodo Hoja: " + super.getLexema()+ "\n");
+
+    }
+
 }

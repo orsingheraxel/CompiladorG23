@@ -36,7 +36,6 @@ public class GeneradorAssembler {
                 + "invoke ExitProcess, 0 \n";
         this.codigoArbol="";
         this.arbol=parser.getRaiz();
-        System.out.println("AAAAAAAAAAAARRRBOOOLLL: " + arbol);
 
 
 
@@ -44,7 +43,6 @@ public class GeneradorAssembler {
             codigoFunciones += a.getAssembler()+"\n";
         }
         codigoArbol +=this.arbol.getAssembler();
-        System.out.println("ASSEMBLEEERR: " + arbol.getAssembler());
         generarCode();
         generarData();
 

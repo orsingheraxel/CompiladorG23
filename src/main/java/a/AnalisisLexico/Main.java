@@ -1,7 +1,12 @@
 package a.AnalisisLexico;
 
 import java.io.*;
+import java.util.Iterator;
+
+import b.GeneracionCodigoIntermedio.Nodo;
 import c.CodigoAssembler.*;
+
+import javax.swing.text.html.HTMLDocument;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -77,7 +82,16 @@ public class Main {
             escritor.println(" ");
             escritor.println("-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------");
             escritor.println(" ");
+            parser.getRaiz().recorrerArbol("");
 
+            escritor.println("-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------");
+            escritor.println(" ");
+            for (int i = 0; i<parser.getFunciones().size();i++){
+                Nodo e = parser.getFunciones().get(i);
+                e.recorrerArbol(" ");
+            }
+
+            escritor.println(parser.getFunciones());
 
             GeneradorAssembler generador = new GeneradorAssembler(parser);
             File f = new File(archivo.substring(0,archivo.length()-4)+".asm");

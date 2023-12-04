@@ -50,9 +50,14 @@ ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
                             }
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
-                                                $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
-                                                AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { if ((TablaSimbolos.getToken($1.sval +":"+ambitoAct))==null)
+                                                    agregarErrorSemantico("Atributo de clase " + $1.sval + " no existe ");
+                                                else{
+                                                    $$.obj = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1.obj,(Nodo)$3.obj);
+                                                    AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
+                                                }
+                                                TablaSimbolos.removeToken($1.sval);
+                                                }
                        ;
 
 SentenciaEjecutable: Asignacion {$$.obj=$1.obj;}
@@ -99,21 +104,24 @@ ListVariables : ID {variables_declaradas.add($1.sval);}
               ;
 
 Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
-                                    for (String var : variables_declaradas) {
-                                    Token t = TablaSimbolos.getToken(var);
-                                    if (t != null){
-                                        t.setLexema(var + ":" + ambitoAct);
-                                        t.setAmbito(ambitoAct);
-                                        t.setUso("Objeto");
-                                        t.setTipo($1.sval);
-                                        TablaSimbolos.removeToken(var);
-                                        TablaSimbolos.addSimbolo(t.getLexema(),t);
-                                    }
-                                    else {
-                                        agregarErrorSemantico("Ya existe un objeto + var + definido en este ambito");
-                                    }
-                                    }
-                                    variables_declaradas.clear();}
+                                   if (clases_declaradas.contains($1.sval + ":" + ambitoAct)){
+                                        for (String var : variables_declaradas) {
+                                        Token t = TablaSimbolos.getToken(var);
+                                        if (t != null){
+                                            t.setLexema(var + ":" + ambitoAct);
+                                            t.setAmbito(ambitoAct);
+                                            t.setUso("Objeto");
+                                            t.setTipo($1.sval);
+                                            TablaSimbolos.removeToken(var);
+                                            TablaSimbolos.addSimbolo(t.getLexema(),t);
+                                        }
+                                        else {
+                                            agregarErrorSemantico("Ya existe un objeto + var + definido en este ambito ");
+                                        }
+                                        }
+                                        variables_declaradas.clear();
+                                   }else{agregarErrorSemantico("La clase "+ $1.sval +" no esta definida ");}
+                                   }
     ;
 
 ListVariablesObj: ID {variables_declaradas.add($1.sval);}
@@ -162,7 +170,7 @@ Constante: ENTERO  {
                     aux.setUso("Constante");
                     aux.setAmbito(ambitoAct);
                     $$.obj = aux;
-	            Token t = TablaSimbolos.getToken($1.sval);
+	                Token t = TablaSimbolos.getToken($1.sval);
                     t.setTipo("DOUBLE");
                     t.setUso("Constante");
                     t.setAmbito(ambitoAct);
@@ -172,30 +180,30 @@ Constante: ENTERO  {
 
 	| '-' ENTERO    {
                     chequearEnteroNegativo($2.sval);
-                    NodoHoja aux = new NodoHoja($1.sval);
+                    NodoHoja aux = new NodoHoja($2.sval);
                     aux.setTipo("INT");
                     aux.setUso("Constante");
                     aux.setAmbito(ambitoAct);
                     $$.obj = aux;
-                    Token t = TablaSimbolos.getToken($1.sval);
+                    Token t = TablaSimbolos.getToken($2.sval);
                     t.setTipo("INT");
                     t.setUso("Constante");
                     t.setAmbito(ambitoAct);
-                    TablaSimbolos.removeToken($1.sval);
-                    TablaSimbolos.addSimbolo($1.sval,t);
+                    TablaSimbolos.removeToken($2.sval);
+                    TablaSimbolos.addSimbolo($2.sval,t);
 	                }
-	| '-' PUNTOFLOTANTE {chequearDouble($1.sval);
-                         NodoHoja aux = new NodoHoja($1.sval);
+	| '-' PUNTOFLOTANTE {chequearDouble($2.sval);
+                         NodoHoja aux = new NodoHoja($2.sval);
                          aux.setTipo("DOUBLE");
                          aux.setUso("Constante");
                          aux.setAmbito(ambitoAct);
                          $$.obj = aux;
-                         Token t = TablaSimbolos.getToken($1.sval);
+                         Token t = TablaSimbolos.getToken($2.sval);
                          t.setTipo("DOUBLE");
                          t.setUso("Constante");
                          t.setAmbito(ambitoAct);
-                         TablaSimbolos.removeToken($1.sval);
-                         TablaSimbolos.addSimbolo($1.sval,t);
+                         TablaSimbolos.removeToken($2.sval);
+                         TablaSimbolos.addSimbolo($2.sval,t);
                         }
 	;
 
@@ -223,7 +231,7 @@ Factor: ID {Nodo aux = new NodoHoja ((String)$1.sval);
                 agregarErrorSemantico("Variable no declarada en este ambito ");
             }
             else {
-                if(!TablaSimbolos.getUso(var).equals("Variable")){
+                if((!TablaSimbolos.getUso(var).equals("Variable")) && (!TablaSimbolos.getUso(var).equals("Parametro"))){
                     agregarErrorSemantico("El ID en uso no es una variable ");
                 }
                 else {
@@ -312,19 +320,17 @@ ListFuncion: Funcion
 	;
 
 Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {agregarErrorSemantico("RETURN fuera de funcion");}
-      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion RETURN ',' '}' {  ((Nodo)$1.obj).setIzq((Nodo)$2.obj);
-                                                                                ((Nodo)$1.obj).setDer((Nodo)$4.obj);
+      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion RETURN ',' '}' {
                                                                                 deshacerAmbito();
-                                                                                funciones.add((Nodo)$1);
+                                                                                Nodo aux = new NodoComun("Funcion",new NodoHoja((Nodo)$1.obj),(Nodo)$4.obj);
+                                                                                funciones.add(aux);
                                                                                 AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
-      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' { ((Nodo)$1.obj).setIzq((Nodo)$2.obj);
-                                                                    ((Nodo)$1.obj).setDer((Nodo)$4.obj);
+      | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' {
                                                                     deshacerAmbito();
+                                                                    Nodo aux = new NodoComun("Funcion",new NodoHoja((Nodo)$1.obj),(Nodo)$4.obj);
+                                                                    funciones.add(aux);
                                                                     AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | VOID error Parametro '{' ListSentenciasFuncion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
-      | EncabezadoFuncion Parametro '{' '}' {AnalizadorLexico.addWarning("Función sin cuerpo ");
-                                            deshacerAmbito();
-                                            AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       ;
 
 EncabezadoFuncion : VOID ID  {
@@ -343,8 +349,6 @@ EncabezadoFuncion : VOID ID  {
                   $$.obj = new NodoComun($2.sval,null,null);
                   }
                   ;
-
-
 
 
 Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
@@ -381,7 +385,7 @@ ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$.obj = new NodoComu
           	  | RETURN error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           ;
 
-LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1.sval));
+LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("LLAMADO FUNCION", new NodoHoja($1.sval));
                             Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
                             Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
                             if (tokenFuncion == null){
@@ -390,7 +394,7 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
                                 if (funciones_declaradas.contains(funcion)) {
                                     int indice = funciones_declaradas.indexOf(funcion);
                                     Funcion f = funciones_declaradas.get(indice);
-                                    if (f.getParametro().getTipo() != null){
+                                    if (f.getParametro() != null){
                                         agregarErrorSemantico("Se esperaba un parametro en la función ");
                                     }
                                 }
@@ -401,9 +405,10 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
             | ID error ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
             | ID '(' error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
             | ID '(' Expresion ')' {
-            			    NodoHoja nodo1 = new NodoHoja($1.sval);
-            			    Nodo n3 = (Nodo)$3.obj;
+            			            NodoHoja nodo1 = new NodoHoja($1.sval);
+            			            Nodo n3 = (Nodo)$3.obj;
                                     Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
+                                    Token tokenParametro = TablaSimbolos.getToken(n3.getLexema());
 
                                     Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
                                     if (tokenFuncion == null){
@@ -414,14 +419,14 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
                                             Funcion f = funciones_declaradas.get(indice);
                                             if (!(f.getParametro().getTipo().equals(n3.getTipo())) && (n3.getTipo() != null)){
                                                 agregarErrorSemantico("No coinciden los tipos del parametro real y el formal. Se esperaba un " + f.getParametro().getTipo() + ", se obtuvo un " + ((Nodo)$3).getTipo());
-                                            }
+                                            }else{n3.setAmbito(f.getParametro().getAmbito());
+                                                  n3.setUso(f.getParametro().getUso());
+                                                  //f.setParametro(tokenParametro);  cambiamos parametro formal por el real
+                                                  }
                                         }
                                     }
 
-                                    n3.setAmbito(f.getParametro().getAmbito());
-                                    n3.setUso(f.getParametro().getUso());
-
-                                    $$.obj=new NodoComun("Llamado Funcion", nodo1, n3);
+                                    $$.obj=new NodoControl("LLAMADO FUNCION", new NodoComun($1.sval,null,n3));
                                     AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
                                     TablaSimbolos.removeToken($1.sval);
                                     }
@@ -508,19 +513,53 @@ EncabezadoClase : CLASS ID {Token var = TablaSimbolos.getToken($2.sval + ":" + a
                                 TablaSimbolos.addSimbolo(t.getLexema(),t);
                             }
                             actualizarAmbito($2.sval);
+                            claseAct = $2.sval;
                             tipoActual = ambitoAct;
                             };
 
-Clase: EncabezadoClase ListClase {deshacerAmbito();}
+Clase: EncabezadoClase ListClase {deshacerAmbito();
+                                  clases_declaradas.add(claseAct+":"+ambitoAct);
+                                  }
                          ;
 
-FuncionSinCuerpo: EncabezadoFuncion Parametro {AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");}
+EncabezadoFuncionSinCuerpo : VOID ID  {
+			      Token t = TablaSimbolos.getToken($2.sval);
+                              if (t != null){
+                                    t.setLexema($2.sval + ":" + ambitoAct);
+                                    t.setAmbito(ambitoAct);
+                                    t.setUso("Funcion sin cuerpo");
+                                    t.setTipo("VOID");
+                                    TablaSimbolos.removeToken($2.sval);
+                                    TablaSimbolos.addSimbolo(t.getLexema(),t);
+                              }
+			      Funcion f = new Funcion($2.sval + ":" + ambitoAct, null);
+			      funciones_declaradas.add(f);
+                  $$.obj = new NodoComun($2.sval,null,null);
+                  }
+                  ;
+
+
+FuncionSinCuerpo: EncabezadoFuncionSinCuerpo Parametro {
+                                                        AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");
+                                                       }
                   //si hay un parentesis mal escrito lo reconoce Funcion.
                   ;
 
-FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken($3.sval);}
-            | IMPL FOR ID ':' error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
-            | IMPL FOR ID ':' '{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
+EncabezadoIMPL : IMPL FOR ID ':' {  if (clases_declaradas.contains($3.sval+":"+"ambitoAct"))
+                                        actualizarAmbito($3.sval)
+                                    else
+                                        agregarErrorSemantico("La clase no esta definida ");
+                                 }
+               ;
+
+FuncionIMPL:  '{'Funcion'}'    {
+                                 if (funciones_declaradas.contains($3.sval+":"+"ambitoAct"))
+
+                                 deshacerAmbito();
+                                 AnalizadorLexico.agregarEstructura("Reconoce funcion IMPL"); TablaSimbolos.removeToken($3.sval);
+                               }
+            | error Funcion '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
+            |'{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
 //TEMA 21 ----------------------------------------------------
@@ -532,11 +571,13 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
 %%
   public NodoControl raiz;
   private String ambitoAct = "main";
+  private String claseAct;
   private String ambitoNuevo= "";
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
   static ArrayList<Nodo> parametros = new ArrayList<Nodo>();
+  static ArrayList<String> clases_declaradas = new ArrayList<String>();
   static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
   static ArrayList<Nodo> funciones = new ArrayList<Nodo>();
 
@@ -650,9 +691,25 @@ FuncionIMPL: IMPL FOR ID ':' '{' Funcion '}' {AnalizadorLexico.agregarEstructura
         return aux;        
 }
 
+public Nodo getNodoParametro(String m){
+    for (Nodo n : parametros){
+        if (n.getLexema().contains(m)){
+            return n;
+        }
+    }
+    return null;
+}
+
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
 { 
         NodoComun aux = null;
+        if ((n1 == null) || (n3==null)) {
+                  return null;
+        }
+        if (n1.getTipo()==null){
+            n1 = getNodoParametro(n1.getLexema());
+        }
+
         if(n1.getTipo().equals(n3.getTipo()))
         {
                 aux= new NodoComun(asig,n1,n3);
