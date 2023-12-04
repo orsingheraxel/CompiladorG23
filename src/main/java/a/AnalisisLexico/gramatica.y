@@ -50,7 +50,7 @@ ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
                             }
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { //chequear q exista y bla bla
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion {
                                                 $$ = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1,(Nodo)$3);
                                                 AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");}
                        ;
@@ -415,11 +415,12 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("INVOCACION", new NodoHoja($1
                                             if (!(f.getParametro().getTipo().equals(n3.getTipo())) && (n3.getTipo() != null)){
                                                 agregarErrorSemantico("No coinciden los tipos del parametro real y el formal. Se esperaba un " + f.getParametro().getTipo() + ", se obtuvo un " + ((Nodo)$3).getTipo());
                                             }
+                                            n3.setAmbito(f.getParametro().getAmbito());
+                                            n3.setUso(f.getParametro().getUso());
                                         }
                                     }
 
-                                    n3.setAmbito(f.getParametro().getAmbito());
-                                    n3.setUso(f.getParametro().getUso());
+
 
                                     $$.obj=new NodoComun("Llamado Funcion", nodo1, n3);
                                     AnalizadorLexico.agregarEstructura("Reconoce llamado funcion ");
