@@ -1,5 +1,7 @@
 package b.GeneracionCodigoIntermedio;
 
+import java.io.PrintWriter;
+
 public class NodoHoja extends Nodo{
     
     public NodoHoja(String lex) {
@@ -19,9 +21,9 @@ public class NodoHoja extends Nodo{
     //Para los Identificadores, se deberá registrar el tipo, a partir de las sentencias declarativas.
     // Para las constantes, se deberá registrar el tipo durante el Análisis Léxico.
 
-    public void recorrerArbol(String s) {
-        System.out.print(s);
-        System.out.print("Lexema Nodo Hoja: " + super.getLexema()+ "\n");
+    public void recorrerArbol(String s, PrintWriter m) {
+        m.println(s);
+        m.println("Lexema Nodo Hoja: " + super.getLexema()+ "\n");
 
     }
 

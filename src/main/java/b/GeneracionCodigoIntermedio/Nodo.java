@@ -3,6 +3,8 @@ package b.GeneracionCodigoIntermedio;
 import a.AnalisisLexico.ParserVal;
 import a.AnalisisLexico.Token;
 
+import java.io.PrintWriter;
+import java.util.Objects;
 import java.util.Stack;
 
 
@@ -85,6 +87,13 @@ public abstract class Nodo extends ParserVal {
         return t.getLexema();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        Nodo nodo = (Nodo) o;
+        String f = nodo.getLexema();
+        return getLexema().equals(f);
+    }
+
 
     public static String getVariableAuxiliar() {
         ++numeroVariable;
@@ -100,7 +109,7 @@ public abstract class Nodo extends ParserVal {
         ++numeroLabel;
         return "label" + numeroLabel;
     }
-    public abstract void recorrerArbol(String s);
+    public abstract void recorrerArbol(String s, PrintWriter m);
     public abstract String getAssembler();
     public abstract NodoHoja getUltimoNodo();
 

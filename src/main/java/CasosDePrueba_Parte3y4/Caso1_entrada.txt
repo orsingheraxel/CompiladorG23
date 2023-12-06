@@ -1,0 +1,25 @@
+{
+    CLASS cc,
+    CLASS h,
+
+    USHORT y,
+    y = 2_us,
+    USHORT as,
+    as=1_us,
+
+    CLASS cc{
+        USHORT x,
+        VOID p(),
+    },
+    IMPL FOR cc : {
+        VOID p(){
+            USHORT x,
+            x+= y + 4_us,
+        }
+    },
+
+    DO {
+        wa = 3_i,
+        x = 1_i,
+    } UNTIL (as<y),
+}

@@ -1,0 +1,162 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=269, lexema='cc', linea=14, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='y:main', linea=5, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='p:main:cc', linea=15, uso='Funcion', tipo='VOID', ambito='main:cc'}
+Token{id=269, lexema='cc:main', linea=2, uso='Clase', tipo='null', ambito='main'}
+Token{id=278, lexema='1', linea=23, uso='Constante', tipo='INT', ambito='main'}
+Token{id=279, lexema='2', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=278, lexema='3', linea=22, uso='Constante', tipo='INT', ambito='main'}
+Token{id=279, lexema='4', linea=17, uso='Constante', tipo='USHORT', ambito='main:cc:p'}
+Token{id=269, lexema='h:main', linea=3, uso='Clase', tipo='null', ambito='main'}
+Token{id=269, lexema='x:main:cc:p', linea=16, uso='Variable', tipo='USHORT', ambito='main:cc:p'}
+Token{id=269, lexema='as:main', linea=7, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='x:main:cc', linea=11, uso='Variable', tipo='USHORT', ambito='main:cc'}
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
+ 
+Error Semantico: Variable no declarada en este ambito  en la linea: 22
+Error Semantico: Variable no declarada en este ambito  en la linea: 23
+Error Semantico: La clase h:main fue declarada, pero no fue implementada en la linea: 25
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce asignacion  en la linea: 6
+Estructura: Reconoce asignacion  en la linea: 8
+Estructura: Reconoce Funcion sin cuerpo en la linea: 12
+Estructura: Reconoce asignacion  en la linea: 17
+Estructura: Reconoce declaracion de funcion  en la linea: 19
+Estructura: Reconoce funcion IMPL en la linea: 19
+Estructura: Reconoce asignacion  en la linea: 22
+Estructura: Reconoce asignacion  en la linea: 23
+Estructura: Reconoce funcion DO UNTIL en la linea: 24
+Estructura: Reconoce programa  en la linea: 25
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+Nodo de control: PROGRAMA
+
+    Lexama Nodo: SENTENCIA
+
+    Hijo Izquierdo: 
+
+        Lexama Nodo: SENTENCIA
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: SENTENCIA
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: SENTENCIA
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: SENTENCIA
+
+                    Hijo Izquierdo: 
+
+                        Lexama Nodo: SENTENCIA
+
+                        Hijo Izquierdo: 
+
+                            Lexama Nodo: SENTENCIA
+
+                            Hijo Izquierdo: 
+
+                                Lexama Nodo: SENTENCIA
+
+                        Hijo Derecho: 
+
+                            Lexama Nodo: =
+
+                            Hijo Izquierdo: 
+
+                                
+Lexema Nodo Hoja: y
+
+                            Hijo Derecho: 
+
+                                
+Lexema Nodo Hoja: 2
+
+                Hijo Derecho: 
+
+                    Lexama Nodo: =
+
+                    Hijo Izquierdo: 
+
+                        
+Lexema Nodo Hoja: as
+
+                    Hijo Derecho: 
+
+                        
+Lexema Nodo Hoja: 1
+
+    Hijo Derecho: 
+
+        Lexama Nodo: DO UNTIL
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: SENTENCIA
+
+        Hijo Derecho: 
+
+            Lexama Nodo: <
+
+            Hijo Izquierdo: 
+
+                
+Lexema Nodo Hoja: as
+
+            Hijo Derecho: 
+
+                
+Lexema Nodo Hoja: y
+
+-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+ Lexama Nodo: Funcion
+
+ Hijo Izquierdo: 
+
+     
+Lexema Nodo Hoja: p
+
+ Hijo Derecho: 
+
+     Lexama Nodo: Sentencia
+
+     Hijo Derecho: 
+
+         Lexama Nodo: +=
+
+         Hijo Izquierdo: 
+
+             
+Lexema Nodo Hoja: x
+
+         Hijo Derecho: 
+
+             Lexama Nodo: +
+
+             Hijo Izquierdo: 
+
+                 
+Lexema Nodo Hoja: y
+
+             Hijo Derecho: 
+
+                 
+Lexema Nodo Hoja: 4
+
+[Funcion]

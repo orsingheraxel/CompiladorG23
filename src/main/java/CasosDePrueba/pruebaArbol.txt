@@ -1,8 +1,4 @@
 {
-    USHORT y,
-    y = 4_us,
-    VOID c(USHORT r){
-       r = 4_us,
-    },
-    c(y),
+USHORT x,
+x=1_us,
 }

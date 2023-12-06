@@ -82,13 +82,13 @@ public class Main {
             escritor.println(" ");
             escritor.println("-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------");
             escritor.println(" ");
-            parser.getRaiz().recorrerArbol("");
+            parser.getRaiz().recorrerArbol("", escritor);
 
             escritor.println("-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------");
             escritor.println(" ");
             for (int i = 0; i<parser.getFunciones().size();i++){
                 Nodo e = parser.getFunciones().get(i);
-                e.recorrerArbol(" ");
+                e.recorrerArbol(" ", escritor);
             }
 
             escritor.println(parser.getFunciones());

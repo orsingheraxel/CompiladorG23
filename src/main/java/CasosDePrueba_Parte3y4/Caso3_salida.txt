@@ -1,0 +1,64 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=269, lexema='p:main', linea=2, uso='Funcion', tipo='VOID', ambito='main'}
+Token{id=279, lexema='12', linea=6, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='x:main:p', linea=3, uso='Variable', tipo='USHORT', ambito='main:p'}
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Entero positivo fuera de rango en la linea: 4
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
+ 
+Error Semantico: Variable no declarada en este ambito  en la linea: 6
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce asignacion  en la linea: 4
+Estructura: Reconoce declaracion de funcion  en la linea: 5
+Estructura: Reconoce asignacion  en la linea: 6
+Estructura: Reconoce programa  en la linea: 7
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+Nodo de control: PROGRAMA
+
+    Lexama Nodo: SENTENCIA
+
+    Hijo Izquierdo: 
+
+        
+Lexema Nodo Hoja: p
+
+-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+ Lexama Nodo: Funcion
+
+ Hijo Izquierdo: 
+
+     
+Lexema Nodo Hoja: p
+
+ Hijo Derecho: 
+
+     Lexama Nodo: Sentencia
+
+     Hijo Derecho: 
+
+         Lexama Nodo: =
+
+         Hijo Izquierdo: 
+
+             
+Lexema Nodo Hoja: x
+
+         Hijo Derecho: 
+
+             
+Lexema Nodo Hoja: 12222222222222
+
+[Funcion]

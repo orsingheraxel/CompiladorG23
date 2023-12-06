@@ -1,0 +1,168 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=269, lexema='y:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='4', linea=10, uso='Constante', tipo='USHORT', ambito='main:a:p'}
+Token{id=269, lexema='papa:main', linea=3, uso='Variable', tipo='INT', ambito='main'}
+Token{id=269, lexema='t:main:a:p', linea=9, uso='Parametro', tipo='USHORT', ambito='main:a:p'}
+Token{id=279, lexema='8', linea=4, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='a:main', linea=5, uso='Clase', tipo='null', ambito='main'}
+Token{id=269, lexema='p:main:a', linea=9, uso='Funcion', tipo='VOID', ambito='main:a'}
+Token{id=269, lexema='j:main', linea=13, uso='Objeto', tipo='a', ambito='main'}
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
+ 
+Error Semantico: Se esperaba un parametro en la función  en la linea: 14
+Error Semantico: Atributo de clase m no existe  en la linea: 15
+Error Semantico: No coinciden los tipos del parametro real y el formal. Se esperaba un USHORT, se obtuvo un INT en la linea: 16
+Error Semantico: Variable no declarada en este ambito  en la linea: 17
+Error Semantico: Ya existe una variable y definida en este ambito en la linea: 18
+Error Semantico: Ya existe una variable y definida en este ambito en la linea: 19
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
+ 
+Estructura: Reconoce asignacion  en la linea: 4
+Estructura: Reconoce Funcion sin cuerpo en la linea: 6
+Estructura: Reconoce asignacion  en la linea: 10
+Estructura: Reconoce declaracion de funcion  en la linea: 12
+Estructura: Reconoce funcion IMPL en la linea: 12
+Estructura: Reconoce llamado funcion  en la linea: 14
+Estructura: Reconoce llamado a funcion de clase  en la linea: 14
+Estructura: Reconoce llamado funcion  en la linea: 15
+Estructura: Reconoce llamado funcion  en la linea: 16
+Estructura: Reconoce llamado a funcion de clase  en la linea: 16
+Estructura: Reconoce llamado funcion  en la linea: 17
+Estructura: Reconoce llamado a funcion de clase  en la linea: 17
+Estructura: Reconoce programa  en la linea: 21
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+Nodo de control: PROGRAMA
+
+    Lexama Nodo: SENTENCIA
+
+    Hijo Izquierdo: 
+
+        Lexama Nodo: SENTENCIA
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: SENTENCIA
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: SENTENCIA
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: SENTENCIA
+
+                    Hijo Izquierdo: 
+
+                        Lexama Nodo: SENTENCIA
+
+                        Hijo Izquierdo: 
+
+                            Lexama Nodo: SENTENCIA
+
+                            Hijo Izquierdo: 
+
+                                Lexama Nodo: SENTENCIA
+
+                                Hijo Izquierdo: 
+
+                                    Lexama Nodo: SENTENCIA
+
+                                    Hijo Izquierdo: 
+
+                                        Lexama Nodo: SENTENCIA
+
+                                        Hijo Izquierdo: 
+
+                                            Lexama Nodo: SENTENCIA
+
+                                        Hijo Derecho: 
+
+                                            Lexama Nodo: =
+
+                                            Hijo Izquierdo: 
+
+                                                
+Lexema Nodo Hoja: y
+
+                                            Hijo Derecho: 
+
+                                                
+Lexema Nodo Hoja: 8
+
+                        Hijo Derecho: 
+
+                            Lexama Nodo: ReferenciaFuncionObjeto
+
+                            Hijo Derecho: 
+
+                                Nodo de control: LLAMADO FUNCION
+
+                                    
+Lexema Nodo Hoja: p
+
+                Hijo Derecho: 
+
+                    Lexama Nodo: ReferenciaFuncionObjeto
+
+                    Hijo Derecho: 
+
+                        Nodo de control: LLAMADO FUNCION
+
+                            Lexama Nodo: p
+
+                            Hijo Derecho: 
+
+                                
+Lexema Nodo Hoja: papa
+
+            Hijo Derecho: 
+
+                Lexama Nodo: ReferenciaFuncionObjeto
+
+                Hijo Derecho: 
+
+                    Nodo de control: LLAMADO FUNCION
+
+                        Lexama Nodo: p
+
+                        Hijo Derecho: 
+
+                            
+Lexema Nodo Hoja: m
+
+-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+ Lexama Nodo: Funcion
+
+ Hijo Izquierdo: 
+
+     
+Lexema Nodo Hoja: p
+
+ Hijo Derecho: 
+
+     Lexama Nodo: =
+
+     Hijo Izquierdo: 
+
+         
+Lexema Nodo Hoja: t
+
+     Hijo Derecho: 
+
+         
+Lexema Nodo Hoja: 4
+
+[Funcion]

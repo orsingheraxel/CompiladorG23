@@ -1,4 +1,8 @@
 package b.GeneracionCodigoIntermedio;
+import a.AnalisisLexico.*;
+
+import java.io.PrintWriter;
+
 public class NodoComun extends Nodo{
 
     private NodoHoja ultimoNodo = null;
@@ -53,7 +57,8 @@ public class NodoComun extends Nodo{
             case "Funcion":
                 salida+= getIzq().getLexema() + ":\n";
                 salida+= getDer().getAssembler() + "ret";
-                //salida += "JE errorAutoinvocacionFuncion\n";
+                //salida += "JE error
+                // invocacionFuncion\n";
                 return salida;
             case "+":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
@@ -316,17 +321,17 @@ public class NodoComun extends Nodo{
         return this.ultimoNodo;
     }
 
-    public void recorrerArbol(String s) {
-        System.out.print(s+"Lexama Nodo: " + super.getLexema() + "\n");
+    public void recorrerArbol(String s, PrintWriter m) {
+        m.println(s+"Lexama Nodo: " + super.getLexema() + "\n");
 
         if (!(super.getIzq() == null)){
-            System.out.print(s+"Hijo Izquierdo: " + "\n");
-            super.getIzq().recorrerArbol(s+"    ");
+            m.println(s+"Hijo Izquierdo: " + "\n");
+            super.getIzq().recorrerArbol(s+"    ", m);
         }
 
         if (!(super.getDer() == null)){
-            System.out.print(s+"Hijo Derecho: "+ "\n");
-            super.getDer().recorrerArbol(s+"    ");
+            m.println(s+"Hijo Derecho: "+ "\n");
+            super.getDer().recorrerArbol(s+"    ",m);
         }
 
     }

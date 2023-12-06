@@ -1,0 +1,21 @@
+{
+    USHORT y,
+    INT papa,
+    y = 8_us,
+    CLASS a{
+         VOID p (USHORT t),
+    },
+    IMPL FOR a : {
+        VOID p(USHORT t){
+            t = 4_us,
+        }
+    },
+    a j,
+    j.p(),
+    m.p(y),
+    j.p(papa),
+    j.p(m),
+    USHORT y,
+    INT y,
+
+}

@@ -1,5 +1,7 @@
 package b.GeneracionCodigoIntermedio;
 
+import java.io.PrintWriter;
+
 public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null siempre
 
     private String salida;
@@ -50,11 +52,12 @@ public class NodoControl extends Nodo{ //Tiene un solo hijo, el otro es null sie
     public NodoHoja getUltimoNodo() {
         return this.ultimoNodo;
     }
-    public void recorrerArbol(String s) {
-
-        System.out.print(s+"Nodo de control: " +super.getLexema()+ "\n");
-        s += "    ";
-        super.getDer().recorrerArbol(s);
+    public void recorrerArbol(String s, PrintWriter m) {
+        if (!(super.getDer() == null)) {
+            m.println(s + "Nodo de control: " + super.getLexema() + "\n");
+            s += "    ";
+            super.getDer().recorrerArbol(s, m);
+        }
     }
 
 }
