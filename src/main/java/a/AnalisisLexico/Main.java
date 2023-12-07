@@ -73,16 +73,17 @@ public class Main {
                 escritor.println("Warning: " + elemento.getError() + " en la linea: " + elemento.getLinea());
             }
             escritor.println(" ");
-            escritor.println("-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------");
+            /*escritor.println("-------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------");
             escritor.println(" ");
             for (int i = 0; i < AnalizadorLexico.estructuraReconocida.size(); i++) {
                     Error elemento = AnalizadorLexico.estructuraReconocida.get(i);
                     escritor.println("Estructura: " + elemento.getError() + " en la linea: " + elemento.getLinea());
             }
-            escritor.println(" ");
+            escritor.println(" ");*/
             escritor.println("-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------");
             escritor.println(" ");
-            parser.getRaiz().recorrerArbol("", escritor);
+            if (parser.getRaiz()!=null)
+                parser.getRaiz().recorrerArbol("", escritor);
 
             escritor.println("-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------");
             escritor.println(" ");

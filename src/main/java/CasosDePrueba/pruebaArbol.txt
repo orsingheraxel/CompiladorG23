@@ -1,4 +1,15 @@
 {
-USHORT x,
-x=1_us,
+   INT x,
+   x = 2_i,
+   IF(x < 1_i){
+        PRINT x,
+   }END_IF,
+
 }
+
+
+
+
+
+
+

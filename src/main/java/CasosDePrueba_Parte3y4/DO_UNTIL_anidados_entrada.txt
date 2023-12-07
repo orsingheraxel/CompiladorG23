@@ -1,0 +1,15 @@
+{
+   USHORT x,
+   USHORT y,
+   x=4_us,
+   y=12_us,
+
+   DO{
+        DO{
+            x=2_us,
+        }UNTIL(x>y),
+        x=2_us,
+   }UNTIL(x<y),
+
+   y = 3_us,
+}

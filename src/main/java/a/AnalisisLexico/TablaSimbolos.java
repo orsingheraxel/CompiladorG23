@@ -72,12 +72,20 @@ public class TablaSimbolos {
     }
 
     public static Token buscarPorAmbito (String palabra) {
-        for (Map.Entry<String, Token> entry : simbolos.entrySet()) {
-            String lexema = entry.getKey();
-            if (lexema.toLowerCase().contains(palabra.toLowerCase())) {
-                Token t = entry.getValue();
-                return t;
+        while(palabra.contains("main")) {
+            for (Map.Entry<String, Token> entry : simbolos.entrySet()) {
+                String lexema = entry.getKey();
+                System.out.println("LEXEMA:" + lexema);
+                if (lexema.toLowerCase().contains(palabra.toLowerCase())) {
+                    Token t = entry.getValue();
+                    return t;
+                }
             }
+            int lastIndex = palabra.lastIndexOf(":");
+            if (lastIndex != -1)
+                palabra = palabra.substring(0, lastIndex);
+            else
+                return null;
         }
         return null; // Retornar null si no se encuentra ninguna coincidencia
     }

@@ -1,6 +1,7 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=279, lexema='1', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
-Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=278, lexema='1', linea=4, uso='Constante', tipo='INT', ambito='main'}
+Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='INT', ambito='main'}
+Token{id=278, lexema='2', linea=3, uso='Constante', tipo='INT', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -13,30 +14,54 @@ Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='USHORT', ambito='m
 -------------------------------------------WARNINGS-------------------------------------------
  
  
--------------------------------------------ESTRUCTURAS RECONOCIDAS-------------------------------------------
- 
-Estructura: Reconoce asignacion  en la linea: 3
-Estructura: Reconoce programa  en la linea: 4
- 
 -------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
  
 Nodo de control: PROGRAMA
 
     Lexama Nodo: SENTENCIA
 
-    Hijo Derecho: 
+    Hijo Izquierdo: 
 
-        Lexama Nodo: =
-
-        Hijo Izquierdo: 
-
-            
-Lexema Nodo Hoja: x
+        Lexama Nodo: SENTENCIA
 
         Hijo Derecho: 
 
-            
+            Lexama Nodo: =
+
+            Hijo Izquierdo: 
+
+                
+Lexema Nodo Hoja: x
+
+            Hijo Derecho: 
+
+                
+Lexema Nodo Hoja: 2
+
+    Hijo Derecho: 
+
+        Lexama Nodo: IF
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: <
+
+            Hijo Izquierdo: 
+
+                
+Lexema Nodo Hoja: x
+
+            Hijo Derecho: 
+
+                
 Lexema Nodo Hoja: 1
+
+        Hijo Derecho: 
+
+            Nodo de control: PRINT
+
+                
+Lexema Nodo Hoja: x
 
 -------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
  

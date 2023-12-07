@@ -1,0 +1,182 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=280, lexema='1.12412412D+2', linea=5, uso='Constante', tipo='DOUBLE', ambito='main'}
+Token{id=279, lexema='1', linea=15, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='INT', ambito='main'}
+Token{id=278, lexema='2', linea=3, uso='Constante', tipo='INT', ambito='main'}
+Token{id=280, lexema='133.d-4', linea=14, uso='Constante', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='r:main', linea=4, uso='Variable', tipo='DOUBLE', ambito='main'}
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
+ 
+Error Semantico: Incompatibilidad de tipos, es necesario un casteo  en la linea: 6
+Error Semantico: Incompatibilidad de tipos  en la linea: 15
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+Nodo de control: PROGRAMA
+
+    Lexama Nodo: SENTENCIA
+
+    Hijo Izquierdo: 
+
+        Lexama Nodo: SENTENCIA
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: SENTENCIA
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: SENTENCIA
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: SENTENCIA
+
+                    Hijo Izquierdo: 
+
+                        Lexama Nodo: SENTENCIA
+
+                        Hijo Derecho: 
+
+                            Lexama Nodo: =
+
+                            Hijo Izquierdo: 
+
+                                
+Lexema Nodo Hoja: x
+
+                            Hijo Derecho: 
+
+                                
+Lexema Nodo Hoja: 2
+
+                Hijo Derecho: 
+
+                    Lexama Nodo: =
+
+                    Hijo Izquierdo: 
+
+                        
+Lexema Nodo Hoja: r
+
+                    Hijo Derecho: 
+
+                        
+Lexema Nodo Hoja: 1.12412412D+2
+
+            Hijo Derecho: 
+
+                Lexama Nodo: IF
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: <
+
+                    Hijo Izquierdo: 
+
+                        
+Lexema Nodo Hoja: x
+
+                    Hijo Derecho: 
+
+                        
+Lexema Nodo Hoja: 133.d-4
+
+                Hijo Derecho: 
+
+                    Nodo de control: PRINT
+
+                        
+Lexema Nodo Hoja: x
+
+        Hijo Derecho: 
+
+            Lexama Nodo: IF
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: <
+
+                Hijo Izquierdo: 
+
+                    
+Lexema Nodo Hoja: x
+
+                Hijo Derecho: 
+
+                    
+Lexema Nodo Hoja: 133.d-4
+
+            Hijo Derecho: 
+
+                Nodo de control: PRINT
+
+                    
+Lexema Nodo Hoja: x
+
+    Hijo Derecho: 
+
+        Lexama Nodo: IF
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: <
+
+            Hijo Izquierdo: 
+
+                
+Lexema Nodo Hoja: x
+
+            Hijo Derecho: 
+
+                
+Lexema Nodo Hoja: 133.d-4
+
+        Hijo Derecho: 
+
+            Lexama Nodo: IF
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: <
+
+                Hijo Izquierdo: 
+
+                    
+Lexema Nodo Hoja: 1
+
+                Hijo Derecho: 
+
+                    
+Lexema Nodo Hoja: x
+
+            Hijo Derecho: 
+
+                Lexama Nodo: CUERPO
+
+                Hijo Izquierdo: 
+
+                    Nodo de control: PRINT
+
+                        
+Lexema Nodo Hoja: x
+
+                Hijo Derecho: 
+
+                    Nodo de control: PRINT
+
+                        
+Lexema Nodo Hoja: r
+
+-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+[]

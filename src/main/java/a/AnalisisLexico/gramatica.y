@@ -30,8 +30,7 @@ ListSentencias:  ListSentencias Sentencia ',' {$$.obj = new NodoComun("SENTENCIA
 	    | Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
-Sentencia: SentenciaControl {$$.obj=$1.obj;}
-        | SentenciaDeclarativa {$$.obj=$1.obj;}
+Sentencia: SentenciaDeclarativa
         | SentenciaEjecutable {$$.obj=$1.obj;}
         | RETURN ',' {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
         ;
@@ -70,6 +69,7 @@ SentenciaEjecutable: Asignacion {$$.obj=$1.obj;}
                   | BloqueIF   {$$.obj=$1.obj;}
 		          | SalidaMensaje {$$.obj=$1.obj;}
                   | ReferenciaObjetoFuncion {$$.obj=$1.obj;}
+                  | SentenciaControl {$$.obj=$1.obj;}
                   ;
 
 ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ','
@@ -89,6 +89,7 @@ SentenciaDeclarativa: Tipo ListVariables {
 							    t.setTipo(tipoActual);
 							    TablaSimbolos.removeToken(var);
 							    TablaSimbolos.addSimbolo(t.getLexema(),t);
+							    comprobacion_uso_variables.put(t.getLexema(),false);
                             }
 							else {
 							    TablaSimbolos.removeToken(var);
@@ -322,12 +323,12 @@ ListaSentenciasIF: error {AnalizadorLexico.agregarErrorSintactico("Solo se acept
                | ListaSentenciasIF SentenciaEjecutable ',' {$$.obj = new NodoComun("SENTENCIA", (Nodo) $1.obj, (Nodo) $2.obj);}
                ;
 
-Comparador: '<' {$$.obj=$1.obj;}
-          | '>' {$$.obj=$1.obj;}
-          | MAYORIGUAL {$$.obj=$1.obj;}
-          | MENORIGUAL {$$.obj=$1.obj;}
-          | IGUAL {$$.obj=$1.obj;}
-          | DIST {$$.obj=$1.obj;}
+Comparador: '<' {$$.sval=$1.sval;}
+          | '>' {$$.sval=$1.sval;}
+          | MAYORIGUAL {$$.sval=$1.sval;}
+          | MENORIGUAL {$$.sval=$1.sval;}
+          | IGUAL {$$.sval=$1.sval;}
+          | DIST {$$.sval=$1.sval;}
           ;
 
 ListFuncion: Funcion
@@ -403,8 +404,21 @@ ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$.obj = new NodoComu
 LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("LLAMADO FUNCION", new NodoHoja($1.sval));
                             Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
 
+                            String aux = $1.sval+":"+ambitoAct;
+
+                            int lastIndex = aux.lastIndexOf(":");
+                            if (lastIndex != -1) {
+                                aux = aux.substring(0, lastIndex);   //recorto del lexema la parte de la funcion
+                            }                                        //ya que sino no habra coincidencia en caso de autoinvocacion.
+                                                                     //Ejemplo: f:main:f no daria coincidencia.
+
+                            Funcion a = new Funcion(aux, null);
+                            if(funciones_declaradas.contains(a)){
+                                funcion_autoInvocada = true;
+                            }
+
                             if (tokenFuncion == null){
-                                agregarErrorSemantico("La funcion " + val_peek(3).sval + " nunca fue declarada");
+                                agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
                             } else {
                                 Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
                                 if (funciones_declaradas.contains(funcion)) {
@@ -425,8 +439,22 @@ LlamadoFuncion: ID '(' ')' {$$.obj=new NodoControl("LLAMADO FUNCION", new NodoHo
             			            Nodo n3 = (Nodo)$3.obj;
                                     Token tokenFuncion = TablaSimbolos.buscarPorAmbito($1.sval + ":" + ambitoAct);
 
+                                    String aux = $1.sval+":"+ambitoAct;
+
+                                    int lastIndex = aux.lastIndexOf(":");
+                                    if (lastIndex != -1) {
+                                        aux = aux.substring(0, lastIndex);   //recorto del lexema la parte de la funcion
+                                    }                                        //ya que sino no habra coincidencia en caso de autoinvocacion.
+                                                                             //Ejemplo: f:main:f no daria coincidencia.
+
+                                    Funcion a = new Funcion(aux, null);
+                                    if(funciones_declaradas.contains(a)){
+                                        funcion_autoInvocada = true;
+                                    }
+
+
                                     if (tokenFuncion == null){
-                                    	agregarErrorSemantico("La funcion " + val_peek(3).sval + " nunca fue declarada");
+                                    	agregarErrorSemantico("La funcion " + $1.sval + " nunca fue declarada");
                                     } else {
                                         Token tokenParametro = TablaSimbolos.getToken(n3.getLexema());
                                         Funcion funcion = new Funcion(tokenFuncion.getLexema(), null);
@@ -465,7 +493,12 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
                                                 if ($2.sval.equals("="))
 						                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "=", (Nodo)$3.obj);
 						                        else
-						                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);}
+						                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);
+
+						                        String ambitoIzquierdo = ((Nodo)$1.obj).getAmbito();
+						                        if ((!(ambitoIzquierdo.equals(ambitoAct)))&&(ambitoIzquierdo.length()<=ambitoAct.length()))
+						                            AnalizadorLexico.addWarning("La variable izquierda de la operacion fue declarada en otro ambito ");
+						                        }
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
 	                                                        if ($2.sval.equals("="))
@@ -477,7 +510,14 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 	                                                if ($2.sval.equals("="))
 	                                                    $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "=", (Nodo)$3.obj);
                                                  	else
-                                                 	    $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);}
+                                                 	    $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);
+
+                                                    //boolean b = comprobacion_uso_variables.get((Nodo)$3.getLexema());
+                                                 	//if (b)
+                                                 	String ambitoIzquierdo = ((Nodo)$1.obj).getAmbito();
+                                                    if ((!(ambitoIzquierdo.equals(ambitoAct)))&&(ambitoIzquierdo.length()<=ambitoAct.length()))
+                                                        AnalizadorLexico.addWarning("La variable izquierda de la operacion fue declarada en otro ambito ");
+                                                    }
 	| ReferenciaObjeto OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 	| Factor OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 	| OperadorAsignacion Factor {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
@@ -570,18 +610,12 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
             |'{' Funcion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 		;
 
-//TEMA 21 ----------------------------------------------------
-
-/*  Forward declaration => Es simplemente utilizar la regla de sentencias declarativas;
-  			   ya que en esta etapa solo controlamos sintaxis
-*/
-
 %%
   public NodoControl raiz;
   private String ambitoAct = "main";
   private String claseAct;
   private String ambitoNuevo= "";
-  private String nameFunctionSinCuerpo;
+  private static boolean funcion_autoInvocada;
   static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
   static ArrayList<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
@@ -590,9 +624,14 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
   static ArrayList<String> clases_declaradas = new ArrayList<String>();
   static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
   static ArrayList<Nodo> funciones = new ArrayList<Nodo>();
+  static Map<String,Boolean> comprobacion_uso_variables = new HashMap<String,Boolean>(); //cada vez q se declara variable se guarda lexema, si se usa del lado derecho en el ambito boolean=true.
 
   public NodoControl getRaiz(){
   	return this.raiz;
+  }
+
+  public static boolean getFuncionAutoInvocada(){
+    return funcion_autoInvocada;
   }
 
   public List<Nodo> getFunciones(){
@@ -678,28 +717,29 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
            }
       }
 
-    NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){ 
-        NodoComun aux = null;
-        if ((n1 == null) || (n3==null)) {
-            agregarErrorSemantico("Incompatibilidad de tipos ");
-            return null;
-        }
-        if (n1.getTipo().equals(n3.getTipo()))
-        {
-                aux = new NodoComun(op,n1,n3);
-                aux.setTipo(n1.getTipo());
+     NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){
+         NodoComun aux = null;
+         if ((n1 == null) || (n3==null)) {
+             agregarErrorSemantico("Incompatibilidad de tipos ");
+             return null;
+         }
+         if (n1.getTipo().equals(n3.getTipo())){
+                 aux = new NodoComun(op,n1,n3);
+                 aux.setTipo(n1.getTipo());
 
-        }
-        else 
-        {
-                if ((n1.getTipo().equals("USHORT") || n1.getTipo().equals("INT")) && (n3.getTipo().equals("USHORT")|| n3.getTipo().equals("INT")))
-                {
-                        agregarErrorSemantico("Incompatibilidad de tipos ");
-                        return null;
-                }
-        }
-        return aux;        
-}
+         }else {
+                 if ((n1.getTipo().equals("USHORT") || n1.getTipo().equals("INT")) && (n3.getTipo().equals("USHORT")|| n3.getTipo().equals("INT")))
+                 {
+                         agregarErrorSemantico("Incompatibilidad de tipos ");
+                         aux = new NodoComun(op,n1,n3);
+                         aux.setTipo(n1.getTipo());
+                 }else{
+                   aux = new NodoComun(op,n1,n3);
+                   aux.setTipo(n1.getTipo());
+                   agregarErrorSemantico("Incompatibilidad de tipos, es necesario un casteo ");}
+         }
+         return aux;
+ }
 
 public Nodo getNodoParametro(String m){
     for (Nodo n : parametros){
@@ -728,11 +768,13 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
                   } else {
                     if (n1.getTipo().equals("USHORT") || n1.getTipo().equals("INT")) {
                       agregarErrorSemantico("Incompatibilidad de tipos ");
-                      return null;
+                      aux = new NodoComun(asig, n1, n3);
+                      aux.setTipo(n1.getTipo());
                     }
                   }
-                }else{
-                        return null;}
+                }else{agregarErrorSemantico("Incompatibilidad de tipos, es necesario un casteo ");
+                      aux = new NodoComun(asig, n1, n3);
+                      aux.setTipo(n1.getTipo());}
                   return aux;
 }
 

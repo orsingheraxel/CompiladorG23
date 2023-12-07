@@ -1,0 +1,29 @@
+{
+   INT x,
+   x = 2_i,
+   DOUBLE r,
+   r = -1.12412412D+2,
+   IF(x < 133.d-4){
+        PRINT x,
+   }END_IF,
+
+   IF(TOD(x) < 133.d-4){
+       PRINT x,
+   }END_IF,
+
+   IF(TOD(x) < 133.d-4){
+          IF(1_us < x){
+                PRINT x,
+          }ELSE
+                PRINT r,
+          END_IF,
+   }END_IF,
+
+}
+
+
+
+
+
+
+

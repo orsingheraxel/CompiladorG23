@@ -57,8 +57,8 @@ public class NodoComun extends Nodo{
             case "Funcion":
                 salida+= getIzq().getLexema() + ":\n";
                 salida+= getDer().getAssembler() + "ret";
-                //salida += "JE error
-                // invocacionFuncion\n";
+                if (Parser.getFuncionAutoInvocada())
+                    salida += " JMP errorInvocacionFuncion\n";
                 return salida;
             case "+":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
@@ -140,7 +140,6 @@ public class NodoComun extends Nodo{
 
                 if (getIzq().getTipo().equals("USHORT")||getIzq().getTipo().equals("INT")) {
                     salida += "CMP " + getDer().getUltimoNodo().getLexema() + ", 0\n";
-                    salida += "JE errorDivisionPorCero\n";
 
                     salida += "MOV EAX, " + getIzq().getUltimoNodo().getLexema() + "\n";
                     salida += "IDIV " + getDer().getUltimoNodo().getLexema() + "\n";
@@ -305,13 +304,11 @@ public class NodoComun extends Nodo{
                 break;
             case "DO UNTIL":
                 label = getLabel();
-                labelFin = getLabel();
-                pilaLabels.push(labelFin);
                 pilaLabels.push(label);
 
-                salida += getIzq().getAssembler() + getDer().getAssembler();
                 salida += "JMP "+ label + "\n";
-                salida += labelFin + ":\n";
+                salida += label + ":\n";
+                salida += getIzq().getAssembler() + getDer().getAssembler();
                 break;
         }
         return salida;
