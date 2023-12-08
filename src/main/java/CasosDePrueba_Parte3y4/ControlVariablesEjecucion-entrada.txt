@@ -1,0 +1,19 @@
+{
+   INT e1,
+   INT resEntero,
+   resEntero = e1 + 999999_i,
+
+   DOUBLE d1,
+   d1 = 2.D+34,
+   DOUBLE d2,
+   d2 = 1.2d+10,
+   DOUBLE resDouble,
+   resDouble = d1 * d2,
+}
+
+
+
+
+
+
+

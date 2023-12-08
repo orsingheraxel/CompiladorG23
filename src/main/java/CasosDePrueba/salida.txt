@@ -1,7 +1,8 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=278, lexema='1', linea=4, uso='Constante', tipo='INT', ambito='main'}
-Token{id=269, lexema='x:main', linea=2, uso='Variable', tipo='INT', ambito='main'}
-Token{id=278, lexema='2', linea=3, uso='Constante', tipo='INT', ambito='main'}
+Token{id=279, lexema='100', linea=3, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='a:main', linea=2, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='b:main', linea=4, uso='Variable', tipo='USHORT', ambito='main'}
+Token{id=279, lexema='10', linea=5, uso='Constante', tipo='USHORT', ambito='main'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -10,6 +11,8 @@ Token{id=278, lexema='2', linea=3, uso='Constante', tipo='INT', ambito='main'}
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
+Error Semantico: Variable no declarada en este ambito  en la linea: 8
+Error Semantico: Variable no declarada en este ambito  en la linea: 10
 
 -------------------------------------------WARNINGS-------------------------------------------
  
@@ -24,44 +27,77 @@ Nodo de control: PROGRAMA
 
         Lexama Nodo: SENTENCIA
 
-        Hijo Derecho: 
+        Hijo Izquierdo: 
 
-            Lexama Nodo: =
+            Lexama Nodo: SENTENCIA
 
             Hijo Izquierdo: 
 
-                
-Lexema Nodo Hoja: x
+                Lexama Nodo: SENTENCIA
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: SENTENCIA
+
+                    Hijo Derecho: 
+
+                        Lexama Nodo: =
+
+                        Hijo Izquierdo: 
+
+                            
+Lexema Nodo Hoja: a
+
+                        Hijo Derecho: 
+
+                            
+Lexema Nodo Hoja: 100
 
             Hijo Derecho: 
 
-                
-Lexema Nodo Hoja: 2
+                Lexama Nodo: =
+
+                Hijo Izquierdo: 
+
+                    
+Lexema Nodo Hoja: b
+
+                Hijo Derecho: 
+
+                    
+Lexema Nodo Hoja: 10
+
+        Hijo Derecho: 
+
+            Lexama Nodo: IF
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: !!
+
+                Hijo Izquierdo: 
+
+                    
+Lexema Nodo Hoja: a
+
+                Hijo Derecho: 
+
+                    
+Lexema Nodo Hoja: b
+
+            Hijo Derecho: 
+
+                Nodo de control: PRINT
+
+                    
+Lexema Nodo Hoja: true
 
     Hijo Derecho: 
 
-        Lexama Nodo: IF
+        Nodo de control: PRINT
 
-        Hijo Izquierdo: 
-
-            Lexama Nodo: <
-
-            Hijo Izquierdo: 
-
-                
-Lexema Nodo Hoja: x
-
-            Hijo Derecho: 
-
-                
-Lexema Nodo Hoja: 1
-
-        Hijo Derecho: 
-
-            Nodo de control: PRINT
-
-                
-Lexema Nodo Hoja: x
+            
+Lexema Nodo Hoja: false
 
 -------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
  

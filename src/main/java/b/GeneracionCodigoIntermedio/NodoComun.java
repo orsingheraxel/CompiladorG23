@@ -157,7 +157,7 @@ public class NodoComun extends Nodo{
                 break;
 
 
-            case "IGUAL":
+            case "==":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 variable = getVariableAuxiliar();
                 label = pilaLabels.pop();
@@ -177,7 +177,7 @@ public class NodoComun extends Nodo{
                 }
                 break;
 
-            case "DIST":
+            case "!!":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 variable = getVariableAuxiliar();
                 label = pilaLabels.pop();
@@ -217,7 +217,7 @@ public class NodoComun extends Nodo{
                 }
                 break;
 
-            case "MAYORIGUAL":
+            case ">=":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 variable = getVariableAuxiliar();
                 label = pilaLabels.pop();
@@ -257,7 +257,7 @@ public class NodoComun extends Nodo{
                 }
                 break;
 
-            case "MENORIGUAL":
+            case "<=":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 variable = getVariableAuxiliar();
                 label = pilaLabels.pop();

@@ -27,7 +27,7 @@ Programa: '{' ListSentencias  '}' { for (String c : clases_forward_declaration){
 
 ListSentencias:  ListSentencias Sentencia ',' {$$.obj = new NodoComun("SENTENCIA", (Nodo) $1.obj, (Nodo) $2.obj);}
         | Sentencia ',' {$$.obj=$1.obj;}
-	    | Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
+	| Sentencia error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
         ;
 
 Sentencia: SentenciaDeclarativa
@@ -79,7 +79,6 @@ ListSentenciasClase : ListSentenciasClase SentenciaDeclarativa ','
                     ;
 
 SentenciaDeclarativa: Tipo ListVariables {
-						//CHEQUAER SI UNA VARIABLE CON ESE LEXEMA YA TIENE SETEADO EL USO, SI LO TIENE SETEADO ES PORQ YA EXITE
 						for (String var : variables_declaradas) {
 							Token t = TablaSimbolos.getToken(var);
 							if (!(TablaSimbolos.existeSimbolo(var+ ":" + ambitoAct))){
@@ -107,9 +106,9 @@ SentenciaDeclarativa: Tipo ListVariables {
 			| EncabezadoClase{deshacerAmbito();}
             ;
 
-ListVariables : ID {variables_declaradas.add($1.sval);}
-              | ListVariables ';' ID   {variables_declaradas.add($3.sval);}
-              ;
+	ListVariables : ID {variables_declaradas.add($1.sval);}
+		      | ListVariables ';' ID   {variables_declaradas.add($3.sval);}
+		      ;
 
 Objeto_clase: ID ListVariablesObj {TablaSimbolos.removeToken($1.sval);
                                    if (clases_declaradas.contains($1.sval + ":" + ambitoAct)){

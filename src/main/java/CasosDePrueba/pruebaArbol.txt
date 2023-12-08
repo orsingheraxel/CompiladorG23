@@ -1,10 +1,13 @@
 {
-   INT x,
-   x = 2_i,
-   IF(x < 1_i){
-        PRINT x,
-   }END_IF,
+   USHORT a,
+   a = 100_us,
+   USHORT b,
+   b = 10_us,
 
+   IF (a !! b){
+        PRINT true,
+   } END_IF,
+   PRINT false,
 }
 
 

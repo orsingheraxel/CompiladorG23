@@ -1,0 +1,136 @@
+------------------------------------------TABLA DE SIMBOLOS------------------------------------------
+Token{id=269, lexema='d2:main', linea=8, uso='Variable', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='resDouble:main', linea=10, uso='Variable', tipo='DOUBLE', ambito='main'}
+Token{id=280, lexema='1.2d+10', linea=9, uso='Constante', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='d1:main', linea=6, uso='Variable', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='x1:main', linea=2, uso='Variable', tipo='INT', ambito='main'}
+Token{id=280, lexema='2.D+34', linea=7, uso='Constante', tipo='DOUBLE', ambito='main'}
+Token{id=269, lexema='resEntero:main', linea=3, uso='Variable', tipo='INT', ambito='main'}
+ 
+-------------------------------------------ERRORES LEXICOS-------------------------------------------
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 3
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 4
+Error Lexico: Entero positivo fuera de rango en la linea: 4
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 10
+Error Lexico: Los identificadores solo pueden contener digitos, letras minúsculas o '_'  en la linea: 11
+ 
+-------------------------------------------ERRORES SINTACTICOS-------------------------------------------
+ 
+
+-------------------------------------------ERRORES SEMANTICOS-------------------------------------------
+ 
+
+-------------------------------------------WARNINGS-------------------------------------------
+ 
+ 
+-------------------------------------------NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+Nodo de control: PROGRAMA
+
+    Lexama Nodo: SENTENCIA
+
+    Hijo Izquierdo: 
+
+        Lexama Nodo: SENTENCIA
+
+        Hijo Izquierdo: 
+
+            Lexama Nodo: SENTENCIA
+
+            Hijo Izquierdo: 
+
+                Lexama Nodo: SENTENCIA
+
+                Hijo Izquierdo: 
+
+                    Lexama Nodo: SENTENCIA
+
+                    Hijo Izquierdo: 
+
+                        Lexama Nodo: SENTENCIA
+
+                        Hijo Izquierdo: 
+
+                            Lexama Nodo: SENTENCIA
+
+                            Hijo Izquierdo: 
+
+                                Lexama Nodo: SENTENCIA
+
+                            Hijo Derecho: 
+
+                                Lexama Nodo: =
+
+                                Hijo Izquierdo: 
+
+                                    
+Lexema Nodo Hoja: resEntero
+
+                                Hijo Derecho: 
+
+                                    Lexama Nodo: +
+
+                                    Hijo Izquierdo: 
+
+                                        
+Lexema Nodo Hoja: x1
+
+                                    Hijo Derecho: 
+
+                                        
+Lexema Nodo Hoja: 999999
+
+                    Hijo Derecho: 
+
+                        Lexama Nodo: =
+
+                        Hijo Izquierdo: 
+
+                            
+Lexema Nodo Hoja: d1
+
+                        Hijo Derecho: 
+
+                            
+Lexema Nodo Hoja: 2.D+34
+
+            Hijo Derecho: 
+
+                Lexama Nodo: =
+
+                Hijo Izquierdo: 
+
+                    
+Lexema Nodo Hoja: d2
+
+                Hijo Derecho: 
+
+                    
+Lexema Nodo Hoja: 1.2d+10
+
+    Hijo Derecho: 
+
+        Lexama Nodo: =
+
+        Hijo Izquierdo: 
+
+            
+Lexema Nodo Hoja: resDouble
+
+        Hijo Derecho: 
+
+            Lexama Nodo: *
+
+            Hijo Izquierdo: 
+
+                
+Lexema Nodo Hoja: d1
+
+            Hijo Derecho: 
+
+                
+Lexema Nodo Hoja: d2
+
+-------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
+ 
+[]
