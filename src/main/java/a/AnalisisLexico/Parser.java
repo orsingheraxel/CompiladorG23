@@ -808,7 +808,7 @@ public Nodo getNodoParametro(String m){
 }
 
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
-{ 
+{
         NodoComun aux = null;
                 if ((n1 == null) || (n3==null)) {
                           return null;
@@ -1114,7 +1114,9 @@ case 10:
 { if ((TablaSimbolos.getToken(val_peek(2).sval +":"+ambitoAct))==null)
                                                     agregarErrorSemantico("Atributo de clase " + val_peek(2).sval + " no existe ");
                                                 else{
-                                                    yyval.obj = new NodoComun("ReferenciaFuncionObjeto",(Nodo)val_peek(2).obj,(Nodo)val_peek(0).obj);
+                                                    String m = (String)val_peek(2).sval;
+                                                    Nodo a = new NodoHoja(m);
+                                                    yyval.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)val_peek(0).obj);
                                                     AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
                                                 }
                                                 TablaSimbolos.removeToken(val_peek(2).sval);
@@ -1646,7 +1648,7 @@ case 104:
 break;
 case 105:
 //#line 397 "gramatica.y"
-{yyval.obj = new NodoComun("Sentencia",(Nodo)val_peek(2).obj,(Nodo)val_peek(1).obj);}
+{yyval.obj = new NodoComun("SENTENCIA",(Nodo)val_peek(2).obj,(Nodo)val_peek(1).obj);}
 break;
 case 106:
 //#line 398 "gramatica.y"

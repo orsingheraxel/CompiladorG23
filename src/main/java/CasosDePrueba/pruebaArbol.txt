@@ -1,13 +1,14 @@
 {
-   USHORT a,
-   a = 100_us,
-   USHORT b,
-   b = 10_us,
-
-   IF (a !! b){
-        PRINT true,
-   } END_IF,
-   PRINT false,
+   CLASS a{
+    VOID b(){
+            USHORT r,
+            r = 2_us,
+    },
+   },
+    USHORT x,
+    x = 4_us,
+    a j,
+    j.b(),
 }
 
 

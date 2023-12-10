@@ -57,7 +57,9 @@ ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
 ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { if ((TablaSimbolos.getToken($1.sval +":"+ambitoAct))==null)
                                                     agregarErrorSemantico("Atributo de clase " + $1.sval + " no existe ");
                                                 else{
-                                                    $$.obj = new NodoComun("ReferenciaFuncionObjeto",(Nodo)$1.obj,(Nodo)$3.obj);
+                                                    String m = (String)$1.sval;
+                                                    Nodo a = new NodoHoja(m);
+                                                    $$.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)$3.obj);
                                                     AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
                                                 }
                                                 TablaSimbolos.removeToken($1.sval);
@@ -393,7 +395,7 @@ Parametro: '(' Tipo ID ')' {    Token t = TablaSimbolos.getToken($3.sval);
 
 
 
-ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$.obj = new NodoComun("Sentencia",(Nodo)$1.obj,(Nodo)$2.obj);}
+ListSentenciasFuncion:ListSentenciasFuncion Sentencia ',' {$$.obj = new NodoComun("SENTENCIA",(Nodo)$1.obj,(Nodo)$2.obj);}
 		  | Sentencia ',' {$$.obj=$1.obj;}
 		  | SentenciaEjecutable error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
           	  | SentenciaDeclarativa error {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}

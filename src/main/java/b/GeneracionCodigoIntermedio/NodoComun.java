@@ -55,11 +55,11 @@ public class NodoComun extends Nodo{
                 }
                 break;
             case "Funcion":
-                salida+= getIzq().getLexema() + ":\n";
+                salida+= getIzq().getLexema() + ":\n"; //getLexema() pq la izquierda es el ID de la funcion.
                 salida+= getDer().getAssembler() + "ret";
                 if (Parser.getFuncionAutoInvocada())
                     salida += " JMP errorInvocacionFuncion\n";
-                return salida;
+                break;
             case "+":
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 variable = getVariableAuxiliar();
@@ -309,6 +309,10 @@ public class NodoComun extends Nodo{
                 salida += "JMP "+ label + "\n";
                 salida += label + ":\n";
                 salida += getIzq().getAssembler() + getDer().getAssembler();
+                break;
+            case "REFERENCIA FUNCION OBJETO":
+                salida+= getIzq().getLexema(); //getLexema() pq la izquierda es el ID del objeto.
+                salida+= getDer().getAssembler();
                 break;
         }
         return salida;
