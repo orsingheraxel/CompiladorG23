@@ -1,14 +1,15 @@
 {
    CLASS a{
-    VOID b(){
-            USHORT r,
-            r = 2_us,
-    },
+    USHORT h,
    },
-    USHORT x,
-    x = 4_us,
-    a j,
-    j.b(),
+
+   CLASS b{
+    VOID f(),
+    a,
+   },
+
+   b g,
+   g.h = 4_us,
 }
 
 

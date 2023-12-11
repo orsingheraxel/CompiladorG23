@@ -1,11 +1,11 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
-Token{id=279, lexema='2', linea=5, uso='Constante', tipo='USHORT', ambito='main:a:b'}
-Token{id=269, lexema='x:main', linea=8, uso='Variable', tipo='USHORT', ambito='main'}
-Token{id=279, lexema='4', linea=9, uso='Constante', tipo='USHORT', ambito='main'}
+Token{id=269, lexema='a', linea=9, uso='', tipo='null', ambito='null'}
+Token{id=279, lexema='4', linea=13, uso='Constante', tipo='USHORT', ambito='main'}
 Token{id=269, lexema='a:main', linea=2, uso='Clase', tipo='null', ambito='main'}
-Token{id=269, lexema='r:main:a:b', linea=4, uso='Variable', tipo='USHORT', ambito='main:a:b'}
-Token{id=269, lexema='b:main:a', linea=3, uso='Funcion', tipo='VOID', ambito='main:a'}
-Token{id=269, lexema='j:main', linea=10, uso='Objeto', tipo='a', ambito='main'}
+Token{id=269, lexema='g:main', linea=12, uso='Objeto', tipo='b', ambito='main'}
+Token{id=269, lexema='h:main:a', linea=3, uso='Variable', tipo='USHORT', ambito='main:a'}
+Token{id=269, lexema='b:main', linea=6, uso='Clase', tipo='null', ambito='main'}
+Token{id=269, lexema='h:main:b', linea=8, uso='Variable', tipo='USHORT', ambito='main:b'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -14,6 +14,7 @@ Token{id=269, lexema='j:main', linea=10, uso='Objeto', tipo='a', ambito='main'}
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
+Error Semantico: Una clase que hereda no puede sobreescribir atributos del padre  en la linea: 10
 
 -------------------------------------------WARNINGS-------------------------------------------
  
@@ -32,65 +33,20 @@ Nodo de control: PROGRAMA
 
             Lexama Nodo: SENTENCIA
 
-            Hijo Izquierdo: 
-
-                Lexama Nodo: SENTENCIA
-
-            Hijo Derecho: 
-
-                Lexama Nodo: =
-
-                Hijo Izquierdo: 
-
-                    
-Lexema Nodo Hoja: x
-
-                Hijo Derecho: 
-
-                    
-Lexema Nodo Hoja: 4
-
     Hijo Derecho: 
 
-        Lexama Nodo: REFERENCIA FUNCION OBJETO
+        Lexama Nodo: =
 
         Hijo Izquierdo: 
 
             
-Lexema Nodo Hoja: j
+Lexema Nodo Hoja: h
 
         Hijo Derecho: 
 
-            Nodo de control: LLAMADO FUNCION
-
-                
-Lexema Nodo Hoja: b
+            
+Lexema Nodo Hoja: 4
 
 -------------------------------------------FUNCIONES NODOS ARBOL SINTACTICO-------------------------------------------
  
- Lexama Nodo: Funcion
-
- Hijo Izquierdo: 
-
-     
-Lexema Nodo Hoja: b
-
- Hijo Derecho: 
-
-     Lexama Nodo: SENTENCIA
-
-     Hijo Derecho: 
-
-         Lexama Nodo: =
-
-         Hijo Izquierdo: 
-
-             
-Lexema Nodo Hoja: r
-
-         Hijo Derecho: 
-
-             
-Lexema Nodo Hoja: 2
-
-[Funcion]
+[]

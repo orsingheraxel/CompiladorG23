@@ -1,0 +1,19 @@
+{
+   CLASS a{
+    VOID b(){
+            USHORT r,
+            r = 2_us,
+    },
+   },
+    USHORT x,
+    x = 4_us,
+    a j,
+    j.b(),
+}
+
+
+
+
+
+
+

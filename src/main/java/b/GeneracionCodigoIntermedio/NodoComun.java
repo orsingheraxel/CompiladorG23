@@ -45,6 +45,7 @@ public class NodoComun extends Nodo{
                 break;
 
             case "=":
+                System.out.println("HOLA");
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 if(getIzq().getTipo().equals("USHORT")||getIzq().getTipo().equals("INT")){
                     salida+= "MOV EAX , " + getDer().getUltimoNodo().getLexema() + "\n";
@@ -311,6 +312,10 @@ public class NodoComun extends Nodo{
                 salida += getIzq().getAssembler() + getDer().getAssembler();
                 break;
             case "REFERENCIA FUNCION OBJETO":
+                salida+= getIzq().getLexema(); //getLexema() pq la izquierda es el ID del objeto.
+                salida+= getDer().getAssembler();
+                break;
+            case "REFERENCIA ATRIBUTO OBJETO":
                 salida+= getIzq().getLexema(); //getLexema() pq la izquierda es el ID del objeto.
                 salida+= getDer().getAssembler();
                 break;

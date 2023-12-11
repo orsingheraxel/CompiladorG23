@@ -37,19 +37,33 @@ Sentencia: SentenciaDeclarativa
 
 ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
                             TablaSimbolos.removeToken($3.sval);
-                            $$ = new NodoComun("ReferenciaObjeto",new NodoHoja($1.sval), new NodoHoja($3.sval));
+
                             Token clase = obtenerClase($1.sval + ":" + ambitoAct);
+                            String nombreClase = clase.getLexema().substring(0, clase.getLexema().indexOf(":"));
+                            String lexemaAtributoHijo = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+
+                            Token atributoPadre = null;
+
+                            if (padreTieneAtributo(nombreClase,lexemaAtributoHijo)){
+                                String lexemaAtributoPadre = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+                                atributoPadre = TablaSimbolos.getToken(lexemaAtributoPadre);
+                            }
+
+                            Token atributo = TablaSimbolos.getToken(lexemaAtributoHijo);
                             if (clase == null) {
                                 agregarErrorSemantico("El objeto " + $1.sval + " no existe");
                             }
                             else {
-                                String nombreClase = clase.getLexema().substring(0, clase.getLexema().indexOf(":"));
-                                String lexemaObjeto = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
-                                Token atributo = TablaSimbolos.getToken(lexemaObjeto);
-                                if (atributo == null){
+                                if ((atributo == null) && (atributoPadre == null)){
                                     agregarErrorSemantico("Atributo de clase no existe");
                                 }
                             }
+                            Nodo a = new NodoHoja($3.sval);
+                            if (atributo != null)
+                                a.setTipo(atributo.getTipo());
+                            if (atributoPadre != null)
+                                a.setTipo(atributoPadre.getTipo());
+                            $$.obj = new NodoComun("REFERENCIA ATRIBUTO OBJETO",new NodoHoja($1.sval), a);
                             AnalizadorLexico.agregarEstructura("Reconoce llamado a atributo");
                             }
                 ;
@@ -91,6 +105,10 @@ SentenciaDeclarativa: Tipo ListVariables {
 							    TablaSimbolos.removeToken(var);
 							    TablaSimbolos.addSimbolo(t.getLexema(),t);
 							    comprobacion_uso_variables.put(t.getLexema(),false);
+							    if (claseAct != null){
+							        listaAtributos.add(var);
+                                    atributosClases.put(claseAct, listaAtributos);
+							    }
                             }
 							else {
 							    TablaSimbolos.removeToken(var);
@@ -496,28 +514,24 @@ Asignacion: Factor OperadorAsignacion Expresion {AnalizadorLexico.agregarEstruct
 						                        else
 						                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);
 
-						                        String ambitoIzquierdo = ((Nodo)$1.obj).getAmbito();
-						                        if ((!(ambitoIzquierdo.equals(ambitoAct)))&&(ambitoIzquierdo.length()<=ambitoAct.length()))
-						                            AnalizadorLexico.addWarning("La variable izquierda de la operacion fue declarada en otro ambito ");
+
 						                        }
 
 	| ReferenciaObjeto OperadorAsignacion ReferenciaObjeto {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                        Nodo a = ((Nodo)$1.obj).getDer();
+	                                                        Nodo b = ((Nodo)$3.obj).getDer();
 	                                                        if ($2.sval.equals("="))
-	                                                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "=", (Nodo)$3.obj);
+	                                                            $$.obj = controlarTiposAsignacion(a, "=", b);
 	                                                        else
-	                                                            $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);}
+	                                                            $$.obj = controlarTiposAsignacion(a, "+=", b);}
 
 	| ReferenciaObjeto OperadorAsignacion Factor {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                Nodo a = ((Nodo)$1.obj).getDer();
 	                                                if ($2.sval.equals("="))
-	                                                    $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "=", (Nodo)$3.obj);
+	                                                    $$.obj = controlarTiposAsignacion(a, "=", (Nodo)$3.obj);
                                                  	else
-                                                 	    $$.obj = controlarTiposAsignacion((Nodo)$1.obj, "+=", (Nodo)$3.obj);
+                                                 	    $$.obj = controlarTiposAsignacion(a, "+=", (Nodo)$3.obj);
 
-                                                    //boolean b = comprobacion_uso_variables.get((Nodo)$3.getLexema());
-                                                 	//if (b)
-                                                 	String ambitoIzquierdo = ((Nodo)$1.obj).getAmbito();
-                                                    if ((!(ambitoIzquierdo.equals(ambitoAct)))&&(ambitoIzquierdo.length()<=ambitoAct.length()))
-                                                        AnalizadorLexico.addWarning("La variable izquierda de la operacion fue declarada en otro ambito ");
                                                     }
 	| ReferenciaObjeto OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 	| Factor OperadorAsignacion error {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
@@ -550,10 +564,6 @@ ConversionExplicita: TOD ParametroTOD {((Nodo)$2.obj).setTipo("DOUBLE");
                   | TOD '(' ')' {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
                   ;
 
-ListClase:'{' ListSentenciasClase '}'
-		//| SentenciaListHerencia '}' {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
-		;
-
     EncabezadoClase : CLASS ID {  if (!(clases_forward_declaration.contains($2.sval + ":" + ambitoAct)))  {
                                         clases_forward_declaration.add($2.sval + ":" + ambitoAct);
 
@@ -564,8 +574,9 @@ ListClase:'{' ListSentenciasClase '}'
                                                 break;
                                             }
                                             agregarErrorSemantico("Este identificador ya fue utilizado en este ambito");
+                                            $$.sval= " ";
                                             break;
-                                        }
+                                        }else{$$.sval = $2.sval;}
                                         Token t = TablaSimbolos.getToken($2.sval);
                                         if (t != null){
                                             t.setLexema(t.getLexema() + ":" + ambitoAct);
@@ -576,13 +587,32 @@ ListClase:'{' ListSentenciasClase '}'
                                         }
                                         tipoActual = $2.sval;
                                         claseAct = $2.sval;
+                                        atributosClases.put($2.sval,null);
                                         actualizarAmbito($2.sval);}
                                      TablaSimbolos.removeToken($2.sval);
+
+
                             };
 
-Clase: EncabezadoClase ListClase {deshacerAmbito();
-                                  clases_declaradas.add(claseAct+":"+ambitoAct);
-                                  }
+Clase: EncabezadoClase '{'ListSentenciasClase ID ',' '}'{
+                                                deshacerAmbito();
+                                                clases_declaradas.add(claseAct+":"+ambitoAct);
+                                                if ($1.sval != " "){
+                                                    if (clases_declaradas.contains($4.sval+":"+ambitoAct)){
+                                                        chequearAtributosRepetidos ($1.sval,$4.sval);
+
+                                                    }
+                                                }
+                                                clase_hijo_padre.put($1.sval,$4.sval);
+                                                listaAtributos.clear();
+                                                claseAct=null; //lo vuelvo null para que no genere conflicto cuabdo guardo atributos de clase
+                                              }
+
+      |EncabezadoClase '{' ListSentenciasClase '}' {deshacerAmbito();
+                                          clases_declaradas.add(claseAct+":"+ambitoAct);
+                                          listaAtributos.clear();
+                                          claseAct=null;
+                                          }
                          ;
 
 FuncionSinCuerpo: EncabezadoFuncion Parametro { deshacerAmbito();
@@ -615,17 +645,20 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
   public NodoControl raiz;
   private String ambitoAct = "main";
   private String claseAct;
-  private String ambitoNuevo= "";
   private static boolean funcion_autoInvocada;
-  static ArrayList<Error> erroresSemanticos = new ArrayList<Error>();
-  static ArrayList<String> variables_declaradas = new ArrayList<String>();
+  static List<Error> erroresSemanticos = new ArrayList<Error>();
+  static List<String> variables_declaradas = new ArrayList<String>();
   static String tipoActual;
-  static ArrayList<Nodo> parametros = new ArrayList<Nodo>();
-  static ArrayList<String> clases_forward_declaration = new ArrayList<String>();
-  static ArrayList<String> clases_declaradas = new ArrayList<String>();
-  static ArrayList<Funcion> funciones_declaradas = new ArrayList<Funcion>();
-  static ArrayList<Nodo> funciones = new ArrayList<Nodo>();
+  static List<Nodo> parametros = new ArrayList<Nodo>();
+  static List<String> clases_forward_declaration = new ArrayList<String>(); //utiliada para asegurarnos que una clase delcarada tambien este implementada
+  static List<String> clases_declaradas = new ArrayList<String>();
+  static List<Funcion> funciones_declaradas = new ArrayList<Funcion>();  //utilizada para chequear que no haya autoinvocaciones y demas
+  static List<Nodo> funciones = new ArrayList<Nodo>(); //utilizada para almacenar las funciones que luego se imprimiran en main
   static Map<String,Boolean> comprobacion_uso_variables = new HashMap<String,Boolean>(); //cada vez q se declara variable se guarda lexema, si se usa del lado derecho en el ambito boolean=true.
+
+  static Map<String, String> clase_hijo_padre = new HashMap<String, String>();
+  static ArrayList<String> listaAtributos = new ArrayList<String>();
+  static Map<String, ArrayList<String>> atributosClases = new HashMap<String, ArrayList<String>>(); //utilizado para chequear que una clase que hereda no sobreescriba atributos de la clase padre
 
   public NodoControl getRaiz(){
   	return this.raiz;
@@ -718,6 +751,20 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
            }
       }
 
+      public void chequearAtributosRepetidos(String a, String b){
+           ArrayList<String> hijo = atributosClases.get(a);
+           ArrayList<String> padre = atributosClases.get(b);
+            if ((hijo != null)&&(padre!=null)) {
+               for (String atributo : hijo)
+                    if (padre.contains(atributo)) {
+                               agregarErrorSemantico ("Una clase que hereda no puede sobreescribir atributos del padre ");
+                               hijo.remove(atributo);
+                               TablaSimbolos.removeToken(atributo+":"+ambitoAct+":"+a);
+                               break;
+                    }
+            }
+      }
+
      NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){
          NodoComun aux = null;
          if ((n1 == null) || (n3==null)) {
@@ -749,6 +796,17 @@ public Nodo getNodoParametro(String m){
         }
     }
     return null;
+}
+
+public boolean padreTieneAtributo (String clase,String atributo){
+    String clasePadre = clase_hijo_padre.get(clase);
+    ArrayList<String> atributosPadre = atributosClases.get(clasePadre);
+
+    atributo = atributo.substring(0, atributo.indexOf(":"));
+
+    if (atributosPadre.contains(atributo))
+        return true;
+    return false;
 }
 
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
@@ -835,7 +893,6 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
             }
             return "USHORT";
    }
-
 
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();
