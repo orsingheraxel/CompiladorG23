@@ -1,0 +1,26 @@
+{
+   CLASS a{
+    USHORT h;g,
+    USHORT m,
+    VOID f(){
+        USHORT ja,
+        ja = 4_us,
+    },
+   },
+
+   CLASS b{
+   USHORT h,
+    VOID f(){
+            USHORT ja,
+            ja = 4_us,
+        },
+    a,
+   },
+}
+
+
+
+
+
+
+

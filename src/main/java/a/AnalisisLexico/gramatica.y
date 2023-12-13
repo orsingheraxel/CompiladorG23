@@ -38,14 +38,23 @@ Sentencia: SentenciaDeclarativa
 ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
                             TablaSimbolos.removeToken($3.sval);
 
+                            String nombreClase = null;
+                            String lexemaAtributoHijo = null;
+
                             Token clase = obtenerClase($1.sval + ":" + ambitoAct);
-                            String nombreClase = clase.getLexema().substring(0, clase.getLexema().indexOf(":"));
-                            String lexemaAtributoHijo = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+                            if (clase!=null){
+                                if (clase.getUso().equals("Variable"))
+                                    nombreClase = clase.getLexema().substring(clase.getLexema().lastIndexOf(":")+1);
+                                else
+                                    nombreClase = clase.getLexema().substring(0,clase.getLexema().indexOf(":"));
+                                lexemaAtributoHijo = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+                            }
 
                             Token atributoPadre = null;
 
                             if (padreTieneAtributo(nombreClase,lexemaAtributoHijo)){
-                                String lexemaAtributoPadre = $3.sval + ":" + ambitoAct + ":"+ nombreClase;
+                                 String clasePadre =  clase_hijo_padre.get(nombreClase);
+                                String lexemaAtributoPadre = $3.sval + ":" + ambitoAct + ":"+ clasePadre;
                                 atributoPadre = TablaSimbolos.getToken(lexemaAtributoPadre);
                             }
 
@@ -68,14 +77,32 @@ ReferenciaObjeto: ID '.' ID {TablaSimbolos.removeToken($1.sval);
                             }
                 ;
 
-ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { if ((TablaSimbolos.getToken($1.sval +":"+ambitoAct))==null)
-                                                    agregarErrorSemantico("Atributo de clase " + $1.sval + " no existe ");
-                                                else{
-                                                    String m = (String)$1.sval;
-                                                    Nodo a = new NodoHoja(m);
-                                                    $$.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)$3.obj);
-                                                    AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
+ReferenciaObjetoFuncion: ID '.' LlamadoFuncion { Nodo n = ((Nodo)$3.obj).getDer();
+                                                String nombreFuncion = n.getLexema();
+
+                                                String nombreClase = null;
+                                                String clasePadre = null;
+
+                                                Token clase = obtenerClase($1.sval + ":" + ambitoAct);
+                                                if (clase!=null){
+                                                    if (clase.getUso().equals("Variable"))
+                                                        nombreClase = clase.getLexema().substring(clase.getLexema().lastIndexOf(":")+1);
+                                                    else
+                                                        nombreClase = clase.getLexema().substring(0,clase.getLexema().indexOf(":"));
+                                                    clasePadre = clase_hijo_padre.get(nombreClase);
                                                 }
+
+                                                if ((tieneFuncion(nombreClase,nombreFuncion))||(tieneFuncion(clasePadre,nombreFuncion))){
+
+                                                    if ((TablaSimbolos.getToken($1.sval +":"+ambitoAct))==null)
+                                                        agregarErrorSemantico("Atributo de clase " + $1.sval + " no existe ");
+                                                    else{
+                                                        String m = (String)$1.sval;
+                                                        Nodo a = new NodoHoja(m);
+                                                        $$.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)$3.obj);
+                                                        AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
+                                                    }
+                                                }else{agregarErrorSemantico("La funcion no esta al alcance ");}
                                                 TablaSimbolos.removeToken($1.sval);
                                                 }
                        ;
@@ -356,11 +383,17 @@ ListFuncion: Funcion
 
 Funcion:  EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' RETURN ',' {agregarErrorSemantico("RETURN fuera de funcion");}
       | EncabezadoFuncion Parametro '{' ListSentenciasFuncion RETURN ',' '}' {  $$.obj = (Nodo)$1.obj;
+                                                                                String nombreFuncion=((Nodo)$1.obj).getLexema();
+                                                                                if (claseAct!=null)
+                                                                                    listaFunciones.add(nombreFuncion);
                                                                                 deshacerAmbito();
                                                                                 Nodo aux = new NodoComun("Funcion",(Nodo)$1.obj,(Nodo)$4.obj);
                                                                                 funciones.add(aux);
                                                                                 AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
       | EncabezadoFuncion Parametro '{' ListSentenciasFuncion '}' { $$.obj = (Nodo)$1.obj;
+                                                                    String nombreFuncion=((Nodo)$1.obj).getLexema();
+                                                                    if (claseAct!=null)
+                                                                        listaFunciones.add(nombreFuncion);
                                                                     deshacerAmbito();
                                                                     Nodo aux = new NodoComun("Funcion",(Nodo)$1.obj,(Nodo)$4.obj);
                                                                     funciones.add(aux);
@@ -604,12 +637,26 @@ Clase: EncabezadoClase '{'ListSentenciasClase ID ',' '}'{
                                                     }
                                                 }
                                                 clase_hijo_padre.put($1.sval,$4.sval);
+                                                ArrayList<String> atributosCopia = new ArrayList<>(listaAtributos);
+                                                ArrayList<String> funcionesCopia = new ArrayList<>(listaFunciones);
+
+                                                String clase = new String(claseAct);
+
+                                                funcionesClases.put(clase, funcionesCopia);
+                                                atributosClases.put(clase, atributosCopia);
                                                 listaAtributos.clear();
                                                 claseAct=null; //lo vuelvo null para que no genere conflicto cuabdo guardo atributos de clase
                                               }
 
       |EncabezadoClase '{' ListSentenciasClase '}' {deshacerAmbito();
                                           clases_declaradas.add(claseAct+":"+ambitoAct);
+                                          ArrayList<String> atributosCopia = new ArrayList<>(listaAtributos);
+                                          ArrayList<String> funcionesCopia = new ArrayList<>(listaFunciones);
+
+                                          String clase = claseAct;
+
+                                          funcionesClases.put(clase, funcionesCopia);
+                                          atributosClases.put(clase, atributosCopia);
                                           listaAtributos.clear();
                                           claseAct=null;
                                           }
@@ -651,13 +698,15 @@ FuncionIMPL: EncabezadoIMPL '{'Funcion'}'      {
   static String tipoActual;
   static List<Nodo> parametros = new ArrayList<Nodo>();
   static List<String> clases_forward_declaration = new ArrayList<String>(); //utiliada para asegurarnos que una clase delcarada tambien este implementada
-  static List<String> clases_declaradas = new ArrayList<String>();
+  static List<String> clases_declaradas = new ArrayList<String>(); //usada para chequear que las clases declaradas esten implementadas al final del programa
   static List<Funcion> funciones_declaradas = new ArrayList<Funcion>();  //utilizada para chequear que no haya autoinvocaciones y demas
   static List<Nodo> funciones = new ArrayList<Nodo>(); //utilizada para almacenar las funciones que luego se imprimiran en main
   static Map<String,Boolean> comprobacion_uso_variables = new HashMap<String,Boolean>(); //cada vez q se declara variable se guarda lexema, si se usa del lado derecho en el ambito boolean=true.
 
-  static Map<String, String> clase_hijo_padre = new HashMap<String, String>();
-  static ArrayList<String> listaAtributos = new ArrayList<String>();
+  static Map<String, String> clase_hijo_padre = new HashMap<String, String>(); //utilizada para guardar el padre de una clase
+  static ArrayList<String> listaFunciones = new ArrayList<String>(); //funciones que declara una clase
+  static Map<String, ArrayList<String>> funcionesClases = new HashMap<String, ArrayList<String>>();  //guardamos como key el nombre de la clase y como value las funciones
+  static ArrayList<String> listaAtributos = new ArrayList<String>(); //atributos que declara una clase
   static Map<String, ArrayList<String>> atributosClases = new HashMap<String, ArrayList<String>>(); //utilizado para chequear que una clase que hereda no sobreescriba atributos de la clase padre
 
   public NodoControl getRaiz(){
@@ -804,7 +853,7 @@ public boolean padreTieneAtributo (String clase,String atributo){
 
     atributo = atributo.substring(0, atributo.indexOf(":"));
 
-    if (atributosPadre.contains(atributo))
+    if ((atributosPadre!=null)&&(atributosPadre.contains(atributo)))
         return true;
     return false;
 }
@@ -862,8 +911,14 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
                }
                t = TablaSimbolos.buscarPorAmbito(lexema);
            }
-           String nombreClase = t.getTipo();
-           return TablaSimbolos.buscarPorAmbito(nombreClase + ":" + ambitoAct);
+            String nombreClase;
+            if (t!=null){
+                if (t.getUso().equals("Variable")) {
+                    nombreClase = t.getLexema();
+                }else{
+                    nombreClase = t.getTipo();}
+                return TablaSimbolos.buscarPorAmbito(nombreClase+":"+ambitoAct);
+            } else { return null; }
    }
 
    public String getLexemaAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
@@ -892,6 +947,18 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
                     }
             }
             return "USHORT";
+   }
+
+   public boolean tieneFuncion(String clase, String funcion){
+
+        if (clase != null){
+            ArrayList<String> funcionesClase = funcionesClases.get(clase);
+            if (!(funcionesClase.isEmpty()))
+                for (String f : funcionesClase)
+                    if (f.equals(funcion))
+                        return true;
+        }
+        return false;
    }
 
   public int yylex() throws IOException{

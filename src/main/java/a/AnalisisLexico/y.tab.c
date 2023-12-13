@@ -553,7 +553,7 @@ YYSTYPE yylval;
 short yyss[YYSTACKSIZE];
 YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 627 "gramatica.y"
+#line 676 "gramatica.y"
   public NodoControl raiz;
   private String ambitoAct = "main";
   private String claseAct;
@@ -568,6 +568,10 @@ YYSTYPE yyvs[YYSTACKSIZE];
   static List<Nodo> funciones = new ArrayList<Nodo>(); //utilizada para almacenar las funciones que luego se imprimiran en main
   static Map<String,Boolean> comprobacion_uso_variables = new HashMap<String,Boolean>(); //cada vez q se declara variable se guarda lexema, si se usa del lado derecho en el ambito boolean=true.
 
+  static Map<String, String> clase_hijo_padre = new HashMap<String, String>();
+  static ArrayList<String> listaFunciones = new ArrayList<String>();
+  static Map<String, ArrayList<String>> funcionesClases = new HashMap<String, ArrayList<String>>();
+  static ArrayList<String> listaAtributos = new ArrayList<String>();
   static Map<String, ArrayList<String>> atributosClases = new HashMap<String, ArrayList<String>>(); //utilizado para chequear que una clase que hereda no sobreescriba atributos de la clase padre
 
   public NodoControl getRaiz(){
@@ -662,15 +666,17 @@ YYSTYPE yyvs[YYSTACKSIZE];
       }
 
       public void chequearAtributosRepetidos(String a, String b){
-           ArrayList<String> hijo = atributosClase.get(a);
-           ArrayList<String> padre = atributosClase.get(b);
-
-           for (String atributo : hijo)
-                if (padre.contains(atributo)) {
-                           agregarErrorSemantico ("Una clase que hereda no puede sobreescribir atributos del padre ")
-                           hijo.remove(atributo);
-                           TablaSimbolos.removeToken(atributo+":"+ambitoAct+":"+a);
-                }
+           ArrayList<String> hijo = atributosClases.get(a);
+           ArrayList<String> padre = atributosClases.get(b);
+            if ((hijo != null)&&(padre!=null)) {
+               for (String atributo : hijo)
+                    if (padre.contains(atributo)) {
+                               agregarErrorSemantico ("Una clase que hereda no puede sobreescribir atributos del padre ");
+                               hijo.remove(atributo);
+                               TablaSimbolos.removeToken(atributo+":"+ambitoAct+":"+a);
+                               break;
+                    }
+            }
       }
 
      NodoComun controlarTipos(Nodo n1, String op, Nodo n3 ){
@@ -704,6 +710,17 @@ public Nodo getNodoParametro(String m){
         }
     }
     return null;
+}
+
+public boolean padreTieneAtributo (String clase,String atributo){
+    //String clasePadre = clase_hijo_padre.get(clase);
+    ArrayList<String> atributosPadre = atributosClases.get(clase);
+
+    atributo = atributo.substring(0, atributo.indexOf(":"));
+
+    if ((atributosPadre!=null)&&(atributosPadre.contains(atributo)))
+        return true;
+    return false;
 }
 
 NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
@@ -759,8 +776,10 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
                }
                t = TablaSimbolos.buscarPorAmbito(lexema);
            }
-           String nombreClase = t.getTipo();
-           return TablaSimbolos.buscarPorAmbito(nombreClase + ":" + ambitoAct);
+           /*String nombreClase = t.getTipo();
+           return TablaSimbolos.buscarPorAmbito(nombreClase + ":" + ambitoAct);*/
+           String nombreClase = t.getLexema();
+           return TablaSimbolos.buscarPorAmbito(nombreClase+":"+ambitoAct);
    }
 
    public String getLexemaAlcance(String lexema){ //EN CASO DE QUE ESTE AL ALCANCE DEVUELVE EL LEXEMA CORRECTO, CASO CONTRARIO DEVUELVE EL NOMBRE DE LA VARIABLE SOLA
@@ -791,6 +810,18 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
             return "USHORT";
    }
 
+   public boolean tieneFuncion(String clase, String funcion){
+
+        if (clase != null){
+            ArrayList<String> funcionesClase = funcionesClases.get(clase);
+            if !(funcionesClase.isEmpty())
+                for (String f : funcionesClase)
+                    if (f.equals(funcion))
+                        return true;
+        }
+        return false;
+   }
+
   public int yylex() throws IOException{
     Token t = AnalizadorLexico.obtenerToken();
     this.yylval = new ParserVal(t.getLexema());
@@ -800,7 +831,7 @@ NodoComun controlarTiposAsignacion(Nodo n1, String asig, Nodo n3)
   public static void yyerror(String error){
     System.out.println(error);
   }
-#line 804 "y.tab.c"
+#line 835 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYACCEPT goto yyaccept
 #define YYERROR goto yyerrlab
@@ -980,71 +1011,92 @@ case 9:
                             TablaSimbolos.removeToken(yyvsp[0].sval);
 
                             Token clase = obtenerClase(yyvsp[-2].sval + ":" + ambitoAct);
+                            String nombreClase = clase.getLexema().substring(clase.getLexema().lastIndexOf(":") + 1);
+                            String lexemaAtributoHijo = yyvsp[0].sval + ":" + ambitoAct + ":"+ nombreClase;
+
+                            Token atributoPadre = null;
+
+                            if (padreTieneAtributo(nombreClase,lexemaAtributoHijo)){
+                                String lexemaAtributoPadre = yyvsp[0].sval + ":" + ambitoAct + ":"+ nombreClase;
+                                atributoPadre = TablaSimbolos.getToken(lexemaAtributoPadre);
+                            }
+
+                            Token atributo = TablaSimbolos.getToken(lexemaAtributoHijo);
                             if (clase == null) {
                                 agregarErrorSemantico("El objeto " + yyvsp[-2].sval + " no existe");
                             }
                             else {
-                                String nombreClase = clase.getLexema().substring(0, clase.getLexema().indexOf(":"));
-                                String lexemaObjeto = yyvsp[0].sval + ":" + ambitoAct + ":"+ nombreClase;
-                                Token atributo = TablaSimbolos.getToken(lexemaObjeto);
-                                if (atributo == null){
+                                if ((atributo == null) && (atributoPadre == null)){
                                     agregarErrorSemantico("Atributo de clase no existe");
                                 }
                             }
                             Nodo a = new NodoHoja(yyvsp[0].sval);
                             if (atributo != null)
                                 a.setTipo(atributo.getTipo());
-                            yyval = new NodoComun("ReferenciaObjeto",new NodoHoja(yyvsp[-2].sval), new NodoHoja(yyvsp[0].sval));
+                            if (atributoPadre != null)
+                                a.setTipo(atributoPadre.getTipo());
+                            yyval.obj = new NodoComun("REFERENCIA ATRIBUTO OBJETO",new NodoHoja(yyvsp[-2].sval), a);
                             AnalizadorLexico.agregarEstructura("Reconoce llamado a atributo");
                             }
 break;
 case 10:
-#line 61 "gramatica.y"
-{ if ((TablaSimbolos.getToken(yyvsp[-2].sval +":"+ambitoAct))==null)
-                                                    agregarErrorSemantico("Atributo de clase " + yyvsp[-2].sval + " no existe ");
-                                                else{
-                                                    String m = (String)yyvsp[-2].sval;
-                                                    Nodo a = new NodoHoja(m);
-                                                    yyval.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)yyvsp[0].obj);
-                                                    AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
-                                                }
+#line 71 "gramatica.y"
+{ Nodo a = ((Nodo)yyvsp[0].obj).getDer();
+                                                String nombreFuncion = a.getLexema();
+
+                                                Token clase = obtenerClase(yyvsp[-2].sval + ":" + ambitoAct);
+                                                String nombreClase = clase.getLexema().substring(clase.getLexema().lastIndexOf(":") + 1);
+
+                                                String clasePadre = clases_hijo_padre.get(clase);
+
+                                                if ((tieneFuncion(nombreClase,nombreFuncion))||(tieneFuncion(clasePadre,nombreFuncion))){
+
+                                                    if ((TablaSimbolos.getToken(yyvsp[-2].sval +":"+ambitoAct))==null)
+                                                        agregarErrorSemantico("Atributo de clase " + yyvsp[-2].sval + " no existe ");
+                                                    else{
+                                                        String m = (String)yyvsp[-2].sval;
+                                                        Nodo a = new NodoHoja(m);
+                                                        yyval.obj = new NodoComun("REFERENCIA FUNCION OBJETO",a,(Nodo)yyvsp[0].obj);
+                                                        AnalizadorLexico.agregarEstructura("Reconoce llamado a funcion de clase ");
+                                                    }
+                                                }else{agregarErrorSemantico("La funcion no esta al alcance ");}
                                                 TablaSimbolos.removeToken(yyvsp[-2].sval);
                                                 }
 break;
 case 11:
-#line 73 "gramatica.y"
+#line 94 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 12:
-#line 74 "gramatica.y"
+#line 95 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 13:
-#line 75 "gramatica.y"
+#line 96 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 14:
-#line 76 "gramatica.y"
+#line 97 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 15:
-#line 77 "gramatica.y"
+#line 98 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 16:
-#line 78 "gramatica.y"
+#line 99 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 19:
-#line 83 "gramatica.y"
+#line 104 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
 break;
 case 20:
-#line 84 "gramatica.y"
+#line 105 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("RETURN definido fuera de funcion ");}
 break;
 case 21:
-#line 87 "gramatica.y"
+#line 108 "gramatica.y"
 {
 						for (String var : variables_declaradas) {
 							Token t = TablaSimbolos.getToken(var);
@@ -1057,7 +1109,8 @@ case 21:
 							    TablaSimbolos.addSimbolo(t.getLexema(),t);
 							    comprobacion_uso_variables.put(t.getLexema(),false);
 							    if (claseAct != null){
-							        atributosClase.put(claseAct, var);
+							        listaAtributos.add(var);
+                                    atributosClases.put(claseAct, listaAtributos);
 							    }
                             }
 							else {
@@ -1069,27 +1122,27 @@ case 21:
                         }
 break;
 case 23:
-#line 110 "gramatica.y"
+#line 132 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se espera el tipo de la variable ");}
 break;
 case 24:
-#line 111 "gramatica.y"
+#line 133 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se espera identificador de la variable ");}
 break;
 case 28:
-#line 115 "gramatica.y"
+#line 137 "gramatica.y"
 {deshacerAmbito();}
 break;
 case 29:
-#line 118 "gramatica.y"
+#line 140 "gramatica.y"
 {variables_declaradas.add(yyvsp[0].sval);}
 break;
 case 30:
-#line 119 "gramatica.y"
+#line 141 "gramatica.y"
 {variables_declaradas.add(yyvsp[0].sval);}
 break;
 case 31:
-#line 122 "gramatica.y"
+#line 144 "gramatica.y"
 {TablaSimbolos.removeToken(yyvsp[-1].sval);
                                    if (clases_declaradas.contains(yyvsp[-1].sval + ":" + ambitoAct)){
                                         for (String var : variables_declaradas) {
@@ -1111,27 +1164,27 @@ case 31:
                                    }
 break;
 case 32:
-#line 143 "gramatica.y"
+#line 165 "gramatica.y"
 {variables_declaradas.add(yyvsp[0].sval);}
 break;
 case 33:
-#line 144 "gramatica.y"
+#line 166 "gramatica.y"
 {variables_declaradas.add(yyvsp[0].sval);}
 break;
 case 34:
-#line 146 "gramatica.y"
+#line 168 "gramatica.y"
 {tipoActual = yyvsp[0].sval;}
 break;
 case 35:
-#line 147 "gramatica.y"
+#line 169 "gramatica.y"
 {tipoActual = yyvsp[0].sval;}
 break;
 case 36:
-#line 148 "gramatica.y"
+#line 170 "gramatica.y"
 {tipoActual = yyvsp[0].sval;}
 break;
 case 37:
-#line 151 "gramatica.y"
+#line 173 "gramatica.y"
 {
                     chequearEnteroPositivo(yyvsp[0].sval);
                     NodoHoja aux = new NodoHoja(yyvsp[0].sval);
@@ -1150,7 +1203,7 @@ case 37:
                    }
 break;
 case 38:
-#line 168 "gramatica.y"
+#line 190 "gramatica.y"
 {NodoHoja aux = new NodoHoja(yyvsp[0].sval);
 	               chequearEnteroCorto(yyvsp[0].sval);
 	               aux.setTipo("USHORT");
@@ -1168,11 +1221,11 @@ case 38:
                    }
 break;
 case 39:
-#line 183 "gramatica.y"
+#line 205 "gramatica.y"
 {AnalizadorLexico.agregarErrorLexico("Un entero corto no puede ser negativo ");}
 break;
 case 40:
-#line 184 "gramatica.y"
+#line 206 "gramatica.y"
 {
 	                chequearDouble(yyvsp[0].sval);
 	                NodoHoja aux = new NodoHoja(yyvsp[0].sval);
@@ -1191,7 +1244,7 @@ case 40:
                     }
 break;
 case 41:
-#line 201 "gramatica.y"
+#line 223 "gramatica.y"
 {
                     chequearEnteroNegativo(yyvsp[0].sval);
                     NodoHoja aux = new NodoHoja(yyvsp[0].sval);
@@ -1210,7 +1263,7 @@ case 41:
 	                }
 break;
 case 42:
-#line 217 "gramatica.y"
+#line 239 "gramatica.y"
 {chequearDouble(yyvsp[0].sval);
                          NodoHoja aux = new NodoHoja(yyvsp[0].sval);
                          aux.setTipo("DOUBLE");
@@ -1228,47 +1281,47 @@ case 42:
                         }
 break;
 case 43:
-#line 234 "gramatica.y"
+#line 256 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 44:
-#line 235 "gramatica.y"
+#line 257 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 45:
-#line 236 "gramatica.y"
+#line 258 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 46:
-#line 237 "gramatica.y"
+#line 259 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 47:
-#line 241 "gramatica.y"
+#line 263 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 48:
-#line 243 "gramatica.y"
+#line 265 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 49:
-#line 244 "gramatica.y"
+#line 266 "gramatica.y"
 {yyval.obj = yyvsp[0].obj;}
 break;
 case 50:
-#line 245 "gramatica.y"
+#line 267 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 51:
-#line 246 "gramatica.y"
+#line 268 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-2].obj,yyvsp[-1].sval,(Nodo)yyvsp[0].obj);}
 break;
 case 52:
-#line 247 "gramatica.y"
+#line 269 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 53:
-#line 250 "gramatica.y"
+#line 272 "gramatica.y"
 {Nodo aux = new NodoHoja ((String)yyvsp[0].sval);
             TablaSimbolos.removeToken(yyvsp[0].sval);
             String var = yyvsp[0].sval + ":" + ambitoAct;
@@ -1290,197 +1343,203 @@ case 53:
           }
 break;
 case 54:
-#line 269 "gramatica.y"
+#line 291 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 55:
-#line 273 "gramatica.y"
+#line 295 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 56:
-#line 276 "gramatica.y"
+#line 298 "gramatica.y"
 {yyval.obj = controlarTipos((Nodo)yyvsp[-3].obj,yyvsp[-2].sval,(Nodo)yyvsp[-1].obj);}
 break;
 case 57:
-#line 277 "gramatica.y"
+#line 299 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ')' ");}
 break;
 case 58:
-#line 278 "gramatica.y"
+#line 300 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una '(' ");}
 break;
 case 59:
-#line 281 "gramatica.y"
+#line 303 "gramatica.y"
 {  yyval.obj = new NodoComun("CUERPO",(Nodo)yyvsp[-3].obj,(Nodo)yyvsp[-1].obj);
                                                         Nodo aux = (Nodo)yyval.obj;
                                                         yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-4].obj,aux);
                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
 break;
 case 60:
-#line 285 "gramatica.y"
+#line 307 "gramatica.y"
 {yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-2].obj,(Nodo)yyvsp[-1].obj);
 	                                    AnalizadorLexico.agregarEstructura("Reconoce IF");}
 break;
 case 61:
-#line 287 "gramatica.y"
+#line 309 "gramatica.y"
 {  yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-3].obj,(Nodo)yyvsp[-2].obj);
          	                                            AnalizadorLexico.agregarEstructura("Reconoce IF");}
 break;
 case 62:
-#line 289 "gramatica.y"
+#line 311 "gramatica.y"
 {   yyval.obj = new NodoComun("CUERPO",(Nodo)yyvsp[-4].obj,(Nodo)yyvsp[-1].obj);
                                                                         Nodo aux = (Nodo)yyval.obj;
                                                                         yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-5].obj,aux);
                                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
 break;
 case 63:
-#line 293 "gramatica.y"
+#line 315 "gramatica.y"
 {yyval.obj = new NodoComun("CUERPO",(Nodo)yyvsp[-5].obj,(Nodo)yyvsp[-2].obj);
                                                                                     Nodo aux = (Nodo)yyval.obj;
                                                                                     yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-6].obj,aux);
                                                                                     AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
 break;
 case 64:
-#line 297 "gramatica.y"
+#line 319 "gramatica.y"
 {   yyval.obj = new NodoComun("CUERPO",(Nodo)yyvsp[-4].obj,(Nodo)yyvsp[-2].obj);
                                                                         Nodo aux = (Nodo)yyval.obj;
                                                                         yyval.obj = new NodoComun("IF",(Nodo)yyvsp[-5].obj,aux);
                                                                         AnalizadorLexico.agregarEstructura("Reconoce IF ELSE");}
 break;
 case 65:
-#line 304 "gramatica.y"
+#line 326 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("IF mal definido ");}
 break;
 case 66:
-#line 305 "gramatica.y"
+#line 327 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 break;
 case 67:
-#line 306 "gramatica.y"
+#line 328 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 break;
 case 68:
-#line 307 "gramatica.y"
+#line 329 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 break;
 case 69:
-#line 308 "gramatica.y"
+#line 330 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un END_IF ");}
 break;
 case 70:
-#line 309 "gramatica.y"
+#line 331 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE ");}
 break;
 case 71:
-#line 310 "gramatica.y"
+#line 332 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ELSE");}
 break;
 case 72:
-#line 311 "gramatica.y"
+#line 333 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
 break;
 case 73:
-#line 312 "gramatica.y"
+#line 334 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' " );}
 break;
 case 74:
-#line 313 "gramatica.y"
+#line 335 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
 break;
 case 75:
-#line 316 "gramatica.y"
+#line 338 "gramatica.y"
 {yyval.obj = yyvsp[-1].obj;}
 break;
 case 76:
-#line 317 "gramatica.y"
+#line 339 "gramatica.y"
 {yyval.obj = yyvsp[-3].obj;}
 break;
 case 77:
-#line 319 "gramatica.y"
+#line 341 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
 break;
 case 78:
-#line 320 "gramatica.y"
+#line 342 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Falta un '{'"); }
 break;
 case 79:
-#line 321 "gramatica.y"
+#line 343 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Falta un '}'"); }
 break;
 case 80:
-#line 322 "gramatica.y"
+#line 344 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("No hay sentencias dentro de las llaves."); }
 break;
 case 81:
-#line 325 "gramatica.y"
+#line 347 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 82:
-#line 328 "gramatica.y"
+#line 350 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Solo se aceptan sentencias ejecutables "); }
 break;
 case 83:
-#line 329 "gramatica.y"
+#line 351 "gramatica.y"
 {yyval.obj=yyvsp[-1].obj;}
 break;
 case 84:
-#line 330 "gramatica.y"
+#line 352 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Falta una ',' "); }
 break;
 case 85:
-#line 331 "gramatica.y"
+#line 353 "gramatica.y"
 {yyval.obj = new NodoComun("SENTENCIA", (Nodo) yyvsp[-2].obj, (Nodo) yyvsp[-1].obj);}
 break;
 case 86:
-#line 334 "gramatica.y"
+#line 356 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 87:
-#line 335 "gramatica.y"
+#line 357 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 88:
-#line 336 "gramatica.y"
+#line 358 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 89:
-#line 337 "gramatica.y"
+#line 359 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 90:
-#line 338 "gramatica.y"
+#line 360 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 91:
-#line 339 "gramatica.y"
+#line 361 "gramatica.y"
 {yyval.sval=yyvsp[0].sval;}
 break;
 case 94:
-#line 346 "gramatica.y"
+#line 368 "gramatica.y"
 {agregarErrorSemantico("RETURN fuera de funcion");}
 break;
 case 95:
-#line 347 "gramatica.y"
+#line 369 "gramatica.y"
 {  yyval.obj = (Nodo)yyvsp[-6].obj;
+                                                                                String nombreFuncion=((Nodo)yyvsp[-6].obj).getLexema();
+                                                                                if (claseAct!=null)
+                                                                                    listaFunciones.add(nombreFuncion);
                                                                                 deshacerAmbito();
                                                                                 Nodo aux = new NodoComun("Funcion",(Nodo)yyvsp[-6].obj,(Nodo)yyvsp[-3].obj);
                                                                                 funciones.add(aux);
                                                                                 AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
 break;
 case 96:
-#line 352 "gramatica.y"
+#line 377 "gramatica.y"
 { yyval.obj = (Nodo)yyvsp[-4].obj;
+                                                                    String nombreFuncion=((Nodo)yyvsp[-4].obj).getLexema();
+                                                                    if (claseAct!=null)
+                                                                        listaFunciones.add(nombreFuncion);
                                                                     deshacerAmbito();
                                                                     Nodo aux = new NodoComun("Funcion",(Nodo)yyvsp[-4].obj,(Nodo)yyvsp[-1].obj);
                                                                     funciones.add(aux);
                                                                     AnalizadorLexico.agregarEstructura("Reconoce declaracion de funcion ");}
 break;
 case 97:
-#line 357 "gramatica.y"
+#line 385 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un nombre para la funcion ");}
 break;
 case 98:
-#line 360 "gramatica.y"
+#line 388 "gramatica.y"
 {
 			      Token t = TablaSimbolos.getToken(yyvsp[0].sval);
                               if (t != null){
@@ -1498,7 +1557,7 @@ case 98:
                   }
 break;
 case 99:
-#line 378 "gramatica.y"
+#line 406 "gramatica.y"
 {    Token t = TablaSimbolos.getToken(yyvsp[-1].sval);
                                 if (t != null){
                                 	t.setLexema(yyvsp[-1].sval + ":" + ambitoAct);
@@ -1518,47 +1577,47 @@ case 99:
                            }
 break;
 case 100:
-#line 395 "gramatica.y"
+#line 423 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 101:
-#line 396 "gramatica.y"
+#line 424 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 102:
-#line 397 "gramatica.y"
+#line 425 "gramatica.y"
 {yyval.obj = null;}
 break;
 case 103:
-#line 398 "gramatica.y"
+#line 426 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 104:
-#line 399 "gramatica.y"
+#line 427 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 105:
-#line 405 "gramatica.y"
+#line 433 "gramatica.y"
 {yyval.obj = new NodoComun("SENTENCIA",(Nodo)yyvsp[-2].obj,(Nodo)yyvsp[-1].obj);}
 break;
 case 106:
-#line 406 "gramatica.y"
+#line 434 "gramatica.y"
 {yyval.obj=yyvsp[-1].obj;}
 break;
 case 107:
-#line 407 "gramatica.y"
+#line 435 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 108:
-#line 408 "gramatica.y"
+#line 436 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 109:
-#line 409 "gramatica.y"
+#line 437 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' al final de la linea ");}
 break;
 case 110:
-#line 412 "gramatica.y"
+#line 440 "gramatica.y"
 {yyval.obj=new NodoControl("LLAMADO FUNCION", new NodoHoja(yyvsp[-2].sval));
                             Token tokenFuncion = TablaSimbolos.buscarPorAmbito(yyvsp[-2].sval + ":" + ambitoAct);
 
@@ -1592,15 +1651,15 @@ case 110:
 				            }
 break;
 case 111:
-#line 443 "gramatica.y"
+#line 471 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 112:
-#line 444 "gramatica.y"
+#line 472 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 113:
-#line 445 "gramatica.y"
+#line 473 "gramatica.y"
 {
             			            NodoHoja nodo1 = new NodoHoja(yyvsp[-3].sval);
             			            Nodo n3 = (Nodo)yyvsp[-1].obj;
@@ -1645,29 +1704,29 @@ case 113:
                                     }
 break;
 case 114:
-#line 489 "gramatica.y"
+#line 517 "gramatica.y"
 {yyval.obj = new NodoControl("PRINT", new NodoHoja(yyvsp[0].sval));
                              AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
 break;
 case 115:
-#line 491 "gramatica.y"
+#line 519 "gramatica.y"
 {yyval.obj = new NodoControl("PRINT", new NodoHoja(yyvsp[0].sval));
                             AnalizadorLexico.agregarEstructura("Reconoce salida de mensaje por pantalla ");}
 break;
 case 116:
-#line 493 "gramatica.y"
+#line 521 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("La funcion PRINT no acepta esa declaracion ");}
 break;
 case 117:
-#line 496 "gramatica.y"
+#line 524 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 118:
-#line 497 "gramatica.y"
+#line 525 "gramatica.y"
 {yyval.obj=yyvsp[0].obj;}
 break;
 case 119:
-#line 500 "gramatica.y"
+#line 528 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
                                                 if (yyvsp[-1].sval.equals("="))
 						                            yyval.obj = controlarTiposAsignacion((Nodo)yyvsp[-2].obj, "=", (Nodo)yyvsp[0].obj);
@@ -1678,86 +1737,89 @@ case 119:
 						                        }
 break;
 case 120:
-#line 509 "gramatica.y"
+#line 537 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                        Nodo a = ((Nodo)yyvsp[-2].obj).getDer();
+	                                                        Nodo b = ((Nodo)yyvsp[0].obj).getDer();
 	                                                        if (yyvsp[-1].sval.equals("="))
-	                                                            yyval.obj = controlarTiposAsignacion((Nodo)yyvsp[-2].obj, "=", (Nodo)yyvsp[0].obj);
+	                                                            yyval.obj = controlarTiposAsignacion(a, "=", b);
 	                                                        else
-	                                                            yyval.obj = controlarTiposAsignacion((Nodo)yyvsp[-2].obj, "+=", (Nodo)yyvsp[0].obj);}
+	                                                            yyval.obj = controlarTiposAsignacion(a, "+=", b);}
 break;
 case 121:
-#line 515 "gramatica.y"
+#line 545 "gramatica.y"
 {AnalizadorLexico.agregarEstructura("Reconoce asignacion ");
+	                                                Nodo a = ((Nodo)yyvsp[-2].obj).getDer();
 	                                                if (yyvsp[-1].sval.equals("="))
-	                                                    yyval.obj = controlarTiposAsignacion((Nodo)yyvsp[-2].obj, "=", (Nodo)yyvsp[0].obj);
+	                                                    yyval.obj = controlarTiposAsignacion(a, "=", (Nodo)yyvsp[0].obj);
                                                  	else
-                                                 	    yyval.obj = controlarTiposAsignacion((Nodo)yyvsp[-2].obj, "+=", (Nodo)yyvsp[0].obj);
+                                                 	    yyval.obj = controlarTiposAsignacion(a, "+=", (Nodo)yyvsp[0].obj);
 
                                                     }
 break;
 case 122:
-#line 522 "gramatica.y"
+#line 553 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 break;
 case 123:
-#line 523 "gramatica.y"
+#line 554 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un valor seguido del operador ");}
 break;
 case 124:
-#line 524 "gramatica.y"
+#line 555 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un operando del lado izquierdo ");}
 break;
 case 125:
-#line 527 "gramatica.y"
+#line 558 "gramatica.y"
 {yyval.obj=new NodoComun("DO UNTIL", (Nodo)yyvsp[-2].obj ,(Nodo)yyvsp[0].obj);
                                                         AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
 break;
 case 126:
-#line 529 "gramatica.y"
+#line 560 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
 break;
 case 127:
-#line 530 "gramatica.y"
+#line 561 "gramatica.y"
 {yyval.obj = new NodoComun("DO UNTIL", (Nodo)yyvsp[-3].obj ,(Nodo)yyvsp[-1].obj);
                                                                AnalizadorLexico.agregarEstructura("Reconoce funcion DO UNTIL");}
 break;
 case 128:
-#line 532 "gramatica.y"
+#line 563 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una condicion ");}
 break;
 case 129:
-#line 533 "gramatica.y"
+#line 564 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una sentencia ejecutable ");}
 break;
 case 130:
-#line 534 "gramatica.y"
+#line 565 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una ',' ");}
 break;
 case 131:
-#line 540 "gramatica.y"
+#line 571 "gramatica.y"
 {yyval.obj = yyvsp[-1].obj;}
 break;
 case 132:
-#line 541 "gramatica.y"
+#line 572 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '(' ");}
 break;
 case 133:
-#line 542 "gramatica.y"
+#line 573 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un ')' ");}
 break;
 case 134:
-#line 545 "gramatica.y"
+#line 576 "gramatica.y"
 {((Nodo)yyvsp[0].obj).setTipo("DOUBLE");
                                             yyval.obj = (Nodo)yyvsp[0].obj;
                                             AnalizadorLexico.agregarEstructura("Reconoce funcion TOD ");
                                             }
 break;
 case 135:
-#line 550 "gramatica.y"
+#line 581 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba una Expresion ");}
 break;
 case 136:
-#line 553 "gramatica.y"
+#line 584 "gramatica.y"
 {  if (!(clases_forward_declaration.contains(yyvsp[0].sval + ":" + ambitoAct)))  {
                                         clases_forward_declaration.add(yyvsp[0].sval + ":" + ambitoAct);
 
@@ -1770,7 +1832,7 @@ case 136:
                                             agregarErrorSemantico("Este identificador ya fue utilizado en este ambito");
                                             yyval.sval= " ";
                                             break;
-                                        }else{yyval.sval = yyvsp[0].sval+":"+ambitoAct;}
+                                        }else{yyval.sval = yyvsp[0].sval;}
                                         Token t = TablaSimbolos.getToken(yyvsp[0].sval);
                                         if (t != null){
                                             t.setLexema(t.getLexema() + ":" + ambitoAct);
@@ -1781,7 +1843,7 @@ case 136:
                                         }
                                         tipoActual = yyvsp[0].sval;
                                         claseAct = yyvsp[0].sval;
-                                        atributosClase.put(yyvsp[0].sval,null);
+                                        atributosClases.put(yyvsp[0].sval,null);
                                         actualizarAmbito(yyvsp[0].sval);}
                                      TablaSimbolos.removeToken(yyvsp[0].sval);
 
@@ -1789,33 +1851,51 @@ case 136:
                             }
 break;
 case 137:
-#line 583 "gramatica.y"
+#line 614 "gramatica.y"
 {
                                                 deshacerAmbito();
                                                 clases_declaradas.add(claseAct+":"+ambitoAct);
                                                 if (yyvsp[-5].sval != " "){
                                                     if (clases_declaradas.contains(yyvsp[-2].sval+":"+ambitoAct)){
                                                         chequearAtributosRepetidos (yyvsp[-5].sval,yyvsp[-2].sval);
+
                                                     }
                                                 }
+                                                clase_hijo_padre.put(yyvsp[-2].sval,yyvsp[-5].sval);
+                                                ArrayList<String> atributosCopia = new ArrayList<>(listaAtributos);
+                                                ArrayList<String> funcionesCopia = new ArrayList<>(listaFunciones);
+
+                                                String clase = claseAct;
+
+                                                funcionesClases.put(clase, funcionesCopia);
+                                                atributosClases.put(clase, atributosCopia);
+                                                listaAtributos.clear();
                                                 claseAct=null; /*lo vuelvo null para que no genere conflicto cuabdo guardo atributos de clase*/
                                               }
 break;
 case 138:
-#line 594 "gramatica.y"
+#line 635 "gramatica.y"
 {deshacerAmbito();
                                           clases_declaradas.add(claseAct+":"+ambitoAct);
+                                          ArrayList<String> atributosCopia = new ArrayList<>(listaAtributos);
+                                          ArrayList<String> funcionesCopia = new ArrayList<>(listaFunciones);
+
+                                          String clase = claseAct;
+
+                                          funcionesClases.put(clase, funcionesCopia);
+                                          atributosClases.put(clase, atributosCopia);
+                                          listaAtributos.clear();
                                           claseAct=null;
                                           }
 break;
 case 139:
-#line 600 "gramatica.y"
+#line 649 "gramatica.y"
 { deshacerAmbito();
                                                 AnalizadorLexico.agregarEstructura("Reconoce Funcion sin cuerpo");
                                                }
 break;
 case 140:
-#line 606 "gramatica.y"
+#line 655 "gramatica.y"
 {  if (!(clases_declaradas.contains(yyvsp[-1].sval+":"+ambitoAct))){
                                         agregarErrorSemantico("La clase no esta definida ");
                                     }
@@ -1823,7 +1903,7 @@ case 140:
                                  }
 break;
 case 141:
-#line 613 "gramatica.y"
+#line 662 "gramatica.y"
 {
                                                  Nodo n = (Nodo)yyvsp[-1].obj;
                                                  Funcion f = new Funcion(n.getLexema()+":"+ambitoAct ,null);
@@ -1835,14 +1915,14 @@ case 141:
                                                }
 break;
 case 142:
-#line 622 "gramatica.y"
+#line 671 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '{' ");}
 break;
 case 143:
-#line 623 "gramatica.y"
+#line 672 "gramatica.y"
 {AnalizadorLexico.agregarErrorSintactico("Se esperaba un '}' ");}
 break;
-#line 1846 "y.tab.c"
+#line 1926 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

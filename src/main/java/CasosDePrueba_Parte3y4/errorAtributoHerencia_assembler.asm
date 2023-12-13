@@ -15,9 +15,10 @@ OverflowSumaEnteros db "Se produjo un overflow en la suma de enteros.", 0
 OverflowProductoDouble db "Se produjo un un overflow en el producto de doubles.", 0 
 error db "Error", 0 
 printMensaje db "Print", 0 
-_qq:main:a:f dd ?
 _4 dd 4
+_ja:main:a:f dd ?
 _g:main:a dd ?
+_ja:main:b:f dd ?
 _h:main:a dd ?
 _m:main:a dd ?
 
@@ -30,11 +31,12 @@ invoke MessageBox, NULL, addr OverflowProductoDouble, addr error, MB_OK
 invoke ExitProcess, 0 
 f:
 MOV EAX , 4
-MOV qq, EAX
+MOV ja, EAX
+ret
+f:
+MOV EAX , 4
+MOV ja, EAX
 ret
 main:
-MOV EAX , 4
-MOV h, EAX
-gcall f
 invoke ExitProcess, 0 
 end main

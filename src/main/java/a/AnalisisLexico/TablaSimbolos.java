@@ -75,7 +75,7 @@ public class TablaSimbolos {
         while(palabra.contains("main")) {
             for (Map.Entry<String, Token> entry : simbolos.entrySet()) {
                 String lexema = entry.getKey();
-                System.out.println("LEXEMA:" + lexema);
+
                 if (lexema.toLowerCase().contains(palabra.toLowerCase())) {
                     Token t = entry.getValue();
                     return t;

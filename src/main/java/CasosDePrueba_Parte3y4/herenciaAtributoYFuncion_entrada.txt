@@ -9,7 +9,7 @@
    },
 
    CLASS b{
-   USHORT h,vcd
+   USHORT r,
     a,
    },
 
