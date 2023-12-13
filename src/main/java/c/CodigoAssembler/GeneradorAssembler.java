@@ -59,11 +59,11 @@ public class GeneradorAssembler {
                     String prefijo = "_";
                     if(tipo.equals("USHORT"))
                     {
-                        data += prefijo + k + " dd " + k + "\n";
+                        data += prefijo + k + " db " + k + "\n";
                     }
                     else if(tipo.equals("DOUBLE"))
                     {
-                        data += prefijo + k + " dd " + k + "\n";
+                        data += prefijo + k + " dq " + k + "\n";
                     }
                     else
                     {
@@ -80,11 +80,11 @@ public class GeneradorAssembler {
                     }
                     if(tipo.equals("USHORT"))
                     {
-                        data += prefijo +  k + " dd " + "?" + "\n";
+                        data += prefijo +  k + " db " + "?" + "\n";
                     }
                     else if(tipo.equals("DOUBLE"))
                     {
-                        data += prefijo + k + " dd " + "?" + "\n";
+                        data += prefijo + k + " dq " + "?" + "\n";
                     }
                     else
                     {
