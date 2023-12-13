@@ -1,14 +1,15 @@
 ------------------------------------------TABLA DE SIMBOLOS------------------------------------------
 Token{id=269, lexema='a', linea=13, uso='', tipo='null', ambito='null'}
+Token{id=269, lexema='g:main', linea=16, uso='Objeto', tipo='b', ambito='main'}
+Token{id=269, lexema='b:main', linea=11, uso='Clase', tipo='null', ambito='main'}
 Token{id=269, lexema='qq:main:a:f', linea=6, uso='Variable', tipo='USHORT', ambito='main:a:f'}
 Token{id=279, lexema='4', linea=17, uso='Constante', tipo='USHORT', ambito='main'}
 Token{id=269, lexema='a:main', linea=2, uso='Clase', tipo='null', ambito='main'}
 Token{id=269, lexema='g:main:a', linea=3, uso='Variable', tipo='USHORT', ambito='main:a'}
-Token{id=269, lexema='g:main', linea=16, uso='Objeto', tipo='b', ambito='main'}
 Token{id=269, lexema='f:main:a', linea=5, uso='Funcion', tipo='VOID', ambito='main:a'}
 Token{id=269, lexema='h:main:a', linea=3, uso='Variable', tipo='USHORT', ambito='main:a'}
-Token{id=269, lexema='b:main', linea=11, uso='Clase', tipo='null', ambito='main'}
 Token{id=269, lexema='m:main:a', linea=4, uso='Variable', tipo='USHORT', ambito='main:a'}
+Token{id=269, lexema='h:main:b', linea=12, uso='Variable', tipo='USHORT', ambito='main:b'}
  
 -------------------------------------------ERRORES LEXICOS-------------------------------------------
  
@@ -17,7 +18,8 @@ Token{id=269, lexema='m:main:a', linea=4, uso='Variable', tipo='USHORT', ambito=
 
 -------------------------------------------ERRORES SEMANTICOS-------------------------------------------
  
-Error Semantico: Una clase que hereda no puede sobreescribir atributos del padre  en la linea: 14
+Error Semantico: La clase vcd no esta definida  en la linea: 13
+Error Semantico: Ya existe un objeto + var + definido en este ambito  en la linea: 16
 
 -------------------------------------------WARNINGS-------------------------------------------
  

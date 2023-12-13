@@ -15,11 +15,12 @@ OverflowSumaEnteros db "Se produjo un overflow en la suma de enteros.", 0
 OverflowProductoDouble db "Se produjo un un overflow en el producto de doubles.", 0 
 error db "Error", 0 
 printMensaje db "Print", 0 
-_qq:main:a:f dd ?
-_4 dd 4
-_g:main:a dd ?
-_h:main:a dd ?
-_m:main:a dd ?
+_qq:main:a:f db ?
+_4 db 4
+_g:main:a db ?
+_h:main:a db ?
+_m:main:a db ?
+_h:main:b db ?
 
 .code
 invoke MessageBox, NULL, addr AutoinvocacionFunciones, addr error, MB_OK 

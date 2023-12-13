@@ -45,7 +45,7 @@ public class NodoComun extends Nodo{
                 break;
 
             case "=":
-                System.out.println("HOLA");
+
                 salida += getDer().getAssembler() + getIzq().getAssembler();
                 if(getIzq().getTipo().equals("USHORT")||getIzq().getTipo().equals("INT")){
                     salida+= "MOV EAX , " + getDer().getUltimoNodo().getLexema() + "\n";
